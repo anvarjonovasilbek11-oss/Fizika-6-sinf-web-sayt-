@@ -13,7 +13,7 @@ const StatsCard = ({ icon, label, count, color }) => (
     </div>
     <div>
       <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white">{count}</h3>
-      <p className="text-slate-500 dark:text-slate-400 font-medium">{label}</p>
+      <p className="text-slate-500 dark:text-slate-300 font-medium">{label}</p>
     </div>
   </motion.div>
 );
@@ -133,7 +133,7 @@ const Home = () => {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-3 text-slate-600 dark:text-slate-400"
+                className="flex items-center gap-3 text-slate-600 dark:text-slate-200"
               >
                 {feature}
               </motion.li>

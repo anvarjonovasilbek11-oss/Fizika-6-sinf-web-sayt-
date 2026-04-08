@@ -114,7 +114,7 @@ const AIQuiz = () => {
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center">
         <h1 className="text-3xl font-heading text-gradient">AI Test Generator</h1>
-        <p className="text-slate-500 mt-2">Istalgan mavzuni yozing va AI sizga test tuzib beradi</p>
+        <p className="text-slate-500 dark:text-slate-300 mt-2">Istalgan mavzuni yozing va AI sizga test tuzib beradi</p>
       </div>
 
       {!quiz && !showResults && (
@@ -150,7 +150,7 @@ const AIQuiz = () => {
                   key={t}
                   type="button"
                   onClick={() => setTopic(t)}
-                  className="px-4 py-1.5 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 rounded-full text-sm hover:bg-primary/10 hover:text-primary transition-all"
+                  className="px-4 py-1.5 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-200 rounded-full text-sm hover:bg-primary/10 hover:text-primary transition-all"
                 >
                   {t}
                 </button>
@@ -162,7 +162,7 @@ const AIQuiz = () => {
 
       {quiz && !showResults && (
         <div className="space-y-6">
-          <div className="flex justify-between items-center text-sm text-slate-500">
+          <div className="flex justify-between items-center text-sm text-slate-500 dark:text-slate-300">
             <span>Mavzu: <b className="text-primary">{quiz.topic}</b></span>
             <span>Savol: <b>{currentIdx + 1}/{quiz.questions.length}</b></span>
           </div>
@@ -216,7 +216,7 @@ const AIQuiz = () => {
         >
           <h2 className="text-4xl font-heading font-extrabold text-gradient mb-4">Natijangiz!</h2>
           <div className="text-6xl font-black text-slate-800 dark:text-white mb-2">{score}/{quiz.questions.length}</div>
-          <p className="text-slate-500 mb-8">
+          <p className="text-slate-500 dark:text-slate-300 mb-8">
             {score === quiz.questions.length ? "A'lo! Siz daho ekansiz!" : score > quiz.questions.length / 2 ? "Yaxshi natija! Yana biroz harakat qiling." : "Yana o'qishingiz kerak. Bo'shashmang!"}
           </p>
           <div className="flex justify-center gap-4">

@@ -45,7 +45,7 @@ const VideoCard = ({ video, onSelect }) => (
     </div>
     <div className="p-4">
       <h3 className="text-lg font-bold text-slate-800 dark:text-white line-clamp-2">{video.title}</h3>
-      <p className="text-sm text-slate-500 mt-1">Mavzu: {video.topic}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">Mavzu: {video.topic}</p>
     </div>
   </motion.div>
 );
@@ -87,7 +87,7 @@ const VideoLessons = () => {
             className={`px-6 py-2 rounded-xl font-semibold transition-all whitespace-nowrap ${
               activeCategory === cat 
                 ? 'bg-primary text-white shadow-lg shadow-primary/30' 
-                : 'bg-white dark:bg-dark-surface text-slate-600 dark:text-slate-400 hover:bg-primary/10'
+                : 'bg-white dark:bg-dark-surface text-slate-600 dark:text-slate-200 hover:bg-primary/10'
             }`}
           >
             {cat}
@@ -145,7 +145,7 @@ const VideoLessons = () => {
                   <span className="px-3 py-1 bg-primary/20 text-primary rounded-lg text-sm font-bold">
                     {selectedVideo.category}
                   </span>
-                  <span className="px-3 py-1 bg-white/10 text-white/60 rounded-lg text-sm">
+                  <span className="px-3 py-1 bg-white/10 text-white/90 rounded-lg text-sm">
                     Mavzu: {selectedVideo.topic}
                   </span>
                 </div>

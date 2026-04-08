@@ -92,7 +92,7 @@ const Materials = () => {
           <RiUploadCloud2Line size={32} />
         </motion.div>
         <h3 className="text-xl font-bold text-slate-800 dark:text-white">Fayllarni yuklash</h3>
-        <p className="text-slate-500 dark:text-slate-400 mt-2">PDF, DOCX yoki ZIP fayllarni shu yerga tashlang</p>
+        <p className="text-slate-500 dark:text-slate-200 mt-2">PDF, DOCX yoki ZIP fayllarni shu yerga tashlang</p>
         <p className="text-xs text-slate-400 mt-1">(Maksimal o'lcham: 10MB)</p>
       </div>
 
@@ -126,7 +126,7 @@ const Materials = () => {
                   <h4 className="font-bold text-slate-800 dark:text-white truncate" title={file.name}>
                     {file.name}
                   </h4>
-                  <p className="text-xs text-slate-500 mt-1">{file.size} • {file.date}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-300 mt-1">{file.size} • {file.date}</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center gap-2">
@@ -153,8 +153,7 @@ const Materials = () => {
           <div className="text-6xl text-slate-200 dark:text-white/5 mb-4 flex justify-center">
             <RiFileTextLine />
           </div>
-          <h3 className="text-xl font-bold text-slate-400">Hozircha fayllar yo'q</h3>
-          <p className="text-slate-400 mt-2">Yangi qo'llanmalarni yuklashni boshlang!</p>
+          <p className="text-slate-400 dark:text-slate-300 mt-2">Yangi qo'llanmalarni yuklashni boshlang!</p>
         </div>
       )}
     </div>

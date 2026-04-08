@@ -39,7 +39,7 @@ const Settings = () => {
 
             <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500">Ism va familiya</label>
+                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Ism va familiya</label>
                 <input 
                   type="text" 
                   value={formData.name}
@@ -48,7 +48,7 @@ const Settings = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500">Username (O'zgartirib bo'lmaydi)</label>
+                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Username (O'zgartirib bo'lmaydi)</label>
                 <input 
                   type="text" 
                   value={user?.username} 
@@ -57,7 +57,7 @@ const Settings = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500">Yosh</label>
+                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Yosh</label>
                 <input 
                   type="number" 
                   value={formData.age}
@@ -66,7 +66,7 @@ const Settings = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500">Sinf</label>
+                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Sinf</label>
                 <input 
                   type="text" 
                   value={formData.class}
@@ -107,7 +107,7 @@ const Settings = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-bold text-slate-800 dark:text-white">Qorong'u rejim</p>
-                  <p className="text-xs text-slate-500">Ko'zni himoya qilish uchun</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-300">Ko'zni himoya qilish uchun</p>
                 </div>
                 <button 
                   onClick={toggleTheme}
@@ -141,7 +141,7 @@ const Settings = () => {
             <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
               <RiInformationLine className="text-primary" /> Ilova haqida
             </h3>
-            <div className="space-y-2 text-sm text-slate-500">
+            <div className="space-y-2 text-sm text-slate-500 dark:text-slate-300">
               <p>Talqin: 1.0.0</p>
               <p>Dasturchi: Antigravity AI</p>
               <p>© 2026 FizikaWorld Team</p>

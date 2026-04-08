@@ -15,6 +15,10 @@ import { Atom } from 'lucide-react';
 const Sidebar = ({ collapsed }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  // Determine if sidebar should be expanded (either toggled open or hovered)
+  const isExpanded = !collapsed || isHovered;
 
   const menuItems = [
     { name: "Asosiy sahifa", icon: <RiDashboardLine size={24} />, path: "/home" },
@@ -32,8 +36,10 @@ const Sidebar = ({ collapsed }) => {
   return (
     <motion.aside 
       initial={false}
-      animate={{ width: collapsed ? 80 : 280 }}
-      className="bg-white dark:bg-dark-surface border-r border-slate-200 dark:border-white/10 h-screen sticky top-0 flex flex-col z-40 transition-colors"
+      onMouseEnter={() => collapsed && setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      animate={{ width: isExpanded ? 280 : 80 }}
+      className="bg-white dark:bg-dark-surface border-r border-slate-200 dark:border-white/10 h-screen sticky top-0 flex flex-col z-40 transition-colors shadow-xl"
     >
       {/* Logo Section */}
       <div className="h-16 flex items-center px-6 gap-3 border-b border-slate-200 dark:border-white/10 overflow-hidden">
@@ -44,7 +50,7 @@ const Sidebar = ({ collapsed }) => {
         >
           <Atom size={32} />
         </motion.div>
-        {!collapsed && (
+        {isExpanded && (
           <motion.span 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -65,15 +71,15 @@ const Sidebar = ({ collapsed }) => {
               flex items-center gap-4 p-3 rounded-xl transition-all group relative
               ${isActive 
                 ? 'bg-primary/10 text-primary' 
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
+                : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
             `}
           >
             <div className="flex-shrink-0">{item.icon}</div>
-            {!collapsed && (
+            {isExpanded && (
               <motion.span 
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="font-medium"
+                className="font-medium whitespace-nowrap"
               >
                 {item.name}
               </motion.span>
@@ -94,7 +100,7 @@ const Sidebar = ({ collapsed }) => {
           className="w-full flex items-center gap-4 p-3 rounded-xl text-secondary hover:bg-secondary/10 transition-all group relative"
         >
           <div className="flex-shrink-0"><RiLogoutBoxRLine size={24} /></div>
-          {!collapsed && <span className="font-medium">Chiqish</span>}
+          {isExpanded && <span className="font-medium whitespace-nowrap">Chiqish</span>}
           {collapsed && (
             <div className="absolute left-16 bg-secondary text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
               Chiqish
