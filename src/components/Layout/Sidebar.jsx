@@ -8,9 +8,9 @@ import {
   RiBookOpenLine, 
   RiRobotLine, 
   RiSettings4Line, 
-  RiLogoutBoxRLine,
-  RiAtomLine
+  RiLogoutBoxRLine
 } from 'react-icons/ri';
+import { Atom } from 'lucide-react';
 
 const Sidebar = ({ collapsed }) => {
   const { logout } = useAuth();
@@ -42,7 +42,7 @@ const Sidebar = ({ collapsed }) => {
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           className="text-primary flex-shrink-0"
         >
-          <RiAtomLine size={32} />
+          <Atom size={32} />
         </motion.div>
         {!collapsed && (
           <motion.span 

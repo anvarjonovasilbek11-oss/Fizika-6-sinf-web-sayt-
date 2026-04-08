@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { RiAtomLine } from 'react-icons/ri';
+import { RiApps2Line } from 'react-icons/ri';
+import { Atom } from 'lucide-react';
 import { FaUserGraduate, FaUserShield } from 'react-icons/fa';
 
 const LoginPage = () => {
@@ -51,7 +52,7 @@ const LoginPage = () => {
             className="absolute text-primary/20 dark:text-accent/10 pointer-events-none"
             style={{ fontSize: 20 + Math.random() * 40 }}
           >
-            {i % 3 === 0 ? <RiAtomLine /> : i % 3 === 1 ? "E=mc²" : "F=ma"}
+            {i % 3 === 0 ? <Atom /> : i % 3 === 1 ? "E=mc²" : "F=ma"}
           </motion.div>
         ))}
       </div>
@@ -67,7 +68,7 @@ const LoginPage = () => {
             transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
             className="inline-block p-4 bg-primary/10 rounded-full mb-4 text-primary"
           >
-            <RiAtomLine size={48} />
+            <Atom size={48} />
           </motion.div>
           <h1 className="text-3xl font-heading font-extrabold text-gradient">FizikaWorld 6</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2">Dunyoni fizika bilan kashf eting</p>
