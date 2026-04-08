@@ -6,7 +6,7 @@ const AuthContext = createContext();
 const DEFAULT_USERS = [
   {username: "ali", password: "1234", name: "Ali Karimov", age: 12, class: "6A", role: "student"},
   {username: "zulfiya", password: "1234", name: "Zulfiya Rahimova", age: 11, class: "6B", role: "student"},
-  {username: "admin", password: "admin123", name: "Admin", role: "admin"}
+  {username: "Asilbek", password: "asilbek0921", name: "Asilbek", role: "admin"}
 ];
 
 export const AuthProvider = ({ children }) => {

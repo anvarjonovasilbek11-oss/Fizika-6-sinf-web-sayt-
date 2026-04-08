@@ -104,7 +104,7 @@ const LoginPage = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 bg-white/50 dark:bg-dark-surface/50 border border-slate-200 dark:border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all dark:text-white"
-              placeholder={isAdmin ? "admin" : "ali"}
+              placeholder="Usernameni kiriting"
             />
           </div>
           <div>
@@ -128,9 +128,6 @@ const LoginPage = () => {
           </motion.button>
         </form>
 
-        <div className="mt-8 text-center text-sm text-slate-500">
-          <p>Login ma'lumotlari: {isAdmin ? "admin / admin123" : "ali / 1234"}</p>
-        </div>
       </motion.div>
     </div>
   );
