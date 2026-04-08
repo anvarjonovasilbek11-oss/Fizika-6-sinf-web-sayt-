@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/Layout/ProtectedRoute';
+import MainLayout from './components/Layout/MainLayout';
 
 // Lazy load pages
 const LoginPage = React.lazy(() => import('./pages/Auth/LoginPage'));
