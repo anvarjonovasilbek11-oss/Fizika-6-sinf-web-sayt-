@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-ui text-dark-bg transition-colors duration-300;
+  }
+  
+  .dark body {
+    @apply bg-dark-bg text-dark-surface;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl;
+  }
+  
+  .dark .glass-card {
+    @apply bg-dark-card/40 border-white/10;
+  }
+  
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-xl font-semibold transition-all active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary hover:bg-secondary/90 text-white px-6 py-2 rounded-xl font-semibold transition-all active:scale-95;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+  }
+}
