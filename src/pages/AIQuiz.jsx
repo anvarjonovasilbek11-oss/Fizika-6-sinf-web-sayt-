@@ -219,9 +219,37 @@ const AIQuiz = () => {
           )}
         </div>
 
-        {/* Right Column: Quiz List or Active Quiz */}
+        {/* Right Column: Quiz List or Active Quiz or Review Area */}
         <div className="lg:col-span-2 space-y-6">
-          {!activeQuiz ? (
+          {isAdmin && pendingQuiz ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-bold dark:text-white">AI tomonidan yaratilgan test: <span className="text-primary">{pendingQuiz.topic}</span></h3>
+                <div className="flex gap-2">
+                  <button onClick={approveQuiz} className="px-6 py-2 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 shadow-lg shadow-green-500/20">Tasdiqlash</button>
+                  <button onClick={() => setPendingQuiz(null)} className="px-6 py-2 bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-200 rounded-xl font-bold">Bekor qilish</button>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {pendingQuiz.questions.map((q, idx) => (
+                  <div key={idx} className="glass-card p-6 border-l-4 border-primary">
+                    <h4 className="font-bold text-lg dark:text-white mb-4">{q.id}. {q.question}</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {Object.entries(q.options).map(([key, val]) => (
+                        <div key={key} className={`p-3 rounded-lg text-sm ${key === q.correct ? 'bg-green-500/10 text-green-600 border border-green-500/50' : 'bg-slate-50 dark:bg-white/5 dark:text-slate-400'}`}>
+                          <b className="mr-2">{key}:</b> {val}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ) : !activeQuiz ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AnimatePresence>
                 {approvedQuizzes.length === 0 ? (
