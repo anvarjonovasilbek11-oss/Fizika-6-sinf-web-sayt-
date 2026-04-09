@@ -29,10 +29,7 @@ const Sidebar = ({ collapsed }) => {
   };
 
   const handleMainItemClick = (path) => {
-    if (path !== '#darslik') {
-      setOpenDarslik(false);
-      setActiveChapter(null);
-    }
+    // Persistent menu - do not auto-collapse
   };
 
   const menuItems = [
@@ -171,13 +168,9 @@ const Sidebar = ({ collapsed }) => {
               >
                 <div className="flex-shrink-0">{item.icon}</div>
                 {isExpanded && (
-                  <motion.span 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="font-medium whitespace-nowrap"
-                  >
+                  <span className="font-medium whitespace-nowrap">
                     {item.name}
-                  </motion.span>
+                  </span>
                 )}
                 {collapsed && (
                   <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
