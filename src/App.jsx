@@ -31,7 +31,8 @@ const App = () => {
               <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
               <Route path="/quiz" element={<ProtectedRoute><MainLayout><AIQuiz /></MainLayout></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
-              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route path="/" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage />} />
             </Routes>
           </React.Suspense>
           <Toaster position="top-right" />

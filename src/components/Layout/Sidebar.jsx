@@ -56,7 +56,7 @@ const Sidebar = ({ collapsed }) => {
             animate={{ opacity: 1 }}
             className="text-xl font-heading font-extrabold text-slate-800 dark:text-white whitespace-nowrap"
           >
-            Fizika<span className="text-primary">World</span>
+            Fizika <span className="text-primary">Olam</span>
           </motion.span>
         )}
       </div>
