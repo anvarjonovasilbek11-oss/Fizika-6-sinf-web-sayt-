@@ -52,53 +52,56 @@ const AIQuiz = () => {
     setPendingQuiz(null);
 
     try {
-      // Logic for AI generation (using placeholder or API)
-      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       
       if (!apiKey) {
-        setTimeout(() => {
-          const mockQuiz = {
-            id: Date.now(),
-            topic: topic,
-            approved: false,
-            questions: Array.from({ length: 10 }, (_, i) => ({
-              id: i + 1,
-              question: `${topic} mavzusiga oid ${i + 1}-shartli savol. Fizik terminlar va formulalarni tavsiflang.`,
-              options: { A: "S = v*t", B: "F = m*a", C: "P = m*g", D: "E = mc^2" },
-              correct: "A"
-            }))
-          };
-          setPendingQuiz(mockQuiz);
-          setLoading(false);
-          toast.success("Test generatsiya qilindi (10 ta savol). Iltimos, tekshirib tasdiqlang!");
-        }, 2000);
+        toast.error("Groq API kaliti topilmadi! .env faylga VITE_GROQ_API_KEY qo'shing.");
+        setLoading(false);
         return;
       }
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'dangerously-allow-browser': 'true'
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'claude-3-sonnet-20240229',
+          model: 'llama3-8b-8192',
           max_tokens: 3000,
-          system: "Sen 6-sinf fizika fani bo'yicha Uzbek tilida professional test tuzuvchi AI assistantsan. Foydalanuvchi mavzu kiritganda, shu mavzu bo'yicha 10 ta test savoli tuz. Savollar asosan fizik formulalar, terminlar, birliklar va fizik kattaliklar (masalan: tezlik, massa, kuch, bosim) haqida bo'lsin. Har bir savol 4 ta variant (A, B, C, D) va to'g'ri javobni o'z ichiga olsin. Javobni faqat JSON formatida qaytar: {topic: string, questions: [{id: number, question: string, options: {A: string, B: string, C: string, D: string}, correct: string}]}",
-          messages: [{ role: 'user', content: `Mavzu: ${topic}` }]
+          temperature: 0.7,
+          messages: [
+            {
+              role: 'system',
+              content: `Sen 6-sinf fizika fani bo'yicha O'zbek tilida professional test tuzuvchi AI assistantsan. Foydalanuvchi mavzu kiritganda, shu mavzu bo'yicha 10 ta test savoli tuz. Savollar asosan fizik formulalar, terminlar, birliklar va fizik kattaliklar (masalan: tezlik v=S/t, massa kg, kuch F=ma, bosim P=F/S) haqida bo'lsin. Har bir savol 4 ta variant (A, B, C, D) va to'g'ri javobni o'z ichiga olsin. MUHIM: Javobni FAQAT quyidagi JSON formatida qaytar, boshqa hech narsa yozma: {"topic": "string", "questions": [{"id": 1, "question": "string", "options": {"A": "string", "B": "string", "C": "string", "D": "string"}, "correct": "A"}]}`
+            },
+            {
+              role: 'user',
+              content: `Mavzu: ${topic} bo'yicha 10 ta test savoli tuz.`
+            }
+          ]
         })
       });
 
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error?.message || 'API xatosi');
+      }
+
       const data = await response.json();
-      const content = data.content[0].text;
-      const parsedQuiz = JSON.parse(content);
+      const rawContent = data.choices[0].message.content.trim();
+      
+      // Extract JSON from response (handle markdown code blocks)
+      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('JSON topilmadi');
+      
+      const parsedQuiz = JSON.parse(jsonMatch[0]);
       setPendingQuiz({ ...parsedQuiz, id: Date.now(), approved: false });
       setLoading(false);
-      toast.success("AI 10 ta sifatli test tayyorladi. Tasdiqlashingiz mumkin!");
+      toast.success(`🤖 AI ${parsedQuiz.questions?.length || 10} ta sifatli test tayyorladi!`);
     } catch (error) {
-      toast.error("AI bilan bog'lanishda xatolik.");
+      console.error('Groq API xatosi:', error);
+      toast.error(`Xatolik: ${error.message}`);
       setLoading(false);
     }
   };
