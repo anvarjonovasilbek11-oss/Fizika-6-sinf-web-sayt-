@@ -29,7 +29,10 @@ const Sidebar = ({ collapsed }) => {
   };
 
   const handleMainItemClick = (path) => {
-    // Persistent menu - do not auto-collapse
+    if (path !== '#darslik') {
+      setOpenDarslik(false);
+      setActiveChapter(null);
+    }
   };
 
   const menuItems = [
