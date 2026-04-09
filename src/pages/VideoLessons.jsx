@@ -54,7 +54,7 @@ const VideoLessons = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Hammasi');
 
-  const categories = ['Hammasi', 'Kirish', 'Mexanika', 'Termodynamika', 'Elektr', 'Optika'];
+  const categories = ['Hammasi', 'Kirish', 'Mexanika', 'Termodynamika'];
 
   const filteredVideos = VIDEOS.filter(v => 
     v.title.toLowerCase().includes(search.toLowerCase()) &&
