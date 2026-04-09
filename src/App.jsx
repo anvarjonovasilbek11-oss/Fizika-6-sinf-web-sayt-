@@ -13,6 +13,7 @@ const VideoLessons = React.lazy(() => import('./pages/VideoLessons'));
 const Materials = React.lazy(() => import('./pages/Materials'));
 const AIQuiz = React.lazy(() => import('./pages/AIQuiz'));
 const Settings = React.lazy(() => import('./pages/Settings'));
+const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
 
 const App = () => {
   return (
@@ -31,8 +32,8 @@ const App = () => {
               <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
               <Route path="/quiz" element={<ProtectedRoute><MainLayout><AIQuiz /></MainLayout></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
+              <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
               <Route path="/" element={<LoginPage />} />
-              <Route path="/login" element={<LoginPage />} />
             </Routes>
           </React.Suspense>
           <Toaster position="top-right" />

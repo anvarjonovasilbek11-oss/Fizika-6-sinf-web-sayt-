@@ -11,17 +11,33 @@ import {
   RiLogoutBoxRLine
 } from 'react-icons/ri';
 import { Atom } from 'lucide-react';
+import { TEXTBOOK_DATA } from '../../data/textbookData';
+import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line } from 'react-icons/ri';
 
 const Sidebar = ({ collapsed }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = React.useState(false);
+  const [openDarslik, setOpenDarslik] = React.useState(false);
+  const [activeChapter, setActiveChapter] = React.useState(null);
 
   // Determine if sidebar should be expanded (either toggled open or hovered)
   const isExpanded = !collapsed || isHovered;
 
+  const handleChapterClick = (chapterId) => {
+    setActiveChapter(activeChapter === chapterId ? null : chapterId);
+  };
+
+  const handleMainItemClick = (path) => {
+    if (path !== '#darslik') {
+      setOpenDarslik(false);
+      setActiveChapter(null);
+    }
+  };
+
   const menuItems = [
     { name: "Asosiy sahifa", icon: <RiDashboardLine size={24} />, path: "/home" },
+    { name: "Darslik", icon: <RiBook3Line size={24} />, path: "#darslik" },
     { name: "Video darslar", icon: <RiVideoLine size={24} />, path: "/videos" },
     { name: "Qo'llanmalar", icon: <RiBookOpenLine size={24} />, path: "/materials" },
     { name: "Testlar (AI)", icon: <RiRobotLine size={24} />, path: "/quiz" },
@@ -64,32 +80,113 @@ const Sidebar = ({ collapsed }) => {
       {/* Navigation Links */}
       <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto no-scrollbar">
         {menuItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) => `
-              flex items-center gap-4 p-3 rounded-xl transition-all group relative
-              ${isActive 
-                ? 'bg-primary/10 text-primary' 
-                : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
-            `}
-          >
-            <div className="flex-shrink-0">{item.icon}</div>
-            {isExpanded && (
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="font-medium whitespace-nowrap"
-              >
-                {item.name}
-              </motion.span>
-            )}
-            {collapsed && (
-              <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
-                {item.name}
+          <React.Fragment key={item.path}>
+            {item.path === '#darslik' ? (
+              <div className="space-y-2">
+                <button
+                  onClick={() => isExpanded && setOpenDarslik(!openDarslik)}
+                  className={`
+                    w-full flex items-center gap-4 p-3 rounded-xl transition-all group relative
+                    ${openDarslik 
+                      ? 'bg-primary/10 text-primary font-bold' 
+                      : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
+                  `}
+                >
+                  <div className="flex-shrink-0">{item.icon}</div>
+                  {isExpanded && (
+                    <>
+                      <span className="flex-1 text-left whitespace-nowrap">{item.name}</span>
+                      {openDarslik ? <RiArrowUpSLine size={20} /> : <RiArrowDownSLine size={20} />}
+                    </>
+                  )}
+                </button>
+
+                {/* Chapters Accordion */}
+                <AnimatePresence>
+                  {isExpanded && openDarslik && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden pl-4 space-y-1"
+                    >
+                      {TEXTBOOK_DATA.map((chapter) => (
+                        <div key={chapter.id} className="space-y-1">
+                          <button
+                            onClick={() => handleChapterClick(chapter.id)}
+                            className={`
+                              w-full flex items-center justify-between p-2 rounded-lg text-sm transition-all
+                              ${activeChapter === chapter.id 
+                                ? 'text-primary bg-primary/5 font-bold' 
+                                : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5'}
+                            `}
+                          >
+                            <span className="text-left line-clamp-1">{chapter.title}</span>
+                            {activeChapter === chapter.id ? <RiArrowUpSLine size={16} /> : <RiArrowDownSLine size={16} />}
+                          </button>
+
+                          {/* Lessons List */}
+                          <AnimatePresence>
+                            {activeChapter === chapter.id && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden pl-4 border-l border-slate-200 dark:border-white/10 space-y-1 ml-2"
+                              >
+                                {chapter.lessons.map((lesson) => (
+                                  <NavLink
+                                    key={lesson.id}
+                                    to={`/textbook/${chapter.id}/${lesson.id}`}
+                                    onClick={() => handleMainItemClick(`/textbook/${chapter.id}/${lesson.id}`)}
+                                    className={({ isActive }) => `
+                                      block p-2 rounded-lg text-xs transition-all
+                                      ${isActive 
+                                        ? 'text-primary bg-primary/10 font-bold' 
+                                        : 'text-slate-400 dark:text-slate-500 hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5'}
+                                    `}
+                                  >
+                                    {lesson.title}
+                                  </NavLink>
+                                ))}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
+            ) : (
+              <NavLink
+                to={item.path}
+                onClick={() => handleMainItemClick(item.path)}
+                className={({ isActive }) => `
+                  flex items-center gap-4 p-3 rounded-xl transition-all group relative
+                  ${isActive 
+                    ? 'bg-primary/10 text-primary' 
+                    : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
+                `}
+              >
+                <div className="flex-shrink-0">{item.icon}</div>
+                {isExpanded && (
+                  <motion.span 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="font-medium whitespace-nowrap"
+                  >
+                    {item.name}
+                  </motion.span>
+                )}
+                {collapsed && (
+                  <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                    {item.name}
+                  </div>
+                )}
+              </NavLink>
             )}
-          </NavLink>
+          </React.Fragment>
         ))}
       </nav>
 
