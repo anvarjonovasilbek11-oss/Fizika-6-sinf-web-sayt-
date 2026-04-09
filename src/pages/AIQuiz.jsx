@@ -61,30 +61,42 @@ const AIQuiz = () => {
             id: Date.now(),
             topic: topic,
             approved: false,
-            questions: [
-              {
-                id: 1,
-                question: `${topic} bo'yicha asosiy tushuncha nima?`,
-                options: { A: "Variant 1", B: "Variant 2", C: "To'g'ri javob", D: "Variant 4" },
-                correct: "C"
-              },
-              {
-                id: 2,
-                question: `Fizikada ${topic} qanday o'lchanadi?`,
-                options: { A: "Metr", B: "Kilogramm", C: "Sekund", D: "Maxsus birlik" },
-                correct: "D"
-              }
-            ]
+            questions: Array.from({ length: 10 }, (_, i) => ({
+              id: i + 1,
+              question: `${topic} mavzusiga oid ${i + 1}-shartli savol. Fizik terminlar va formulalarni tavsiflang.`,
+              options: { A: "S = v*t", B: "F = m*a", C: "P = m*g", D: "E = mc^2" },
+              correct: "A"
+            }))
           };
           setPendingQuiz(mockQuiz);
           setLoading(false);
-          toast.success("Test generatsiya qilindi. Iltimos, tekshirib tasdiqlang!");
+          toast.success("Test generatsiya qilindi (10 ta savol). Iltimos, tekshirib tasdiqlang!");
         }, 2000);
         return;
       }
 
-      // API Call logic (similar to previous version but setting it as pending)
-      // ... (Keeping it simple for now as per user's Groq request)
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'dangerously-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-3-sonnet-20240229',
+          max_tokens: 3000,
+          system: "Sen 6-sinf fizika fani bo'yicha Uzbek tilida professional test tuzuvchi AI assistantsan. Foydalanuvchi mavzu kiritganda, shu mavzu bo'yicha 10 ta test savoli tuz. Savollar asosan fizik formulalar, terminlar, birliklar va fizik kattaliklar (masalan: tezlik, massa, kuch, bosim) haqida bo'lsin. Har bir savol 4 ta variant (A, B, C, D) va to'g'ri javobni o'z ichiga olsin. Javobni faqat JSON formatida qaytar: {topic: string, questions: [{id: number, question: string, options: {A: string, B: string, C: string, D: string}, correct: string}]}",
+          messages: [{ role: 'user', content: `Mavzu: ${topic}` }]
+        })
+      });
+
+      const data = await response.json();
+      const content = data.content[0].text;
+      const parsedQuiz = JSON.parse(content);
+      setPendingQuiz({ ...parsedQuiz, id: Date.now(), approved: false });
+      setLoading(false);
+      toast.success("AI 10 ta sifatli test tayyorladi. Tasdiqlashingiz mumkin!");
     } catch (error) {
       toast.error("AI bilan bog'lanishda xatolik.");
       setLoading(false);
@@ -97,7 +109,7 @@ const AIQuiz = () => {
     saveQuizzes(updated);
     setPendingQuiz(null);
     setTopic('');
-    toast.success("Test o'quvchilar uchun e'lon qilindi!");
+    toast.success("10 ta savoldan iborat yangi test e'lon qilindi!");
   };
 
   const deleteQuiz = (id) => {
@@ -122,7 +134,7 @@ const AIQuiz = () => {
       setScore(prev => prev + 1);
       toast.success("To'g'ri!", { duration: 1000 });
     } else {
-      toast.error(`Noto'g'ri!`, { duration: 1500 });
+      toast.error(`Aslida: ${activeQuiz.questions[currentIdx].correct}`, { duration: 1500 });
     }
 
     setTimeout(() => {
@@ -137,7 +149,7 @@ const AIQuiz = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-20">
+    <div className="max-w-6xl mx-auto space-y-8 pb-20 px-4">
       {/* Header */}
       <div className="text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-bold">
@@ -148,7 +160,7 @@ const AIQuiz = () => {
         </h1>
         <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
           {isAdmin 
-            ? "Admin panel: Testlar yarating, tekshiring va o'quvchilar uchun tasdiqlang." 
+            ? "Admin panel: 10 ta savoldan iborat testlar yarating va o'quvchilar uchun tasdiqlang." 
             : "Tasdiqlangan mavzular bo'yicha o'z bilimingizni sinab ko'ring."}
         </p>
       </div>
@@ -163,10 +175,10 @@ const AIQuiz = () => {
               </h3>
               <form onSubmit={generateQuizForReview} className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Mavzu nomi</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Mavzu nomi (Formula/Terminlar)</label>
                   <input 
                     type="text" 
-                    placeholder="Masalan: Optika"
+                    placeholder="Masalan: Mexanika formulalari"
                     value={topic}
                     onChange={(e) => setTopic(e.target.value)}
                     className="w-full px-4 py-3 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
@@ -175,9 +187,9 @@ const AIQuiz = () => {
                 <button 
                   type="submit"
                   disabled={loading || !topic.trim()}
-                  className="w-full py-3 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-dark transition-all disabled:opacity-50"
+                  className="w-full py-3 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-dark transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
                 >
-                  {loading ? <div className="animate-spin border-2 border-white/20 border-t-white rounded-full w-5 h-5"></div> : <><RiRobotLine/> AI Generatsiya</>}
+                  {loading ? <div className="animate-spin border-2 border-white/20 border-t-white rounded-full w-5 h-5"></div> : <><RiRobotLine/> 10 ta Savol Tayyorlash</>}
                 </button>
               </form>
 
@@ -192,7 +204,7 @@ const AIQuiz = () => {
                   <div className="flex gap-2">
                     <button 
                       onClick={approveQuiz}
-                      className="flex-1 py-2 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-all"
+                      className="flex-1 py-2 bg-green-500 text-white rounded-lg text-xs font-bold hover:bg-green-600 transition-all shadow-sm"
                     >
                       Tasdiqlash
                     </button>
@@ -213,7 +225,7 @@ const AIQuiz = () => {
               </div>
               <h3 className="text-lg font-bold dark:text-white">O'quvchi rejimi</h3>
               <p className="text-sm text-slate-500">
-                Faqat admin tomonidan tasdiqlangan va tekshirilgan testlargina bu yerda ko'rinadi.
+                Faqat admin tomonidan tasdiqlangan (kamida 10 ta savolli) testlargina bu yerda ko'rinadi.
               </p>
             </div>
           )}
@@ -227,21 +239,27 @@ const AIQuiz = () => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-              <div className="flex justify-between items-center">
-                <h3 className="text-2xl font-bold dark:text-white">AI tomonidan yaratilgan test: <span className="text-primary">{pendingQuiz.topic}</span></h3>
-                <div className="flex gap-2">
-                  <button onClick={approveQuiz} className="px-6 py-2 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 shadow-lg shadow-green-500/20">Tasdiqlash</button>
-                  <button onClick={() => setPendingQuiz(null)} className="px-6 py-2 bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-200 rounded-xl font-bold">Bekor qilish</button>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-dark-surface p-6 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm">
+                <div>
+                  <h3 className="text-2xl font-bold dark:text-white">AI Test: <span className="text-primary">{pendingQuiz.topic}</span></h3>
+                  <p className="text-sm text-slate-400 font-medium">Iltimos, o'quvchilar uchun e'lon qilishdan oldin nazorat qiling.</p>
+                </div>
+                <div className="flex gap-3 w-full md:w-auto">
+                  <button onClick={approveQuiz} className="flex-1 md:flex-none px-8 py-3 bg-green-500 text-white rounded-2xl font-bold hover:bg-green-600 shadow-xl shadow-green-500/20 transition-all">Tasdiqlash</button>
+                  <button onClick={() => setPendingQuiz(null)} className="flex-1 md:flex-none px-8 py-3 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-200 rounded-2xl font-bold transition-all">Bekor qilish</button>
                 </div>
               </div>
               <div className="space-y-4">
                 {pendingQuiz.questions.map((q, idx) => (
-                  <div key={idx} className="glass-card p-6 border-l-4 border-primary">
-                    <h4 className="font-bold text-lg dark:text-white mb-4">{q.id}. {q.question}</h4>
-                    <div className="grid grid-cols-2 gap-3">
+                  <div key={idx} className="glass-card p-6 border-l-4 border-primary bg-white dark:bg-dark-surface/50">
+                    <h4 className="font-bold text-lg text-slate-800 dark:text-white mb-6 flex gap-3">
+                      <span className="text-primary">#{q.id}</span> {q.question}
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {Object.entries(q.options).map(([key, val]) => (
-                        <div key={key} className={`p-3 rounded-lg text-sm ${key === q.correct ? 'bg-green-500/10 text-green-600 border border-green-500/50' : 'bg-slate-50 dark:bg-white/5 dark:text-slate-400'}`}>
-                          <b className="mr-2">{key}:</b> {val}
+                        <div key={key} className={`p-4 rounded-2xl text-sm font-bold flex items-center gap-3 transition-all ${key === q.correct ? 'bg-green-500/10 text-green-600 border-2 border-green-500/20' : 'bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border border-transparent'}`}>
+                          <span className={`w-8 h-8 rounded-lg flex items-center justify-center ${key === q.correct ? 'bg-green-500 text-white' : 'bg-slate-200 dark:bg-white/10 text-slate-500'}`}>{key}</span>
+                          {val}
                         </div>
                       ))}
                     </div>
@@ -267,32 +285,32 @@ const AIQuiz = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       key={q.id}
-                      className="glass-card p-6 flex flex-col justify-between group h-full"
+                      className="glass-card p-6 flex flex-col justify-between group h-full hover:border-primary/50 transition-all border-2 border-transparent"
                     >
                       <div className="space-y-4">
                         <div className="flex justify-between items-start">
-                          <div className="p-2 bg-primary/10 text-primary rounded-lg">
-                            <RiCheckLine size={20} />
+                          <div className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20">
+                            <RiCheckLine size={24} />
                           </div>
                           {isAdmin && (
                             <button 
                               onClick={() => deleteQuiz(q.id)}
-                              className="p-2 text-slate-400 hover:text-red-500 transition-all"
+                              className="p-2 text-slate-400 hover:text-red-500 transition-all bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5"
                             >
-                              <RiDeleteBin6Line size={18} />
+                              <RiDeleteBin6Line size={20} />
                             </button>
                           )}
                         </div>
                         <div>
-                          <h4 className="text-xl font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{q.topic}</h4>
-                          <p className="text-sm text-slate-500">{q.questions.length} ta savol • Fizika</p>
+                          <h4 className="text-2xl font-extrabold text-slate-800 dark:text-white group-hover:text-primary transition-colors line-clamp-1">{q.topic}</h4>
+                          <p className="text-sm text-slate-500 font-medium">10 ta savol • Fizika terminlari</p>
                         </div>
                       </div>
                       <button 
                         onClick={() => startQuiz(q)}
-                        className="mt-6 w-full py-3 border border-primary/20 hover:bg-primary text-primary hover:text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                        className="mt-8 w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-xl"
                       >
-                        <RiPlayFill size={20} /> Testni boshlash
+                        <RiPlayFill size={24} /> TESTNI BOSHLASH
                       </button>
                     </motion.div>
                   ))
@@ -303,17 +321,20 @@ const AIQuiz = () => {
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="glass-card p-12 text-center"
+              className="glass-card p-12 text-center bg-gradient-to-b from-white to-slate-50 dark:from-dark-surface dark:to-dark-bg"
             >
+              <div className="w-24 h-24 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <RiCheckLine size={48} />
+              </div>
               <h2 className="text-4xl font-heading font-extrabold text-gradient mb-4">Natijangiz!</h2>
-              <div className="text-6xl font-black text-slate-800 dark:text-white mb-2">{score}/{activeQuiz.questions.length}</div>
-              <p className="text-slate-500 dark:text-slate-300 mb-8 font-medium">
-                {score === activeQuiz.questions.length ? "A'lo! Siz daho ekansiz!" : score > activeQuiz.questions.length / 2 ? "Yaxshi natija! Yana biroz harakat qiling." : "Yana o'qishingiz kerak. Bo'shashmang!"}
+              <div className="text-7xl font-black text-slate-800 dark:text-white mb-2">{score}/{activeQuiz.questions.length}</div>
+              <p className="text-lg text-slate-500 dark:text-slate-300 mb-8 font-bold">
+                {score === activeQuiz.questions.length ? "A'lo! Siz daho ekansiz! 🏆" : score > activeQuiz.questions.length / 2 ? "Yaxshi natija! 👏" : "Yana o'qishingiz kerak. 💪"}
               </p>
               <div className="flex justify-center gap-4">
                 <button 
                   onClick={() => setActiveQuiz(null)}
-                  className="btn-primary flex items-center gap-2"
+                  className="px-8 py-3 bg-primary text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-primary-dark transition-all"
                 >
                   <RiRestartLine /> Bo'limga qaytish
                 </button>
@@ -321,51 +342,52 @@ const AIQuiz = () => {
             </motion.div>
           ) : (
             <div className="space-y-6">
-              <div className="flex justify-between items-center bg-white dark:bg-dark-surface p-4 rounded-2xl border border-slate-200 dark:border-white/10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-bold">
+              <div className="flex justify-between items-center bg-white dark:bg-dark-surface p-6 rounded-3xl border border-slate-200 dark:border-white/10 shadow-sm">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center text-xl font-black shadow-lg shadow-primary/20">
                     {currentIdx + 1}
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Joriy savol</div>
-                    <div className="text-sm font-bold dark:text-white">{activeQuiz.topic}</div>
+                    <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">Savol raqami</div>
+                    <div className="text-lg font-bold dark:text-white truncate max-w-[200px]">{activeQuiz.topic}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Progress</div>
-                  <div className="text-sm font-bold text-primary">{Math.round(((currentIdx + 1) / activeQuiz.questions.length) * 100)}%</div>
+                  <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">Progress</div>
+                  <div className="text-2xl font-black text-primary">{Math.round(((currentIdx + 1) / activeQuiz.questions.length) * 100)}%</div>
                 </div>
               </div>
 
               <motion.div 
                 key={currentIdx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="glass-card p-8 md:p-12 relative overflow-hidden"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="glass-card p-8 md:p-14 relative overflow-hidden"
               >
-                <div className="absolute top-0 left-0 w-1 bg-primary h-full"></div>
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-10 leading-snug">
+                <div className="absolute top-0 left-0 w-2 bg-primary h-full"></div>
+                <h2 className="text-2xl md:text-4xl font-extrabold text-slate-800 dark:text-white mb-12 leading-tight">
                   {activeQuiz.questions[currentIdx].question}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-5">
                   {Object.entries(activeQuiz.questions[currentIdx].options).map(([key, value]) => (
                     <button
                       key={key}
                       onClick={() => handleAnswer(key)}
                       disabled={!!selectedAnswer}
                       className={`
-                        p-5 rounded-2xl border-2 text-left transition-all relative flex items-center gap-4
+                        p-6 rounded-3xl border-2 text-left transition-all relative flex items-center gap-6 group
                         ${selectedAnswer === key 
                           ? (key === activeQuiz.questions[currentIdx].correct ? 'bg-green-500/10 border-green-500 text-green-700 dark:text-green-300' : 'bg-red-500/10 border-red-500 text-red-700 dark:text-red-300') 
-                          : (selectedAnswer && key === activeQuiz.questions[currentIdx].correct ? 'bg-green-500/10 border-green-500' : 'bg-white dark:bg-dark-surface border-slate-200 dark:border-white/10 hover:border-primary group')
+                          : (selectedAnswer && key === activeQuiz.questions[currentIdx].correct ? 'bg-green-500/10 border-green-500' : 'bg-slate-50 dark:bg-white/5 border-transparent dark:border-white/5 hover:border-primary hover:bg-white dark:hover:bg-primary/5')
                         }
                       `}
                     >
                       <span className={`
-                        w-10 h-10 rounded-xl flex items-center justify-center font-black transition-colors
-                        ${selectedAnswer === key ? 'bg-current text-white' : 'bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 group-hover:bg-primary group-hover:text-white'}
+                        w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xl transition-all
+                        ${selectedAnswer === key ? 'bg-current text-white shadow-lg' : 'bg-white dark:bg-white/10 text-slate-800 dark:text-slate-200 shadow-sm group-hover:bg-primary group-hover:text-white'}
                       `}>{key}</span>
-                      <span className="font-bold flex-1">{value}</span>
+                      <span className={`text-lg md:text-xl font-bold flex-1 ${selectedAnswer === key ? 'text-current' : 'text-slate-700 dark:text-slate-200'}`}>{value}</span>
+                      {selectedAnswer === key && key === activeQuiz.questions[currentIdx].correct && <RiCheckLine size={32} className="text-green-500" />}
                     </button>
                   ))}
                 </div>
@@ -373,6 +395,10 @@ const AIQuiz = () => {
             </div>
           )}
         </div>
+      </div>
+    </div>
+  );
+};
       </div>
     </div>
   );

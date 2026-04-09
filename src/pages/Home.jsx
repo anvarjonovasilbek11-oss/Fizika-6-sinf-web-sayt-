@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { RiVideoLine, RiBookReadLine, RiQuestionAnswerLine, RiDoubleQuotesL } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 
@@ -20,6 +21,7 @@ const StatsCard = ({ icon, label, count, color }) => (
 
 const Home = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [quoteIdx, setQuoteIdx] = useState(0);
 
   const quotes = [
@@ -61,10 +63,16 @@ const Home = () => {
             transition={{ delay: 0.4 }}
             className="mt-8 flex gap-4"
           >
-            <button className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors shadow-lg">
+            <button 
+              onClick={() => navigate('/textbook/bob-1/1')}
+              className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors shadow-lg"
+            >
               Darsni boshlash
             </button>
-            <button className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors">
+            <button 
+              onClick={() => navigate('/quiz')}
+              className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors"
+            >
               Test yechish
             </button>
           </motion.div>
