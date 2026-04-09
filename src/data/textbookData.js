@@ -3,10 +3,42 @@ export const TEXTBOOK_DATA = [
     id: 'bob-1',
     title: "1-BОB. Fizika nimani o'rgatadi?",
     lessons: [
-      { id: '1', title: '1. Kirish' },
-      { id: '2', title: '2. Fizika nimani o‘rganadi?' },
-      { id: '3', title: '3. Fizika va texnika' },
-      { id: '4', title: '4. Fizika va tabiatni muhofaza qilish' }
+      { 
+        id: '1', 
+        title: '1. Kirish',
+        content: {
+          theory: "Fizika – tabiat sirlarini o'rganishga kirish eshigidir. U yomg'ir yog'ishi, bulutlarning suzishi, daryolarning oqishi kabi tabiiy jarayonlarning sabablarini tushuntiradi. Ushbu qonuniyatlarni o'rganish insoniyatga o'z mehnatini yengillashtiruvchi mashinalar yaratish imkonini beradi.",
+          formulas: "Ushbu darsda matematik formulalar mavjud emas. Asosiy e'tibor dunyoqarashga qaratilgan.",
+          experiments: "Atrof-muhitdagi oddiy tabiat hodisalarini (shamol esishi, suvning oqishi) kuzatish orqali ularning inson hayotiga ta'sirini muhokama qilish."
+        }
+      },
+      { 
+        id: '2', 
+        title: '2. Fizika nimani o‘rganadi?',
+        content: {
+          theory: "Tabiatda yuz beradigan o'zgarishlar tabiat hodisalari deyiladi. Fizika esa fizik hodisalarni: mexanik, issiqlik, tovush, yorug'lik, elektr va magnit hodisalarini o'rganadi. 'Fizika' atamasini fanga birinchi bo'lib Aristotel kiritgan.",
+          formulas: "Terminlar: Fizika (yunoncha 'fyuze' - tabiat), Fizik hodisalar.",
+          experiments: "Muzning erishi (issiqlik hodisasi), koptokning harakati (mexanik hodisa) yoki magnitning temirni tortishi kabi oddiy tajribalar."
+        }
+      },
+      { 
+        id: '3', 
+        title: '3. Fizika va texnika',
+        content: {
+          theory: "Fizika kashfiyotlari texnika taraqqiyotiga asos bo'ladi. Bug' mashinalari, elektr energiyasi, yadro energetikasi, lazerlar va kompyuterlar fizika yutuqlari samarasidir.",
+          formulas: "Texnika taraqqiyoti = Fizik kashfiyotlar + Muhandislik amaliyoti.",
+          experiments: "Kundalik turmushda ishlatiladigan texnik vositalar (smartfon, mikroto'lqinli pech) qaysi fizik prinsiplar asosida ishlashini tahlil qilish."
+        }
+      },
+      { 
+        id: '4', 
+        title: '4. Fizika va tabiatni muhofaza qilish',
+        content: {
+          theory: "Fizika fani tabiatni muhofaza qilishda muhim o'rin tutadi: u ekologik toza energiya manbalarini (quyosh, shamol) yaratish va atrof-muhit musaffoligini saqlash usullarini ishlab chiqishga xizmat qiladi.",
+          formulas: "Yashil energiya: Quyosh, Shamol, Suv (gidro).",
+          experiments: "Quyosh panellari yoki shamol generatorlarining ishlash prinsipi haqida videolavhalar ko'rish yoki kichik tadqiqot o'tkazish."
+        }
+      }
     ]
   },
   {
