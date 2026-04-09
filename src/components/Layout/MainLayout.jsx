@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import AIChatBot from '../AI/AIChatBot';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MainLayout = ({ children }) => {
@@ -27,6 +28,7 @@ const MainLayout = ({ children }) => {
           </AnimatePresence>
         </main>
       </div>
+      <AIChatBot />
     </div>
   );
 };
