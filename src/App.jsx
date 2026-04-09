@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/Layout/ProtectedRoute';
+import AdminRoute from './components/Layout/AdminRoute';
 import MainLayout from './components/Layout/MainLayout';
 
 // Lazy load pages
@@ -12,6 +13,7 @@ const Home = React.lazy(() => import('./pages/Home'));
 const VideoLessons = React.lazy(() => import('./pages/VideoLessons'));
 const Materials = React.lazy(() => import('./pages/Materials'));
 const AIQuiz = React.lazy(() => import('./pages/AIQuiz'));
+const StudentQuiz = React.lazy(() => import('./pages/StudentQuiz'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
 
@@ -30,7 +32,10 @@ const App = () => {
               <Route path="/home" element={<ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>} />
               <Route path="/videos" element={<ProtectedRoute><MainLayout><VideoLessons /></MainLayout></ProtectedRoute>} />
               <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
-              <Route path="/quiz" element={<ProtectedRoute><MainLayout><AIQuiz /></MainLayout></ProtectedRoute>} />
+              {/* Admin only: Test generation and management */}
+              <Route path="/quiz" element={<AdminRoute><MainLayout><AIQuiz /></MainLayout></AdminRoute>} />
+              {/* Students: Take approved tests only */}
+              <Route path="/tests" element={<ProtectedRoute><MainLayout><StudentQuiz /></MainLayout></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
               <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
               <Route path="/" element={<LoginPage />} />

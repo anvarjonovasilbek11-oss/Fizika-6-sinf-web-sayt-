@@ -22,6 +22,7 @@ const StatsCard = ({ icon, label, count, color }) => (
 const Home = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isAdmin = user?.role === 'admin';
   const [quoteIdx, setQuoteIdx] = useState(0);
 
   const quotes = [
@@ -70,7 +71,7 @@ const Home = () => {
               Darsni boshlash
             </button>
             <button 
-              onClick={() => navigate('/quiz')}
+              onClick={() => navigate(isAdmin ? '/quiz' : '/tests')}
               className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors"
             >
               Test yechish

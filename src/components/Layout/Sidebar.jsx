@@ -15,11 +15,13 @@ import { TEXTBOOK_DATA } from '../../data/textbookData';
 import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line } from 'react-icons/ri';
 
 const Sidebar = ({ collapsed }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = React.useState(false);
   const [openDarslik, setOpenDarslik] = React.useState(false);
   const [activeChapter, setActiveChapter] = React.useState(null);
+
+  const isAdmin = user?.role === 'admin';
 
   // Determine if sidebar should be expanded (either toggled open or hovered)
   const isExpanded = !collapsed || isHovered;
@@ -40,7 +42,11 @@ const Sidebar = ({ collapsed }) => {
     { name: "Darslik", icon: <RiBook3Line size={24} />, path: "#darslik" },
     { name: "Video darslar", icon: <RiVideoLine size={24} />, path: "/videos" },
     { name: "Qo'llanmalar", icon: <RiBookOpenLine size={24} />, path: "/materials" },
-    { name: "Testlar (AI)", icon: <RiRobotLine size={24} />, path: "/quiz" },
+    { 
+      name: isAdmin ? "Testlar (AI) — Admin" : "Testlar (AI)", 
+      icon: <RiRobotLine size={24} />, 
+      path: isAdmin ? "/quiz" : "/tests" 
+    },
     { name: "Sozlamalar", icon: <RiSettings4Line size={24} />, path: "/settings" },
   ];
 
