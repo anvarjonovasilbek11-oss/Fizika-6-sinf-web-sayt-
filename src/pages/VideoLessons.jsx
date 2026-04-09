@@ -3,18 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RiSearchLine, RiPlayLine, RiCloseLine } from 'react-icons/ri';
 
 const VIDEOS = [
-  { id: '1', videoId: 'e_aV8I9Vj1s', title: 'Moddaning tuzilishi', topic: 'Molekulalar', category: 'Termodynamika' },
-  { id: '2', videoId: '_pI6g7yBf8o', title: 'Molekulalar va atomlar', topic: 'Atomlar', category: 'Termodynamika' },
-  { id: '3', videoId: 'v8-S1p5o_-o', title: 'Issiqlik harakati', topic: 'Harakat', category: 'Termodynamika' },
-  { id: '4', videoId: '09W0Z7_hGSc', title: 'Zichlik tushunchasi', topic: 'Kuch', category: 'Mexanika' },
-  { id: '5', videoId: 'u9mU0o6q8lU', title: 'Bosim va uning birliklari', topic: 'Bosim', category: 'Mexanika' },
-  { id: '6', videoId: 'Gv2hD5mR2Y8', title: 'Arximed kuchi', topic: 'Kuch', category: 'Mexanika' },
-  { id: '7', videoId: 'Y9jA7H-7fV8', title: 'Elektr toki asoslari', topic: 'Tok', category: 'Elektr' },
-  { id: '8', videoId: '6L5M0vXQ3n0', title: 'Nur va soya', topic: 'Nur', category: 'Optika' },
-  { id: '9', videoId: '4I5B-P6_y7k', title: 'Tovush hodisalari', topic: 'Tovush', category: 'Mexanika' },
-  { id: '10', videoId: 'u2mY8o6q8lU', title: 'Issiqlik miqdori', topic: 'Issiqlik', category: 'Termodynamika' },
-  { id: '11', videoId: 'z2mY8o6q8lU', title: 'Erish va qotish', topic: 'Faza', category: 'Termodynamika' },
-  { id: '12', videoId: 'x2mY8o6q8lU', title: "Bug'lanish va kondensatsiya", topic: "Bug'", category: 'Termodynamika' },
+  { id: '1', videoId: 'vx1Nkb_-srE', title: '1. Kirish', topic: 'Kirish', category: 'Kirish' },
+  { id: '2', videoId: 'NetSwSnu5T0', title: '2. Fizika nimani oʻrganadi?', topic: 'Fizika asoslari', category: 'Kirish' },
+  { id: '3', videoId: 'vIX3X8AM3nE', title: '5. Fizikada ishlatiladigan ayrim kattaliklar', topic: 'Kattaliklar', category: 'Kirish' },
+  { id: '4', videoId: 'pLyZsiz4ud4', title: '6. Kuzatishlar va tajribalar', topic: 'Metodika', category: 'Kirish' },
+  { id: '5', videoId: 'U2yX4SIc7FU', title: "7. Fizika kattaliklar va ularni o'lchash", topic: "O'lchash", category: 'Kirish' },
+  { id: '6', videoId: 'aAUPfJr1K78', title: "8. O'lchash va o'lchash aniqligi", topic: "O'lchash", category: 'Kirish' },
+  { id: '7', videoId: 'dL6uNZyOkpQ', title: '9. Modda tuzilishi haqida Demokrit, Ar-Roziy fikrlari', topic: 'Modda', category: 'Termodynamika' },
+  { id: '8', videoId: 'YFQFFiFP5XY', title: '10. Molekulalar va ularning oʻlchamlari', topic: 'Molekulalar', category: 'Termodynamika' },
+  { id: '9', videoId: '75S7Qv6lZeU', title: 'Diffuziya hodisasi', topic: 'Diffuziya', category: 'Termodynamika' },
+  { id: '10', videoId: 'uzQ3ymb161M', title: '13. Qattiq jism, suyuqlik va gazlarning molekulyar tuzilishi', topic: 'Modda holati', category: 'Termodynamika' },
+  { id: '11', videoId: 'mumNfuYtu_E', title: '15. Massa va uning birliklari', topic: 'Massa', category: 'Mexanika' },
+  { id: '12', videoId: 'q0fmOb79Q_c', title: '8-mashq 11-masala yechimi', topic: 'Masala yechish', category: 'Masalalar' },
+  { id: '13', videoId: 'm87e-e_rNoE', title: '7-mashq. 4-masala yechimi', topic: 'Masala yechish', category: 'Masalalar' },
+  { id: '14', videoId: 'VAsg4Gh69I0', title: '6-mashq. 10-masala yechimi', topic: 'Masala yechish', category: 'Masalalar' },
+  { id: '15', videoId: 'rIisW_sLp8Q', title: '9-mashq. 11-masala yechimi', topic: 'Masala yechish', category: 'Masalalar' },
 ];
 
 const VideoCard = ({ video, onSelect }) => (
@@ -55,7 +58,7 @@ const VideoLessons = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Hammasi');
 
-  const categories = ['Hammasi', 'Mexanika', 'Optika', 'Termodynamika', 'Elektr'];
+  const categories = ['Hammasi', 'Kirish', 'Mexanika', 'Termodynamika', 'Masalalar', 'Elektr', 'Optika'];
 
   const filteredVideos = VIDEOS.filter(v => 
     v.title.toLowerCase().includes(search.toLowerCase()) &&
