@@ -108,140 +108,136 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto no-scrollbar overflow-x-hidden">
-        <AnimatePresence mode="wait">
-          {!openDarslik || !isExpanded ? (
-            <motion.div
-              key="main-menu"
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -20, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-2"
+      <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto no-scrollbar overflow-x-hidden relative">
+        {(!openDarslik || !isExpanded) ? (
+          <div className="space-y-2 animate-fade-in-fast">
+            {menuItems.map((item) => (
+              <React.Fragment key={item.path}>
+                {item.path === '#darslik' ? (
+                  <button
+                    onClick={() => {
+                      if (isExpanded) {
+                        setOpenDarslik(true);
+                      } else {
+                        // Expand the sidebar then open darslik
+                        if (setCollapsed) setCollapsed(false);
+                        setOpenDarslik(true);
+                      }
+                    }}
+                    className={`
+                      w-full flex items-center gap-4 p-3 rounded-xl transition-all group relative
+                      text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary
+                    `}
+                  >
+                    <div className="flex-shrink-0">{item.icon}</div>
+                    {isExpanded && (
+                      <span className="text-left font-medium whitespace-nowrap">
+                        {item.name}
+                      </span>
+                    )}
+                    {collapsed && (
+                      <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                        {item.name}
+                      </div>
+                    )}
+                  </button>
+                ) : (
+                  <NavLink
+                    to={item.path}
+                    onClick={() => handleMainItemClick(item.path)}
+                    className={({ isActive }) => `
+                      flex items-center gap-4 p-3 rounded-xl transition-all group relative
+                      ${isActive 
+                        ? 'bg-primary/10 text-primary' 
+                        : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
+                    `}
+                  >
+                    <div className="flex-shrink-0">{item.icon}</div>
+                    {isExpanded && (
+                      <span className="font-medium whitespace-nowrap">
+                        {item.name}
+                      </span>
+                    )}
+                    {collapsed && (
+                      <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                        {item.name}
+                      </div>
+                    )}
+                  </NavLink>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-4 animate-fade-in-fast">
+            <button
+              onClick={() => setOpenDarslik(false)}
+              className="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-colors px-2 relative"
             >
-              {menuItems.map((item) => (
-                <React.Fragment key={item.path}>
-                  {item.path === '#darslik' ? (
-                    <button
-                      onClick={() => {
-                        if (isExpanded) {
-                          setOpenDarslik(true);
-                        }
-                      }}
-                      className={`
-                        w-full flex items-center gap-4 p-3 rounded-xl transition-all group relative
-                        text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary
-                      `}
-                    >
-                      <div className="flex-shrink-0">{item.icon}</div>
-                      {isExpanded && (
-                        <>
-                          <span className="flex-1 text-left whitespace-nowrap">{item.name}</span>
-                          <RiArrowRightSLine size={20} />
-                        </>
-                      )}
-                      {collapsed && (
-                        <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
-                          {item.name}
-                        </div>
-                      )}
-                    </button>
-                  ) : (
-                    <NavLink
-                      to={item.path}
-                      onClick={() => handleMainItemClick(item.path)}
-                      className={({ isActive }) => `
-                        flex items-center gap-4 p-3 rounded-xl transition-all group relative
-                        ${isActive 
-                          ? 'bg-primary/10 text-primary' 
-                          : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
-                      `}
-                    >
-                      <div className="flex-shrink-0">{item.icon}</div>
-                      {isExpanded && (
-                        <span className="font-medium whitespace-nowrap">
-                          {item.name}
-                        </span>
-                      )}
-                      {collapsed && (
-                        <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
-                          {item.name}
-                        </div>
-                      )}
-                    </NavLink>
-                  )}
-                </React.Fragment>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="darslik-menu"
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 20, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="space-y-4"
-            >
-              <button
-                onClick={() => setOpenDarslik(false)}
-                className="w-full flex items-center gap-3 p-2 text-slate-500 dark:text-slate-300 hover:text-primary transition-all font-bold mb-2 border-b border-slate-200 dark:border-white/10 pb-4 group"
-              >
-                <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                  <RiArrowLeftSLine size={20} />
-                </div>
-                <span>Orqaga qaytish</span>
-              </button>
+              <RiArrowLeftSLine size={20} />
+              <span className="text-sm font-medium">{t('nav_back')}</span>
+            </button>
 
-              <div className="space-y-1">
-                {TEXTBOOK_DATA.map((chapter, idx) => (
-                  <div key={chapter.id} className="space-y-1">
-                    <button
-                      onClick={() => handleChapterClick(chapter.id)}
-                      className={`
-                        w-full flex items-center justify-between p-2 rounded-lg text-sm transition-all
-                        ${activeChapter === chapter.id 
-                          ? 'text-primary bg-primary/5 font-bold' 
-                          : 'text-slate-600 dark:text-slate-300 hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5'}
-                      `}
+            <div className="space-y-2 relative">
+              {TEXTBOOK_DATA.map((chapter, idx) => (
+                <div key={chapter.id} className="space-y-1">
+                  <button
+                    onClick={() => handleChapterClick(chapter.id)}
+                    className={`
+                      w-full flex items-center justify-between p-3 rounded-xl transition-all
+                      ${activeChapter === chapter.id
+                        ? 'bg-primary text-white shadow-md shadow-primary/25' 
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
+                    `}
+                  >
+                    <span className="text-left line-clamp-1 break-all">{t(`chap_${idx + 1}`)}</span>
+                    <motion.div
+                      animate={{ rotate: activeChapter === chapter.id ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex-shrink-0 ml-2"
                     >
-                      <span className="text-left line-clamp-1">{t(`chap_${idx + 1}`)}</span>
-                      {activeChapter === chapter.id ? <RiArrowUpSLine size={16} /> : <RiArrowDownSLine size={16} />}
-                    </button>
+                      <RiArrowDownSLine size={20} />
+                    </motion.div>
+                  </button>
 
-                    <AnimatePresence>
-                      {activeChapter === chapter.id && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden pl-4 border-l border-slate-200 dark:border-white/10 space-y-1 ml-2"
-                        >
+                  <AnimatePresence>
+                    {activeChapter === chapter.id && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pt-1 pb-2 pl-4 pr-2 space-y-1 relative">
+                          <div className="absolute left-3.5 top-0 bottom-4 w-px bg-slate-200 dark:bg-white/10" />
                           {chapter.lessons.map((lesson) => (
                             <NavLink
                               key={lesson.id}
                               to={`/textbook/${chapter.id}/${lesson.id}`}
                               onClick={() => {
-                                handleMainItemClick(`/textbook/${chapter.id}/${lesson.id}`);
+                                if (setCollapsed) setCollapsed(true);
+                                if (setMobileOpen) setMobileOpen(false);
                               }}
                               className={({ isActive }) => `
-                                block p-2 rounded-lg text-xs transition-all
+                                block w-full text-left py-2 px-4 rounded-lg text-sm transition-all relative
                                 ${isActive 
-                                  ? 'text-primary bg-primary/10 font-bold' 
-                                  : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5'}
+                                  ? 'bg-primary/10 text-primary font-medium' 
+                                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5'}
                               `}
                             >
-                              {lesson.title}
+                              <span className="line-clamp-2 break-all">{t(`lesson_${lesson.id}`)}</span>
                             </NavLink>
                           ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Logout Button */}
