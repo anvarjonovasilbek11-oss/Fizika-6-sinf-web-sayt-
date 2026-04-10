@@ -10,6 +10,7 @@ import {
 } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
+import { useLanguage } from '../context/LanguageContext';
 
 const StudentQuiz = () => {
   const [approvedQuizzes, setApprovedQuizzes] = useState([]);
@@ -18,6 +19,7 @@ const StudentQuiz = () => {
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const saved = localStorage.getItem('approvedQuizzes');
@@ -40,9 +42,9 @@ const StudentQuiz = () => {
     
     if (option === activeQuiz.questions[currentIdx].correct) {
       setScore(prev => prev + 1);
-      toast.success("To'g'ri!", { duration: 1000 });
+      toast.success(t('quiz_correct'), { duration: 1000 });
     } else {
-      toast.error(`To'g'ri javob: ${activeQuiz.questions[currentIdx].correct}`, { duration: 2000 });
+      toast.error(`${t('quiz_wrong')}: ${activeQuiz.questions[currentIdx].correct}`, { duration: 2000 });
     }
 
     setTimeout(() => {
@@ -69,12 +71,12 @@ const StudentQuiz = () => {
                 {currentIdx + 1}
               </div>
               <div>
-                <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">Savol</div>
+                <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">{t('quiz_question')}</div>
                 <div className="text-lg font-bold dark:text-white">{activeQuiz.topic}</div>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">Progress</div>
+              <div className="text-[10px] text-slate-400 uppercase font-black tracking-[0.2em]">{t('quiz_progress')}</div>
               <div className="text-2xl font-black text-primary">{progress}%</div>
             </div>
           </div>
@@ -149,18 +151,18 @@ const StudentQuiz = () => {
         <div className={`w-28 h-28 rounded-full flex items-center justify-center mx-auto mb-6 ${pct >= 80 ? 'bg-green-500/10 text-green-500' : pct >= 50 ? 'bg-yellow-500/10 text-yellow-500' : 'bg-red-500/10 text-red-500'}`}>
           <RiTrophyLine size={56} />
         </div>
-        <h2 className="text-4xl font-heading font-extrabold text-gradient mb-2">Natijangiz!</h2>
+        <h2 className="text-4xl font-heading font-extrabold text-gradient mb-2">{t('quiz_result')}</h2>
         <div className="text-7xl font-black text-slate-800 dark:text-white mb-1">{score}/{activeQuiz.questions.length}</div>
         <div className="text-2xl font-bold text-primary mb-6">{pct}%</div>
         <p className="text-lg text-slate-500 dark:text-slate-300 mb-8 font-bold">
-          {pct === 100 ? "A'lo! Siz mutlaq chempionsiz! 🏆" : pct >= 80 ? "Zo'r natija! 🎉" : pct >= 50 ? "Yaxshi harakat! Yana bir bor o'qing 📚" : "Yana urinib ko'ring va ko'proq o'qing 💪"}
+          {pct === 100 ? t('quiz_excellent') : pct >= 50 ? t('quiz_good') : t('quiz_try')}
         </p>
         <div className="flex gap-4 justify-center">
           <button onClick={() => startQuiz(activeQuiz)} className="px-6 py-3 bg-primary text-white rounded-2xl font-bold flex items-center gap-2 hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
-            <RiRestartLine /> Qayta boshlash
+            <RiRestartLine /> {t('quiz_back')}
           </button>
           <button onClick={() => setActiveQuiz(null)} className="px-6 py-3 bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-slate-200 rounded-2xl font-bold">
-            Test tanlash
+            {t('quiz_title')}
           </button>
         </div>
       </motion.div>
@@ -187,8 +189,7 @@ const StudentQuiz = () => {
           <div className="flex justify-center text-slate-300 dark:text-slate-700 mb-4">
             <RiHistoryLine size={72} />
           </div>
-          <h3 className="text-2xl font-bold text-slate-400">Hali hech qanday test yo'q</h3>
-          <p className="text-slate-400 mt-2">Admin testlarni tasdiqlagandan so'ng bu yerda ko'rinadi.</p>
+          <h3 className="text-2xl font-bold text-slate-400">{t('quiz_empty')}</h3>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -215,7 +216,7 @@ const StudentQuiz = () => {
                   onClick={() => startQuiz(q)}
                   className="mt-6 w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-xl"
                 >
-                  <RiPlayFill size={22} /> BOSHLASH
+                  <RiPlayFill size={22} /> {t('quiz_start')}
                 </button>
               </motion.div>
             ))}
