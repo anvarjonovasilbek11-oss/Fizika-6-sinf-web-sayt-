@@ -402,10 +402,5 @@ const AIQuiz = () => {
     </div>
   );
 };
-      </div>
-    </div>
-  );
-};
 
 export default AIQuiz;
-
