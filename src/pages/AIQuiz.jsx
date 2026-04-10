@@ -15,6 +15,7 @@ import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
 
 const AIQuiz = () => {
   const { user } = useAuth();
@@ -37,6 +38,9 @@ const AIQuiz = () => {
     const saved = localStorage.getItem('approvedQuizzes');
     if (saved) {
       setApprovedQuizzes(JSON.parse(saved));
+    } else {
+      setApprovedQuizzes(DEFAULT_AI_QUIZZES);
+      localStorage.setItem('approvedQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
     }
   }, []);
 

@@ -11,6 +11,7 @@ import {
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
+import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
 
 const StudentQuiz = () => {
   const [approvedQuizzes, setApprovedQuizzes] = useState([]);
@@ -25,6 +26,9 @@ const StudentQuiz = () => {
     const saved = localStorage.getItem('approvedQuizzes');
     if (saved) {
       setApprovedQuizzes(JSON.parse(saved));
+    } else {
+      setApprovedQuizzes(DEFAULT_AI_QUIZZES);
+      localStorage.setItem('approvedQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
     }
   }, []);
 
