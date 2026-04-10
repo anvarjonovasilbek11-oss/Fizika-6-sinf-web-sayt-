@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   RiDashboardLine, 
   RiVideoLine, 
@@ -16,14 +17,13 @@ import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line } from 'react-icons/ri';
 
 const Sidebar = ({ collapsed }) => {
   const { logout, user } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = React.useState(false);
   const [openDarslik, setOpenDarslik] = React.useState(false);
   const [activeChapter, setActiveChapter] = React.useState(null);
 
   const isAdmin = user?.role === 'admin';
-
-  // Determine if sidebar should be expanded (either toggled open or hovered)
   const isExpanded = !collapsed || isHovered;
 
   const handleChapterClick = (chapterId) => {
@@ -38,16 +38,12 @@ const Sidebar = ({ collapsed }) => {
   };
 
   const menuItems = [
-    { name: "Asosiy sahifa", icon: <RiDashboardLine size={24} />, path: "/home" },
-    { name: "Darslik", icon: <RiBook3Line size={24} />, path: "#darslik" },
-    { name: "Video darslar", icon: <RiVideoLine size={24} />, path: "/videos" },
-    { name: "Qo'llanmalar", icon: <RiBookOpenLine size={24} />, path: "/materials" },
-    { 
-      name: "Testlar (AI)", 
-      icon: <RiRobotLine size={24} />, 
-      path: isAdmin ? "/quiz" : "/tests" 
-    },
-    { name: "Sozlamalar", icon: <RiSettings4Line size={24} />, path: "/settings" },
+    { name: t('nav_home'),      icon: <RiDashboardLine size={24} />, path: "/home" },
+    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} />,     path: "#darslik" },
+    { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos" },
+    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials" },
+    { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: isAdmin ? "/quiz" : "/tests" },
+    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings" },
   ];
 
   const handleLogout = () => {
@@ -63,7 +59,7 @@ const Sidebar = ({ collapsed }) => {
       animate={{ width: isExpanded ? 280 : 80 }}
       className="bg-white dark:bg-dark-surface border-r border-slate-200 dark:border-white/10 h-screen sticky top-0 flex flex-col z-40 transition-colors shadow-xl"
     >
-      {/* Logo Section */}
+      {/* Logo */}
       <div className="h-16 flex items-center px-6 gap-3 border-b border-slate-200 dark:border-white/10 overflow-hidden">
         <motion.div 
           animate={{ rotate: 360 }}
@@ -107,7 +103,6 @@ const Sidebar = ({ collapsed }) => {
                   )}
                 </button>
 
-                {/* Chapters Accordion */}
                 <AnimatePresence>
                   {isExpanded && openDarslik && (
                     <motion.div
@@ -131,7 +126,6 @@ const Sidebar = ({ collapsed }) => {
                             {activeChapter === chapter.id ? <RiArrowUpSLine size={16} /> : <RiArrowDownSLine size={16} />}
                           </button>
 
-                          {/* Lessons List */}
                           <AnimatePresence>
                             {activeChapter === chapter.id && (
                               <motion.div
@@ -199,10 +193,10 @@ const Sidebar = ({ collapsed }) => {
           className="w-full flex items-center gap-4 p-3 rounded-xl text-secondary hover:bg-secondary/10 transition-all group relative"
         >
           <div className="flex-shrink-0"><RiLogoutBoxRLine size={24} /></div>
-          {isExpanded && <span className="font-medium whitespace-nowrap">Chiqish</span>}
+          {isExpanded && <span className="font-medium whitespace-nowrap">{t('nav_logout')}</span>}
           {collapsed && (
             <div className="absolute left-16 bg-secondary text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
-              Chiqish
+              {t('nav_logout')}
             </div>
           )}
         </button>

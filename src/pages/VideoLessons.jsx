@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiSearchLine, RiPlayLine, RiCloseLine } from 'react-icons/ri';
+import { useLanguage } from '../context/LanguageContext';
 
 export const VIDEOS = [
   { id: '1', videoId: 'vx1Nkb_-srE', title: '1. Kirish', topic: 'Kirish', category: 'Kirish' },
@@ -54,23 +55,24 @@ const VideoLessons = () => {
   const [search, setSearch] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Hammasi');
+  const { t } = useLanguage();
 
-  const categories = ['Hammasi', 'Kirish', 'Mexanika', 'Termodynamika'];
+  const categories = [t('videos_all'), 'Kirish', 'Mexanika', 'Termodynamika'];
 
   const filteredVideos = VIDEOS.filter(v => 
     v.title.toLowerCase().includes(search.toLowerCase()) &&
-    (activeCategory === 'Hammasi' || v.category === activeCategory)
+    (activeCategory === t('videos_all') || v.category === activeCategory)
   );
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <h1 className="text-3xl font-heading text-gradient">Video darslar</h1>
+        <h1 className="text-3xl font-heading text-gradient">{t('videos_title')}</h1>
         <div className="relative w-full md:w-80">
           <RiSearchLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
           <input 
             type="text" 
-            placeholder="Mavzuni qidiring..." 
+            placeholder={t('videos_search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"

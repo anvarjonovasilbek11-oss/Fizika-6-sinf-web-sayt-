@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { RiUploadCloud2Line, RiFilePdfLine, RiFileWordLine, RiFileZipLine, RiDeleteBin7Line, RiDownload2Line, RiFileTextLine } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useLanguage } from '../context/LanguageContext';
 
 const FileIcon = ({ type }) => {
   if (type.includes('pdf')) return <RiFilePdfLine className="text-red-500" />;
@@ -15,6 +16,7 @@ const FileIcon = ({ type }) => {
 const Materials = () => {
   const [files, setFiles] = useLocalStorage('physics_files', []);
   const [uploading, setUploading] = useState(false);
+  const { t } = useLanguage();
 
   const onDrop = useCallback((acceptedFiles) => {
     setUploading(true);
@@ -74,7 +76,7 @@ const Materials = () => {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-heading text-gradient">Qo'llanmalar va Kitoblar</h1>
+      <h1 className="text-3xl font-heading text-gradient">{t('materials_title')}</h1>
 
       {/* Upload Zone */}
       <div 
@@ -85,15 +87,13 @@ const Materials = () => {
         `}
       >
         <input {...getInputProps()} />
-        <motion.div 
-          animate={{ y: isDragActive ? -10 : 0 }}
-          className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4"
-        >
+        <motion.div animate={{ y: isDragActive ? -10 : 0 }}
+          className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
           <RiUploadCloud2Line size={32} />
         </motion.div>
-        <h3 className="text-xl font-bold text-slate-800 dark:text-white">Fayllarni yuklash</h3>
-        <p className="text-slate-500 dark:text-slate-200 mt-2">PDF, DOCX yoki ZIP fayllarni shu yerga tashlang</p>
-        <p className="text-xs text-slate-400 mt-1">(Maksimal o'lcham: 10MB)</p>
+        <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('materials_drop')}</h3>
+        <p className="text-slate-500 dark:text-slate-200 mt-2">{t('materials_drop_sub')}</p>
+        <p className="text-xs text-slate-400 mt-1">{t('materials_drop_size')}</p>
       </div>
 
       {uploading && (
@@ -134,7 +134,7 @@ const Materials = () => {
                   onClick={() => downloadFile(file)}
                   className="flex-1 btn-primary py-2 text-sm flex items-center justify-center gap-2"
                 >
-                  <RiDownload2Line /> Yuklash
+                  <RiDownload2Line /> {t('materials_download')}
                 </button>
                 <button 
                   onClick={() => deleteFile(file.id)}
@@ -153,7 +153,7 @@ const Materials = () => {
           <div className="text-6xl text-slate-200 dark:text-white/5 mb-4 flex justify-center">
             <RiFileTextLine />
           </div>
-          <p className="text-slate-400 dark:text-slate-300 mt-2">Yangi qo'llanmalarni yuklashni boshlang!</p>
+          <p className="text-slate-400 dark:text-slate-300 mt-2">{t('materials_empty')}</p>
         </div>
       )}
     </div>

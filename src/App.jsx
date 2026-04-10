@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/Layout/ProtectedRoute';
 import AdminRoute from './components/Layout/AdminRoute';
 import MainLayout from './components/Layout/MainLayout';
+import { LanguageProvider } from './context/LanguageContext';
 
 // Lazy load pages
 const LoginPage = React.lazy(() => import('./pages/Auth/LoginPage'));
@@ -21,6 +22,7 @@ const App = () => {
   return (
     <Router>
       <AuthProvider>
+        <LanguageProvider>
         <ThemeProvider>
           <React.Suspense fallback={
             <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-dark-bg">
@@ -43,6 +45,7 @@ const App = () => {
           </React.Suspense>
           <Toaster position="top-right" />
         </ThemeProvider>
+        </LanguageProvider>
       </AuthProvider>
     </Router>
   );

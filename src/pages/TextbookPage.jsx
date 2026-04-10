@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiArrowLeftLine, RiBookOpenLine, RiInformationLine } from 'react-icons/ri';
 import { TEXTBOOK_DATA } from '../data/textbookData';
+import { useLanguage } from '../context/LanguageContext';
 
 const TextbookPage = () => {
   const { chapterId, lessonId } = useParams();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const chapter = TEXTBOOK_DATA.find(c => c.id === chapterId);
   const lesson = chapter?.lessons.find(l => l.id === lessonId);
@@ -17,12 +19,9 @@ const TextbookPage = () => {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center">
         <RiInformationLine size={64} className="text-slate-300 mb-4" />
-        <h1 className="text-2xl font-bold dark:text-white">Dars topilmadi</h1>
-        <button 
-          onClick={() => navigate('/home')}
-          className="mt-4 px-6 py-2 bg-primary text-white rounded-xl"
-        >
-          Asosiy sahifaga qaytish
+        <h1 className="text-2xl font-bold dark:text-white">{t('textbook_not_found')}</h1>
+        <button onClick={() => navigate('/home')} className="mt-4 px-6 py-2 bg-primary text-white rounded-xl">
+          {t('textbook_back')}
         </button>
       </div>
     );
@@ -61,14 +60,14 @@ const TextbookPage = () => {
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'theory' ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-md' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
         >
           <RiBookOpenLine size={20} />
-          Nazariya
+          {t('textbook_theory')}
         </button>
         <button
           onClick={() => setActiveTab('experiments')}
           className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'experiments' ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-md' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
         >
           <RiInformationLine size={20} />
-          Tajribalar
+          {t('textbook_experiments')}
         </button>
       </div>
 
@@ -92,7 +91,7 @@ const TextbookPage = () => {
               
               <div className="pt-8 border-t border-slate-100 dark:border-white/5">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-primary/10 text-primary rounded-lg font-black text-xs uppercase tracking-widest">Formulalar va Terminlar</div>
+                  <div className="p-2 bg-primary/10 text-primary rounded-lg font-black text-xs uppercase tracking-widest">{t('textbook_formulas')}</div>
                 </div>
                 <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-100 dark:border-white/5 font-mono text-primary dark:text-accent-light">
                   {content.formulas}
@@ -106,8 +105,8 @@ const TextbookPage = () => {
                   <RiInformationLine size={32} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold dark:text-white">Amaliy tajriba qo'llanmasi</h3>
-                  <p className="text-sm text-slate-500">Mavzuni amalda tushunish uchun ko'rsatmalar</p>
+                  <h3 className="text-xl font-bold dark:text-white">{t('textbook_experiment_guide')}</h3>
+                  <p className="text-sm text-slate-500">{t('textbook_experiment_sub')}</p>
                 </div>
               </div>
               <div className="bg-slate-50 dark:bg-white/5 p-8 rounded-3xl border border-dashed border-slate-200 dark:border-white/10">
@@ -116,7 +115,7 @@ const TextbookPage = () => {
                 </p>
               </div>
               <div className="p-6 bg-secondary/5 rounded-2xl border border-secondary/10 text-secondary-dark dark:text-secondary text-sm font-medium">
-                Diqqat! Tajribalarni o'tkazishda xavfsizlik qoidalariga rioya qiling va kattalar nazoratida bo'ling.
+                {t('textbook_warning')}
               </div>
             </div>
           )}
