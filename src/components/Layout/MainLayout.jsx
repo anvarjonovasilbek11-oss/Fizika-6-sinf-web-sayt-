@@ -5,7 +5,7 @@ import AIChatBot from '../AI/AIChatBot';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MainLayout = ({ children }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -18,19 +18,29 @@ const MainLayout = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const isOverlayOpen = mobileOpen || (!collapsed && typeof window !== 'undefined' && window.innerWidth >= 768);
+
   return (
     <div className="flex bg-slate-50 dark:bg-dark-bg min-h-screen transition-colors relative">
-      <Sidebar collapsed={collapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       
-      {/* Mobile Overlay */}
-      {mobileOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+      {/* Universal Drawer Overlay */}
+      <AnimatePresence>
+        {isOverlayOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+            onClick={() => {
+              setMobileOpen(false);
+              setCollapsed(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
       
-      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden md:pl-[80px]">
         <Navbar 
           collapsed={collapsed} 
           setCollapsed={setCollapsed} 
@@ -38,7 +48,7 @@ const MainLayout = ({ children }) => {
           setMobileOpen={setMobileOpen} 
         />
         
-        <main className="flex-1 p-4 md:p-6 overflow-x-hidden w-full">
+        <main className="flex-1 p-4 md:p-6 overflow-x-hidden w-full relative z-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={window.location.pathname}

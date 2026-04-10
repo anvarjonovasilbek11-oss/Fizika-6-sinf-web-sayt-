@@ -15,16 +15,15 @@ import { Atom } from 'lucide-react';
 import { TEXTBOOK_DATA } from '../../data/textbookData';
 import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line, RiCloseLine, RiArrowRightSLine, RiArrowLeftSLine } from 'react-icons/ri';
 
-const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
+const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   const { logout, user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [isHovered, setIsHovered] = React.useState(false);
   const [openDarslik, setOpenDarslik] = React.useState(false);
   const [activeChapter, setActiveChapter] = React.useState(null);
 
   const isAdmin = user?.role === 'admin';
-  const isExpanded = !collapsed || isHovered;
+  const isExpanded = !collapsed;
 
   const handleChapterClick = (chapterId) => {
     setActiveChapter(activeChapter === chapterId ? null : chapterId);
@@ -34,7 +33,11 @@ const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
     if (path !== '#darslik') {
       setOpenDarslik(false);
       setActiveChapter(null);
-      if (window.innerWidth < 768 && setMobileOpen) setMobileOpen(false);
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && setMobileOpen) {
+        setMobileOpen(false);
+      } else {
+        if (setCollapsed) setCollapsed(true);
+      }
     }
   };
 
@@ -62,15 +65,13 @@ const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
   return (
     <motion.aside 
       initial={false}
-      onMouseEnter={() => collapsed && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       animate={{ 
         width: typeof window !== 'undefined' && window.innerWidth < 768 
           ? 280 
           : (isExpanded ? 280 : 80),
       }}
       className={`
-        fixed md:sticky top-0 h-screen z-40 bg-white dark:bg-dark-surface 
+        fixed top-0 left-0 h-screen z-50 bg-white dark:bg-dark-surface 
         border-r border-slate-200 dark:border-white/10 shadow-xl flex flex-col transition-all duration-300 overflow-hidden
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}
