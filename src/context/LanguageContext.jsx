@@ -122,9 +122,22 @@ export const TRANSLATIONS = {
     // Settings
     settings_title: "Sozlamalar",
     settings_theme: "Mavzu",
-    settings_lang: "Til",
+    settings_switch_lang: "Tilni o'zgartirish",
     settings_dark: "Qoʻngʻir rejim",
     settings_light: "Yorqin rejim",
+
+    // Fallbacks and Errors
+    textbook_f_theory: "Bu mavzu bo'yicha nazariy ma'lumotlar ustida ish olib borilmoqda. Tez kunda kiritiladi.",
+    textbook_f_formulas: "Tez kunda...",
+    textbook_f_experiments: "Tajribalar metodikasi tayyorlanmoqda.",
+    ai_parse_error: "Test tarkibini ajratishda xatolik. Yana bir bor urinib ko'ring.",
+    ai_actual_answer: "Aslida:",
+    quiz_toast_correct: "To'g'ri!",
+    quiz_toast_delete: "Test o'chirib tashlandi.",
+    not_found_title: "404 - Sahifa topilmadi",
+    not_found_desc: "Siz qidirayotgan sahifa manzili xato yoki o'chirilgan.",
+    not_found_back: "Asosiy sahifaga qaytish",
+    materials_upload_error: "Fayl saqlashda xotira xatosi yuz berdi.",
 
     // Language names
     lang_uz: "O'zbekcha",
@@ -251,9 +264,22 @@ export const TRANSLATIONS = {
     // Settings
     settings_title: "Настройки",
     settings_theme: "Тема",
-    settings_lang: "Язык",
+    settings_switch_lang: "Изменить язык",
     settings_dark: "Тёмный режим",
     settings_light: "Светлый режим",
+
+    // Fallbacks and Errors
+    textbook_f_theory: "Теоретические материалы по этой теме находятся в разработке. Скоро будут добавлены.",
+    textbook_f_formulas: "В скором времени...",
+    textbook_f_experiments: "Методика экспериментов в процессе подготовки.",
+    ai_parse_error: "Ошибка обработки теста. Попробуйте сгенерировать снова.",
+    ai_actual_answer: "На самом деле:",
+    quiz_toast_correct: "Верно!",
+    quiz_toast_delete: "Тест удалён.",
+    not_found_title: "404 - Страница не найдена",
+    not_found_desc: "Страница, которую вы ищете, не существует или была удалена.",
+    not_found_back: "Вернуться на главную",
+    materials_upload_error: "Ошибка памяти при сохранении файла.",
 
     // Language names
     lang_uz: "O'zbekcha",
@@ -380,9 +406,22 @@ export const TRANSLATIONS = {
     // Settings
     settings_title: "Settings",
     settings_theme: "Theme",
-    settings_lang: "Language",
+    settings_switch_lang: "Change Language",
     settings_dark: "Dark mode",
     settings_light: "Light mode",
+
+    // Fallbacks and Errors
+    textbook_f_theory: "Theoretical materials for this topic are currently under development and will be added soon.",
+    textbook_f_formulas: "Coming soon...",
+    textbook_f_experiments: "Experimental methods are being prepared.",
+    ai_parse_error: "Error parsing the test content. Please try generating it again.",
+    ai_actual_answer: "Actually:",
+    quiz_toast_correct: "Correct!",
+    quiz_toast_delete: "Test deleted.",
+    not_found_title: "404 - Page Not Found",
+    not_found_desc: "The page you are looking for does not exist or has been removed.",
+    not_found_back: "Back to Home",
+    materials_upload_error: "Memory error occurred while saving the file.",
 
     // Language names
     lang_uz: "O'zbekcha",

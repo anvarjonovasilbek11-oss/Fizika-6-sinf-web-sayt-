@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiUploadCloud2Line, RiFilePdfLine, RiFileWordLine, RiFileZipLine, RiDeleteBin7Line, RiDownload2Line, RiFileTextLine } from 'react-icons/ri';
 import toast from 'react-hot-toast';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import localforage from 'localforage';
 import { useLanguage } from '../context/LanguageContext';
 
 const FileIcon = ({ type }) => {
@@ -14,45 +14,82 @@ const FileIcon = ({ type }) => {
 };
 
 const Materials = () => {
-  const [files, setFiles] = useLocalStorage('physics_files', []);
+  const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const { t } = useLanguage();
+
+  // Component yuklanganda IndexedDB dan fayllarni o'qish
+  useEffect(() => {
+    const loadFiles = async () => {
+      try {
+        const storedFiles = await localforage.getItem('physics_files');
+        if (storedFiles) {
+          setFiles(storedFiles);
+        }
+      } catch (err) {
+        console.error('Xotiradan oqishda xatolik:', err);
+        // Silently fail or toast
+      }
+    };
+    loadFiles();
+  }, []);
+
+  const saveFiles = async (newFiles) => {
+    try {
+      await localforage.setItem('physics_files', newFiles);
+      setFiles(newFiles);
+    } catch (err) {
+      console.error('Xotiraga yozishda xatolik:', err);
+      toast.error(t('materials_upload_error'));
+    }
+  };
 
   const onDrop = useCallback((acceptedFiles) => {
     setUploading(true);
     
-    // Simulate upload progress
     setTimeout(() => {
-      const newFiles = acceptedFiles.map(file => {
-        // In a real app, we'd upload to a server. 
-        // Here we convert to base64 for LocalStorage (limited space!)
-        return new Promise((resolve) => {
+      const newFilesPromises = acceptedFiles.map(file => {
+        return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => {
             resolve({
               id: Date.now() + Math.random(),
               name: file.name,
-              size: (file.size / 1024).toFixed(1) + ' KB',
+              size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
               type: file.type,
               date: new Date().toLocaleDateString(),
               data: reader.result // Base64
             });
           };
+          reader.onerror = () => reject(new Error("File read error"));
           reader.readAsDataURL(file);
         });
       });
 
-      Promise.all(newFiles).then(resolvedFiles => {
-        setFiles(prev => [...prev, ...resolvedFiles]);
-        setUploading(false);
-        toast.success(`${resolvedFiles.length} ta fayl yuklandi!`);
-      });
+      Promise.all(newFilesPromises)
+        .then(async (resolvedFiles) => {
+          const updatedFiles = [...files, ...resolvedFiles];
+          try {
+            await localforage.setItem('physics_files', updatedFiles);
+            setFiles(updatedFiles);
+            toast.success(`${resolvedFiles.length} ta fayl yuklandi!`);
+          } catch (err) {
+            console.error('IndexedDB xatosi:', err);
+            toast.error(t('materials_upload_error'));
+          }
+          setUploading(false);
+        })
+        .catch(err => {
+          console.error('Fayl yozish xatosi', err);
+          toast.error(t('materials_upload_error'));
+          setUploading(false);
+        });
     }, 1500);
-  }, []);
+  }, [files, t]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
     onDrop,
-    maxSize: 10485760, // 10MB
+    maxSize: 52428800, // IndexedDB ruxsat beradi 50MB gacha xavfsiz fayllar
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
@@ -62,9 +99,10 @@ const Materials = () => {
     }
   });
 
-  const deleteFile = (id) => {
-    setFiles(prev => prev.filter(f => f.id !== id));
-    toast.success("Fayl o'chirildi.");
+  const deleteFile = async (id) => {
+    const updated = files.filter(f => f.id !== id);
+    await saveFiles(updated);
+    toast.success(t('quiz_toast_delete') || "Fayl o'chirildi.");
   };
 
   const downloadFile = (file) => {
@@ -93,7 +131,7 @@ const Materials = () => {
         </motion.div>
         <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('materials_drop')}</h3>
         <p className="text-slate-500 dark:text-slate-200 mt-2">{t('materials_drop_sub')}</p>
-        <p className="text-xs text-slate-400 mt-1">{t('materials_drop_size')}</p>
+        <p className="text-xs text-slate-400 mt-1">{t('materials_drop_size')} (Max: 50MB)</p>
       </div>
 
       {uploading && (

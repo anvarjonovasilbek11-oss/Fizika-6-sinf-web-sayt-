@@ -93,11 +93,17 @@ const AIQuiz = () => {
       const data = await response.json();
       const rawContent = data.choices[0].message.content.trim();
       
-      // Extract JSON from response (handle markdown code blocks)
-      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('JSON topilmadi');
+      let parsedQuiz;
+      try {
+        const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) throw new Error('JSON topilmadi');
+        
+        parsedQuiz = JSON.parse(jsonMatch[0]);
+      } catch (parseError) {
+        console.error('JSON Parse xatosi:', parseError, rawContent);
+        throw new Error(t('ai_parse_error') || 'Test formati noto\'g\'ri keldi');
+      }
       
-      const parsedQuiz = JSON.parse(jsonMatch[0]);
       setPendingQuiz({ ...parsedQuiz, id: Date.now(), approved: false });
       setLoading(false);
       toast.success(`🤖 AI ${parsedQuiz.questions?.length || 10} ta sifatli test tayyorladi!`);
@@ -125,7 +131,7 @@ const AIQuiz = () => {
   const deleteQuiz = (id) => {
     const updated = approvedQuizzes.filter(q => q.id !== id);
     saveQuizzes(updated);
-    toast.success("Test o'chirib tashlandi.");
+    toast.success(t('quiz_toast_delete'));
   };
 
   const startQuiz = (quiz) => {
@@ -142,9 +148,9 @@ const AIQuiz = () => {
     
     if (option === activeQuiz.questions[currentIdx].correct) {
       setScore(prev => prev + 1);
-      toast.success("To'g'ri!", { duration: 1000 });
+      toast.success(t('quiz_toast_correct'), { duration: 1000 });
     } else {
-      toast.error(`Aslida: ${activeQuiz.questions[currentIdx].correct}`, { duration: 1500 });
+      toast.error(`${t('ai_actual_answer')} ${activeQuiz.questions[currentIdx].correct}`, { duration: 1500 });
     }
 
     setTimeout(() => {

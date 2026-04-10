@@ -28,9 +28,9 @@ const TextbookPage = () => {
   }
 
   const content = lesson.content || {
-    theory: "Bu mavzu bo'yicha nazariy ma'lumotlar tayyorlanmoqda. Tez orada ushbu bo'lim to'ldiriladi.",
-    formulas: "Tez kunda...",
-    experiments: "Bu mavzu bo'yicha tajribalar metodikasi tayyorlanmoqda."
+    theory: t('textbook_f_theory'),
+    formulas: t('textbook_f_formulas'),
+    experiments: t('textbook_f_experiments')
   };
 
   return (

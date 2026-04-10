@@ -17,6 +17,7 @@ const AIQuiz = React.lazy(() => import('./pages/AIQuiz'));
 const StudentQuiz = React.lazy(() => import('./pages/StudentQuiz'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
               <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
               <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
               <Route path="/" element={<LoginPage />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </React.Suspense>
           <Toaster position="top-right" />
