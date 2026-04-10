@@ -12,8 +12,9 @@ import {
   RiLogoutBoxRLine
 } from 'react-icons/ri';
 import { Atom } from 'lucide-react';
-import { TEXTBOOK_DATA } from '../../data/textbookData';
-import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line, RiCloseLine, RiArrowRightSLine, RiArrowLeftSLine } from 'react-icons/ri';
+import { getCombinedTextbooks, saveCustomLesson } from '../../services/textbookService';
+import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line, RiCloseLine, RiArrowRightSLine, RiArrowLeftSLine, RiSave3Line, RiAddLine } from 'react-icons/ri';
+import toast from 'react-hot-toast';
 
 const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   const { logout, user } = useAuth();
@@ -21,9 +22,47 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   const navigate = useNavigate();
   const [openDarslik, setOpenDarslik] = React.useState(false);
   const [activeChapter, setActiveChapter] = React.useState(null);
+  const [textbooks, setTextbooks] = React.useState([]);
+  const [showAddModal, setShowAddModal] = React.useState(false);
+  
+  // Form state
+  const [newLesson, setNewLesson] = React.useState({ chapterId: 'bob-1', title: '', theory: '' });
 
   const isAdmin = user?.role === 'admin';
   const isExpanded = !collapsed;
+
+  const refreshTextbooks = React.useCallback(() => {
+    setTextbooks(getCombinedTextbooks());
+  }, []);
+
+  React.useEffect(() => {
+    refreshTextbooks();
+    window.addEventListener('storage', refreshTextbooks);
+    return () => window.removeEventListener('storage', refreshTextbooks);
+  }, [refreshTextbooks]);
+
+  const handleAddLesson = (e) => {
+    e.preventDefault();
+    if (!newLesson.title || !newLesson.theory) {
+      toast.error("Iltimos barcha maydonlarni to'ldiring");
+      return;
+    }
+
+    const lessonObj = {
+      id: Date.now().toString(),
+      title: newLesson.title,
+      content: {
+        theory: newLesson.theory,
+        formulas: "Formulalar kiritilmagan",
+        experiments: "Tajribalar kiritilmagan"
+      }
+    };
+
+    saveCustomLesson(newLesson.chapterId, lessonObj);
+    setNewLesson({ chapterId: 'bob-1', title: '', theory: '' });
+    setShowAddModal(false);
+    toast.success("Yangi darslik muvaffaqiyatli qo'shildi!");
+  };
 
   const handleChapterClick = (chapterId) => {
     setActiveChapter(activeChapter === chapterId ? null : chapterId);
@@ -49,8 +88,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     { name: t('nav_textbook'),  icon: <RiBook3Line size={24} className={hoverEffect} />,     path: "#darslik" },
     { name: t('nav_videos'),    icon: <RiVideoLine size={24} className={hoverEffect} />,     path: "/videos" },
     { name: t('nav_materials'), icon: <RiBookOpenLine size={24} className={hoverEffect} />,  path: "/materials" },
-    { name: t('nav_tests'),     icon: <RiRobotLine size={24} className={hoverEffect} />,     path: isAdmin ? "/quiz" : "/tests" },
-    ...(isAdmin ? [{ name: "Admin Panel", icon: <RiDashboardLine size={24} className={hoverEffect} />, path: "/admin" }] : []),
+    { name: t('nav_tests'),     icon: <RiRobotLine size={24} className={hoverEffect} />,     path: "/tests" },
     { name: t('nav_settings'),  icon: <RiSettings4Line size={24} className={hoverEffect} />, path: "/settings" },
   ];
 
@@ -182,8 +220,8 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
               <span className="text-sm font-medium">{t('nav_back')}</span>
             </button>
 
-            <div className="space-y-2 relative">
-              {TEXTBOOK_DATA.map((chapter, idx) => (
+             <div className="space-y-2 relative">
+              {textbooks.map((chapter, idx) => (
                 <div key={chapter.id} className="space-y-1">
                   <button
                     onClick={() => handleChapterClick(chapter.id)}
@@ -194,7 +232,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                         : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
                     `}
                   >
-                    <span className="text-left line-clamp-1 break-all">{t(`chap_${idx + 1}`)}</span>
+                    <span className="text-left line-clamp-1 break-all">{chapter.id.startsWith('bob-') ? t(`chap_${idx + 1}`) : chapter.title}</span>
                     <motion.div
                       animate={{ rotate: activeChapter === chapter.id ? 180 : 0 }}
                       transition={{ duration: 0.2 }}
@@ -230,7 +268,11 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5'}
                               `}
                             >
-                              <span className="line-clamp-2 break-all">{t(`lesson_${lesson.id}`)}</span>
+                              <span className="line-clamp-2 break-all">
+                                {t(`lesson_${lesson.id}`) !== `lesson_${lesson.id}` 
+                                  ? t(`lesson_${lesson.id}`) 
+                                  : lesson.title}
+                              </span>
                             </NavLink>
                           ))}
                         </div>
@@ -239,6 +281,15 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                   </AnimatePresence>
                 </div>
               ))}
+              {isAdmin && (
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="w-full flex items-center justify-center p-3 rounded-xl border border-dashed border-primary/50 text-primary hover:bg-primary/10 transition-all font-bold text-sm mt-4 animate-pulse"
+                >
+                  <RiAddLine size={20} className="mr-2" />
+                  Yangi darslik qo'shish
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -259,6 +310,68 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           )}
         </button>
       </div>
+
+      {/* Add Textbook Modal */}
+      <AnimatePresence>
+        {showAddModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-dark-surface w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-slate-200 dark:border-white/10"
+            >
+              <div className="p-6 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
+                <h3 className="text-xl font-bold dark:text-white flex items-center gap-2">
+                  <RiAddLine size={24} className="text-primary" /> Yangi dars qo'shish
+                </h3>
+                <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                  <RiCloseLine size={24} />
+                </button>
+              </div>
+              <form onSubmit={handleAddLesson} className="p-6 space-y-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Bobni tanlang</label>
+                  <select 
+                    value={newLesson.chapterId}
+                    onChange={(e) => setNewLesson({ ...newLesson, chapterId: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
+                  >
+                    {textbooks.map((c, idx) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title.startsWith('bob-') ? t(`chap_${idx + 1}`) : c.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Dars nomi</label>
+                  <input 
+                    type="text" required
+                    placeholder="Masalan: 33. Elektr zaryadi"
+                    value={newLesson.title}
+                    onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Nazariy qism (Matn)</label>
+                  <textarea 
+                    required rows={4}
+                    placeholder="Darslik matnini shu yerga yozing..."
+                    value={newLesson.theory}
+                    onChange={(e) => setNewLesson({ ...newLesson, theory: e.target.value })}
+                    className="w-full px-4 py-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white resize-none"
+                  />
+                </div>
+                <button type="submit" className="w-full py-3 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-dark transition-all shadow-lg shadow-primary/20">
+                  <RiSave3Line /> Saqlash
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.aside>
   );
 };

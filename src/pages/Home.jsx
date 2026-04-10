@@ -6,18 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { VIDEOS } from './VideoLessons';
 
-const StatsCard = ({ icon, label, count, color }) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className="glass-card p-6 flex items-center gap-6"
-  >
-    <div className={`p-4 rounded-2xl ${color} bg-opacity-10 text-2xl`}>{icon}</div>
-    <div>
-      <h3 className="text-3xl font-extrabold text-slate-800 dark:text-white">{count}</h3>
-      <p className="text-slate-500 dark:text-slate-300 font-medium">{label}</p>
-    </div>
-  </motion.div>
-);
+// StatsCards removed due to in-place architecture requested by user
 
 const Home = () => {
   const { user } = useAuth();
@@ -25,27 +14,6 @@ const Home = () => {
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   const [quoteIdx, setQuoteIdx] = useState(0);
-  const [materialsCount, setMaterialsCount] = useState(0);
-  const [testQuestionsCount, setTestQuestionsCount] = useState(0);
-
-  const refreshCounts = () => {
-    try {
-      const files = JSON.parse(localStorage.getItem('physics_files') || '[]');
-      setMaterialsCount(files.length);
-    } catch { setMaterialsCount(0); }
-    try {
-      const quizzes = JSON.parse(localStorage.getItem('approvedQuizzes') || '[]');
-      const total = quizzes.reduce((sum, q) => sum + (q.questions?.length || 0), 0);
-      setTestQuestionsCount(total);
-    } catch { setTestQuestionsCount(0); }
-  };
-
-  useEffect(() => {
-    refreshCounts();
-    window.addEventListener('storage', refreshCounts);
-    const interval = setInterval(refreshCounts, 2000);
-    return () => { window.removeEventListener('storage', refreshCounts); clearInterval(interval); };
-  }, []);
 
   const quotes = [
     { text: "Fizika – bu tabiatning tili.", author: "Richard Feynman" },
@@ -76,7 +44,7 @@ const Home = () => {
               className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors shadow-lg w-full sm:w-auto">
               {t('btn_start')}
             </button>
-            <button onClick={() => navigate(isAdmin ? '/quiz' : '/tests')}
+            <button onClick={() => navigate('/tests')}
               className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors w-full sm:w-auto">
               {t('btn_test')}
             </button>
@@ -86,11 +54,27 @@ const Home = () => {
           className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl p-20 border-[40px] border-white/5" />
       </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatsCard icon={<RiVideoLine />}         label={t('stat_videos')}    count={VIDEOS.length}        color="text-primary bg-primary" />
-        <StatsCard icon={<RiBookReadLine />}       label={t('stat_materials')} count={materialsCount}       color="text-secondary bg-secondary" />
-        <StatsCard icon={<RiQuestionAnswerLine />} label={t('stat_tests')}     count={testQuestionsCount}   color="text-accent bg-accent" />
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card p-8 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-6"
+      >
+        <div className="text-center md:text-left">
+          <h2 className="text-3xl font-heading font-black text-slate-800 dark:text-white leading-tight">
+            {isAdmin ? `Salom, ${user?.name || 'Asilbek'}!` : `Salom, ${user?.name || 'Talaba'}!`}
+          </h2>
+          <p className="text-slate-500 dark:text-slate-300 mt-2 font-medium max-w-xl">
+            {isAdmin 
+              ? 'Siz admin darajasidasiz. Barcha bo\'limlarda ma\'lumotlarni tahrirlash va o\'chirish huquqiga egasiz.' 
+              : 'Bugun fizika olamidan qanday yangi bilimlarni egallashni istaysiz?'}
+          </p>
+        </div>
+        <div className="flex-shrink-0">
+           <div className="px-6 py-2 bg-primary text-white rounded-full font-bold text-sm shadow-lg shadow-primary/20">
+             {isAdmin ? "ADMIN MODE" : "STUDENT MODE"}
+           </div>
+        </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="glass-card p-8 flex flex-col justify-center min-h-[200px]">

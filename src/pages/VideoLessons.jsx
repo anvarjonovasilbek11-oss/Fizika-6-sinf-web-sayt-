@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiSearchLine, RiPlayLine, RiCloseLine } from 'react-icons/ri';
+import { RiSearchLine, RiPlayLine, RiCloseLine, RiDeleteBin6Line, RiAddLine, RiSave3Line } from 'react-icons/ri';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export const VIDEOS = [
   { id: '1', videoId: 'vx1Nkb_-srE', title: '1. Kirish', topic: 'Kirish', category: 'Kirish' },
@@ -24,14 +26,23 @@ const CATEGORY_KEY_MAP = {
   'Termodynamika':'cat_thermo',
 };
 
-const VideoCard = ({ video, onSelect, categoryLabel }) => (
+const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
   <motion.div 
     layout
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
     whileHover={{ y: -5 }}
-    className="glass-card overflow-hidden group"
+    className="glass-card overflow-hidden group relative"
   >
+    {isAdmin && (
+      <button
+        onClick={(e) => { e.stopPropagation(); onDelete(video.id); }}
+        className="absolute top-2 left-2 z-20 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg"
+        title="Videoni o'chirish"
+      >
+        <RiDeleteBin6Line size={16} />
+      </button>
+    )}
     <div className="relative aspect-video">
       <img 
         src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`} 
@@ -62,7 +73,16 @@ const VideoLessons = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState('__all__');
   const [customVideos, setCustomVideos] = useState([]);
+  const [showAdminForm, setShowAdminForm] = useState(false);
+  
+  // CMS State
+  const [cmsTitle, setCmsTitle] = useState('');
+  const [cmsCategory, setCmsCategory] = useState('Kirish');
+  const [cmsVideoId, setCmsVideoId] = useState('');
+
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   React.useEffect(() => {
     const saved = localStorage.getItem('customVideos');
@@ -78,6 +98,54 @@ const VideoLessons = () => {
     { key: 'Mexanika',      label: t('cat_mechanics') },
     { key: 'Termodynamika', label: t('cat_thermo') },
   ];
+
+  // Delete video logic
+  const handleDeleteVideo = (id) => {
+    if (!window.confirm("Rostdan ham ushbu videoni o'chirib tashlamoqchimisiz?")) return;
+    const remainingCustom = customVideos.filter(v => v.id !== id);
+    setCustomVideos(remainingCustom);
+    localStorage.setItem('customVideos', JSON.stringify(remainingCustom));
+    // Check if it's a static base video, warn if so:
+    if (VIDEOS.some(v => v.id === id)) {
+      toast.error("Ushbu video loyiha bazaviy (static) kodiga qotirilgan. O'chirish qismi kod bo'yicha cheklangan.");
+    } else {
+      toast.success("Video muvaffaqiyatli saqlovdan bekor qilindi!");
+    }
+  };
+
+  // CMS Save Logic
+  const handleSaveVideo = (e) => {
+    e.preventDefault();
+    if (!cmsTitle || !cmsVideoId) {
+      toast.error("Iltimos, video nomi va linkni kiriting.");
+      return;
+    }
+
+    let finalId = cmsVideoId;
+    if (cmsVideoId.includes('v=')) {
+      finalId = cmsVideoId.split('v=')[1].split('&')[0];
+    } else if (cmsVideoId.includes('youtu.be/')) {
+      finalId = cmsVideoId.split('youtu.be/')[1].split('?')[0];
+    }
+
+    const newVideo = {
+      id: Date.now().toString(),
+      videoId: finalId,
+      title: cmsTitle,
+      topic: cmsTitle,
+      category: cmsCategory,
+      isCustom: true
+    };
+
+    const updatedVideos = [...customVideos, newVideo];
+    setCustomVideos(updatedVideos);
+    localStorage.setItem('customVideos', JSON.stringify(updatedVideos));
+    
+    setCmsTitle('');
+    setCmsVideoId('');
+    setShowAdminForm(false);
+    toast.success("Muvaffaqiyatli! Darslik sayt xotirasiga saqlandi!");
+  };
 
   // Merge static default videos with dynamically CMS uploaded offline videos
   const finalVideosData = [...VIDEOS, ...customVideos];
@@ -102,6 +170,70 @@ const VideoLessons = () => {
           />
         </div>
       </div>
+
+      {isAdmin && (
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6">
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-primary flex items-center gap-2">
+                <RiAddLine size={24} /> Yangi Video Qo'shish (Admin CMS)
+              </h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Yangi o'quv materialini baza saqloviga integratsiya qiling.</p>
+            </div>
+            <button 
+              onClick={() => setShowAdminForm(!showAdminForm)}
+              className="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-all"
+            >
+              {showAdminForm ? "Yopish" : "Formani Ochish"}
+            </button>
+          </div>
+
+          <AnimatePresence>
+            {showAdminForm && (
+              <motion.form 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                onSubmit={handleSaveVideo} 
+                className="space-y-4 overflow-hidden pt-4 border-t border-primary/10"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black uppercase text-primary/80">Dars Sargavhasi (Title)</label>
+                    <input 
+                      type="text" required value={cmsTitle} onChange={(e) => setCmsTitle(e.target.value)}
+                      placeholder="Mavzu nomi..."
+                      className="w-full px-4 py-2 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black uppercase text-primary/80">Kategoriya</label>
+                    <select 
+                      value={cmsCategory} onChange={(e) => setCmsCategory(e.target.value)}
+                      className="w-full px-4 py-2 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:border-primary"
+                    >
+                      <option value="Kirish">Kirish moduli</option>
+                      <option value="Mexanika">Mexanika</option>
+                      <option value="Termodynamika">Termodinamika</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs font-black uppercase text-primary/80">YouTube Media Linki</label>
+                    <input 
+                      type="text" required value={cmsVideoId} onChange={(e) => setCmsVideoId(e.target.value)}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      className="w-full px-4 py-2 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:border-primary font-mono"
+                    />
+                  </div>
+                </div>
+                <button type="submit" className="px-6 py-2 bg-primary text-white rounded-xl font-bold flex items-center gap-2 hover:bg-primary-dark transition-all">
+                  <RiSave3Line /> Resursni Saqlash
+                </button>
+              </motion.form>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
 
       {/* Category Tabs — fully translated */}
       <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
@@ -132,6 +264,8 @@ const VideoLessons = () => {
               video={video} 
               onSelect={setSelectedVideo}
               categoryLabel={t(CATEGORY_KEY_MAP[video.category] || 'cat_all')}
+              isAdmin={isAdmin}
+              onDelete={handleDeleteVideo}
             />
           ))}
         </AnimatePresence>

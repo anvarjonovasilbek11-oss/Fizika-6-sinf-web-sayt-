@@ -13,11 +13,9 @@ const LoginPage = React.lazy(() => import('./pages/Auth/LoginPage'));
 const Home = React.lazy(() => import('./pages/Home'));
 const VideoLessons = React.lazy(() => import('./pages/VideoLessons'));
 const Materials = React.lazy(() => import('./pages/Materials'));
-const AIQuiz = React.lazy(() => import('./pages/AIQuiz'));
 const StudentQuiz = React.lazy(() => import('./pages/StudentQuiz'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
-const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
 
 const App = () => {
@@ -36,10 +34,7 @@ const App = () => {
               <Route path="/home" element={<ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>} />
               <Route path="/videos" element={<ProtectedRoute><MainLayout><VideoLessons /></MainLayout></ProtectedRoute>} />
               <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
-              {/* Admin only: Test generation and management */}
-              <Route path="/quiz" element={<AdminRoute><MainLayout><AIQuiz /></MainLayout></AdminRoute>} />
-              <Route path="/admin" element={<AdminRoute><MainLayout><AdminDashboard /></MainLayout></AdminRoute>} />
-              {/* Students: Take approved tests only */}
+              {/* Tests: Take or manage tests */}
               <Route path="/tests" element={<ProtectedRoute><MainLayout><StudentQuiz /></MainLayout></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
               <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />

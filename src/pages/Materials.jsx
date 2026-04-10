@@ -5,6 +5,7 @@ import { RiUploadCloud2Line, RiFilePdfLine, RiFileWordLine, RiFileZipLine, RiDel
 import toast from 'react-hot-toast';
 import localforage from 'localforage';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 
 const FileIcon = ({ type }) => {
   if (type.includes('pdf')) return <RiFilePdfLine className="text-red-500" />;
@@ -17,6 +18,8 @@ const Materials = () => {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   // Component yuklanganda IndexedDB dan fayllarni o'qish
   useEffect(() => {
@@ -117,22 +120,24 @@ const Materials = () => {
       <h1 className="text-3xl font-heading text-gradient">{t('materials_title')}</h1>
 
       {/* Upload Zone */}
-      <div 
-        {...getRootProps()} 
-        className={`
-          glass-card p-12 border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center
-          ${isDragActive ? 'border-primary bg-primary/5' : 'border-slate-300 dark:border-white/10 hover:border-primary/50'}
-        `}
-      >
-        <input {...getInputProps()} />
-        <motion.div animate={{ y: isDragActive ? -10 : 0 }}
-          className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-          <RiUploadCloud2Line size={32} />
-        </motion.div>
-        <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('materials_drop')}</h3>
-        <p className="text-slate-500 dark:text-slate-200 mt-2">{t('materials_drop_sub')}</p>
-        <p className="text-xs text-slate-400 mt-1">{t('materials_drop_size')} (Max: 50MB)</p>
-      </div>
+      {isAdmin && (
+        <div 
+          {...getRootProps()} 
+          className={`
+            glass-card p-12 border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center
+            ${isDragActive ? 'border-primary bg-primary/5' : 'border-slate-300 dark:border-white/10 hover:border-primary/50'}
+          `}
+        >
+          <input {...getInputProps()} />
+          <motion.div animate={{ y: isDragActive ? -10 : 0 }}
+            className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+            <RiUploadCloud2Line size={32} />
+          </motion.div>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('materials_drop')}</h3>
+          <p className="text-slate-500 dark:text-slate-200 mt-2">{t('materials_drop_sub')}</p>
+          <p className="text-xs text-slate-400 mt-1">{t('materials_drop_size')} (Max: 50MB)</p>
+        </div>
+      )}
 
       {uploading && (
         <div className="w-full bg-slate-200 dark:bg-white/5 rounded-full h-2 overflow-hidden">
@@ -174,12 +179,14 @@ const Materials = () => {
                 >
                   <RiDownload2Line /> {t('materials_download')}
                 </button>
-                <button 
-                  onClick={() => deleteFile(file.id)}
-                  className="p-2 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary/20 transition-colors"
-                >
-                  <RiDeleteBin7Line size={20} />
-                </button>
+                {isAdmin && (
+                  <button 
+                    onClick={() => deleteFile(file.id)}
+                    className="p-2 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary/20 transition-colors"
+                  >
+                    <RiDeleteBin7Line size={20} />
+                  </button>
+                )}
               </div>
             </motion.div>
           ))}
