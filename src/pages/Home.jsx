@@ -71,13 +71,13 @@ const Home = () => {
             {t('hero_sub')}
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-            className="mt-8 flex gap-4">
+            className="mt-8 flex flex-col sm:flex-row gap-4">
             <button onClick={() => navigate('/textbook/bob-1/1')}
-              className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors shadow-lg">
+              className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors shadow-lg w-full sm:w-auto">
               {t('btn_start')}
             </button>
             <button onClick={() => navigate(isAdmin ? '/quiz' : '/tests')}
-              className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors">
+              className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors w-full sm:w-auto">
               {t('btn_test')}
             </button>
           </motion.div>

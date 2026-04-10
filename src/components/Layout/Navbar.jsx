@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const FLAG = { uz: '🇺🇿', ru: '🇷🇺', en: '🇬🇧' };
 
-const Navbar = ({ collapsed, setCollapsed }) => {
+const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { lang, changeLang, t } = useLanguage();
@@ -19,14 +19,24 @@ const Navbar = ({ collapsed, setCollapsed }) => {
     { code: 'en', label: 'English',   flag: '🇬🇧' },
   ];
 
+  const handleMenuToggle = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setMobileOpen(!mobileOpen);
+    } else {
+      setCollapsed(!collapsed);
+    }
+  };
+
+  const isMenuClosed = typeof window !== 'undefined' && window.innerWidth < 768 ? !mobileOpen : collapsed;
+
   return (
-    <nav className="h-16 border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-dark-surface/80 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-30">
-      <div className="flex items-center gap-4">
+    <nav className="h-16 border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-dark-surface/80 backdrop-blur-md flex items-center justify-between px-4 md:px-6 sticky top-0 z-30">
+      <div className="flex items-center gap-2 md:gap-4">
         <button 
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={handleMenuToggle}
           className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors text-slate-600 dark:text-slate-300"
         >
-          {collapsed ? <RiMenuUnfoldLine size={24} /> : <RiMenuFoldLine size={24} />}
+          {isMenuClosed ? <RiMenuUnfoldLine size={24} /> : <RiMenuFoldLine size={24} />}
         </button>
         <h2 className="text-xl font-heading text-slate-800 dark:text-white hidden md:block">
           {t('greeting')}, <span className="text-primary">{user?.name}</span>!

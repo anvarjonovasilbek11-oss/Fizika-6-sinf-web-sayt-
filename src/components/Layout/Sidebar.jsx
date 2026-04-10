@@ -13,9 +13,9 @@ import {
 } from 'react-icons/ri';
 import { Atom } from 'lucide-react';
 import { TEXTBOOK_DATA } from '../../data/textbookData';
-import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line } from 'react-icons/ri';
+import { RiArrowDownSLine, RiArrowUpSLine, RiBook3Line, RiCloseLine } from 'react-icons/ri';
 
-const Sidebar = ({ collapsed }) => {
+const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
   const { logout, user } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ const Sidebar = ({ collapsed }) => {
     if (path !== '#darslik') {
       setOpenDarslik(false);
       setActiveChapter(null);
+      if (window.innerWidth < 768 && setMobileOpen) setMobileOpen(false);
     }
   };
 
@@ -56,26 +57,45 @@ const Sidebar = ({ collapsed }) => {
       initial={false}
       onMouseEnter={() => collapsed && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      animate={{ width: isExpanded ? 280 : 80 }}
-      className="bg-white dark:bg-dark-surface border-r border-slate-200 dark:border-white/10 h-screen sticky top-0 flex flex-col z-40 transition-colors shadow-xl"
+      animate={{ 
+        width: typeof window !== 'undefined' && window.innerWidth < 768 
+          ? 280 
+          : (collapsed ? 0 : 280),
+      }}
+      className={`
+        fixed md:sticky top-0 h-screen z-40 bg-white dark:bg-dark-surface 
+        border-r border-slate-200 dark:border-white/10 shadow-xl flex flex-col transition-all duration-300 overflow-hidden
+        ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center px-6 gap-3 border-b border-slate-200 dark:border-white/10 overflow-hidden">
-        <motion.div 
-          animate={{ rotate: 360 }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="text-primary flex-shrink-0"
-        >
-          <Atom size={32} />
-        </motion.div>
-        {isExpanded && (
-          <motion.span 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-xl font-heading font-extrabold text-slate-800 dark:text-white whitespace-nowrap"
+      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-white/10 overflow-hidden flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            className="text-primary flex-shrink-0"
           >
-            Fizika <span className="text-primary">Olam</span>
-          </motion.span>
+            <Atom size={32} />
+          </motion.div>
+          {isExpanded && (
+            <motion.span 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-xl font-heading font-extrabold text-slate-800 dark:text-white whitespace-nowrap"
+            >
+              Fizika <span className="text-primary">Olam</span>
+            </motion.span>
+          )}
+        </div>
+        
+        {mobileOpen && (
+          <button 
+            onClick={() => setMobileOpen && setMobileOpen(false)}
+            className="md:hidden p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+          >
+            <RiCloseLine size={24} />
+          </button>
         )}
       </div>
 
