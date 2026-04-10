@@ -28,7 +28,7 @@ const Home = () => {
     lessons: 0,
     materials: 0,
     tests: 0,
-    users: 250 // Mock user count as requested
+    users: 0
   });
 
   useEffect(() => {
@@ -49,13 +49,17 @@ const Home = () => {
       const tests = JSON.parse(localStorage.getItem('custom_tests') || '[]');
       const testCount = tests.length;
 
-      setCounts(prev => ({
-        ...prev,
+      // 5. Real Users (excluding passwords from calculation for safety)
+      const usersData = JSON.parse(localStorage.getItem('users') || '[]');
+      const userCount = usersData.length;
+
+      setCounts({
         lessons: lessonCount,
         videos: videoCount,
         materials: materialCount,
-        tests: testCount
-      }));
+        tests: testCount,
+        users: userCount
+      });
     };
 
     fetchData();
@@ -91,77 +95,49 @@ const Home = () => {
           className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl p-20 border-[40px] border-white/5" />
       </section>
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass-card p-6 md:p-10 bg-gradient-to-r from-primary/10 via-white/5 to-accent/10 border border-primary/20"
-      >
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div className="text-center lg:text-left space-y-4">
-            <h2 className="text-3xl md:text-5xl font-heading font-black text-slate-800 dark:text-white leading-tight">
-              {counts.videos} ta video, {counts.lessons} ta dars, {counts.materials} ta qo'llanma
-            </h2>
-            <p className="text-xl md:text-2xl text-primary font-bold">
-              Hozirgi kunda {counts.users}+ kishi ushbu saytdan foydalanmoqda
-            </p>
-            <p className="text-slate-500 dark:text-slate-300 font-medium max-w-xl">
-              {isAdmin 
-                ? 'Admin: Darslarni boshqarish va yangi materiallar qo\'shish imkoniyati mavjud.' 
-                : 'Fizika olamidagi eng sara darsliklar va testlar to\'plami.'}
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap justify-center lg:justify-end gap-3">
-             <StatPill 
-               icon={<RiVideoLine />} 
-               count={counts.videos} 
-               label="Video" 
-               color="bg-red-500"
-               onClick={() => navigate('/videos')}
-             />
-             <StatPill 
-               icon={<RiBookReadLine />} 
-               count={counts.lessons} 
-               label="Dars" 
-               color="bg-primary"
-               onClick={() => navigate('/textbook/bob-1/1')}
-             />
-             <StatPill 
-               icon={<RiFileTextLine />} 
-               count={counts.materials} 
-               label="Qo'llanma" 
-               color="bg-amber-500"
-               onClick={() => navigate('/materials')}
-             />
-             <StatPill 
-               icon={<RiQuestionAnswerLine />} 
-               count={counts.tests} 
-               label="Test" 
-               color="bg-emerald-500"
-               onClick={() => navigate('/tests')}
-             />
-             <StatPill 
-               icon={<RiUser3Line />} 
-               count={counts.users} 
-               label="Kishi" 
-               color="bg-secondary"
-               onClick={() => {}}
-             />
-          </div>
-        </div>
-        
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 flex items-center justify-between">
-           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-             Tizim to'liq barqaror holatda
-           </div>
-           {isAdmin && (
-             <div className="flex px-4 py-1.5 bg-primary/10 text-primary rounded-full font-bold text-[10px] tracking-tighter uppercase">
-               Boshqaruv Paneli Faol
-             </div>
-           )}
-        </div>
-      </motion.div>
+      <div className="text-center py-4">
+        <h2 className="text-3xl md:text-5xl font-heading font-black text-slate-800 dark:text-white leading-tight">
+          Fizika Olamiga Xush Kelibsiz!
+        </h2>
+        <p className="text-lg text-slate-500 dark:text-slate-400 mt-2 font-medium">
+          Saytning bugungi holati va umumiy statistikasi
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+         <ActionCard 
+           icon={<RiVideoLine />} 
+           count={counts.videos} 
+           label="Video darslar" 
+           description="Mavzuga oid videolar"
+           color="bg-red-500"
+           onClick={() => navigate('/videos')}
+         />
+         <ActionCard 
+           icon={<RiBookReadLine />} 
+           count={counts.lessons} 
+           label="Nazariy darslar" 
+           description="Kitobdagi barcha boblar"
+           color="bg-primary"
+           onClick={() => navigate('/textbook/bob-1/1')}
+         />
+         <ActionCard 
+           icon={<RiFileTextLine />} 
+           count={counts.materials} 
+           label="O'quv qo'llanmalar" 
+           description="PDF, Word va Zip fayllar"
+           color="bg-amber-500"
+           onClick={() => navigate('/materials')}
+         />
+         <ActionCard 
+           icon={<RiUser3Line />} 
+           count={counts.users} 
+           label="Obunachilar" 
+           description="Ro'yxatdan o'tganlar"
+           color="bg-indigo-500"
+           onClick={() => {}}
+         />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="glass-card p-8 flex flex-col justify-center min-h-[200px]">
@@ -188,20 +164,21 @@ const Home = () => {
   );
 };
 
-const StatPill = ({ icon, count, label, color, onClick }) => (
+const ActionCard = ({ icon, count, label, description, color, onClick }) => (
   <motion.button
-    whileHover={{ y: -4, scale: 1.02 }}
+    whileHover={{ y: -8, scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className="flex items-center gap-3 p-1.5 pl-4 pr-5 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+    className="glass-card p-6 flex flex-col items-center text-center group hover:bg-white/50 dark:hover:bg-white/10 transition-colors border-primary/5 hover:border-primary/20"
   >
-    <div className={`w-10 h-10 ${color} text-white rounded-xl flex items-center justify-center shadow-lg shadow-${color.split('-')[1]}/20 group-hover:scale-110 transition-transform`}>
-      {React.cloneElement(icon, { size: 20 })}
+    <div className={`w-16 h-16 ${color} text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-${color.split('-')[1]}/30 mb-4 group-hover:scale-110 transition-transform`}>
+      {React.cloneElement(icon, { size: 32 })}
     </div>
-    <div className="text-left">
-      <div className="text-lg font-black text-slate-800 dark:text-white leading-none">{count}</div>
-      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</div>
-    </div>
+    <div className="text-3xl font-black text-slate-800 dark:text-white mb-1">{count}</div>
+    <div className="text-sm font-bold text-slate-900 dark:text-white mb-2">{label}</div>
+    <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">{description}</div>
   </motion.button>
 );
 
