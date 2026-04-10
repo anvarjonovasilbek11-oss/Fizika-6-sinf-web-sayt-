@@ -228,7 +228,7 @@ const StudentQuiz = () => {
             <RiRestartLine size={24} /> Qayta boshlash
           </button>
           <button 
-            onClick={() => navigate('/')} 
+            onClick={() => navigate('/home')} 
             className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
           >
             <RiHome4Line size={24} /> Bosh menyu
