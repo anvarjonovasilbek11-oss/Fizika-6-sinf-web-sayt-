@@ -109,7 +109,7 @@ const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
       {/* Navigation Links */}
       <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto no-scrollbar overflow-x-hidden">
         <AnimatePresence mode="wait">
-          {!openDarslik ? (
+          {!openDarslik || !isExpanded ? (
             <motion.div
               key="main-menu"
               initial={{ x: -20, opacity: 0 }}
