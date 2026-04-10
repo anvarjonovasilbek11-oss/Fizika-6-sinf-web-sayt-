@@ -9,7 +9,7 @@ import { FaUserGraduate, FaUserShield } from 'react-icons/fa';
 
 const LoginPage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [username, setUsername] = useState('Asilbek');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -18,7 +18,11 @@ const LoginPage = () => {
     e.preventDefault();
     const result = login(username, password);
     if (result.success) {
-      toast.success("Xush kelibsiz!");
+      if (result.isNew) {
+        toast.success(`Xush kelibsiz, ${username}! Hisobingiz yaratildi 🎉`);
+      } else {
+        toast.success(`Xush kelibsiz, ${username}!`);
+      }
       navigate('/home');
     } else {
       toast.error(result.message);
@@ -96,7 +100,7 @@ const LoginPage = () => {
               transition={{ delay: 0.3 }}
               className="relative"
             >
-              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2 ml-1">Username</label>
+              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2 ml-1">Ism (istalgan ism yozing)</label>
               <div className="relative">
                 <RiUserLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
                 <input 
@@ -105,7 +109,7 @@ const LoginPage = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="premium-input"
-                  placeholder="Ismingizni kiriting"
+                  placeholder="Masalan: Samol, Jasur, Malika..."
                 />
               </div>
             </motion.div>

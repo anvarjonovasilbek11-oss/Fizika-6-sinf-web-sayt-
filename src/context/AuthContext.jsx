@@ -3,23 +3,70 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 
 const AuthContext = createContext();
 
-const DEFAULT_USERS = [
-  {username: "ali", password: "1234", name: "Ali Karimov", age: 12, class: "6A", role: "student"},
-  {username: "zulfiya", password: "1234", name: "Zulfiya Rahimova", age: 11, class: "6B", role: "student"},
-  {username: "Asilbek", password: "asilbek0921", name: "Asilbek", role: "admin"}
-];
+// Faqat admin oldindan belgilangan
+const ADMIN_USER = { username: "Asilbek", password: "asilbek0921", name: "Asilbek", role: "admin" };
+
+// LocalStorage'dan foydalanuvchilar ro'yxatini olish
+const getInitialUsers = () => {
+  try {
+    const saved = localStorage.getItem('users');
+    const users = saved ? JSON.parse(saved) : [ADMIN_USER];
+    // Admin har doim ro'yxatda bo'lsin
+    const hasAdmin = users.some(u => u.role === 'admin');
+    if (!hasAdmin) return [ADMIN_USER, ...users];
+    return users;
+  } catch {
+    return [ADMIN_USER];
+  }
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage('currentUser', null);
-  const [users, setUsers] = useLocalStorage('users', DEFAULT_USERS);
+  const [users, setUsers] = useState(getInitialUsers);
+
+  const saveUsers = (updatedUsers) => {
+    setUsers(updatedUsers);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+  };
 
   const login = (username, password) => {
-    const foundUser = users.find(u => u.username === username && u.password === password);
-    if (foundUser) {
-      setUser(foundUser);
+    if (!username.trim() || !password.trim()) {
+      return { success: false, message: "Ism va parolni kiriting" };
+    }
+
+    // Admin tekshiruvi (case-sensitive)
+    if (username === ADMIN_USER.username && password === ADMIN_USER.password) {
+      setUser(ADMIN_USER);
       return { success: true };
     }
-    return { success: false, message: "Username yoki parol noto'g'ri" };
+
+    // Mavjud foydalanuvchini qidirish (harflar farqi yo'q)
+    const existingUser = users.find(
+      u => u.username.toLowerCase() === username.toLowerCase() && u.role !== 'admin'
+    );
+
+    if (existingUser) {
+      // Foydalanuvchi mavjud — parolni tekshir
+      if (existingUser.password === password) {
+        setUser(existingUser);
+        return { success: true };
+      } else {
+        return { success: false, message: "Parol noto'g'ri! Avval kirgan parolingizni ishlating." };
+      }
+    } else {
+      // Yangi foydalanuvchi — avtomatik ro'yxatdan o'tkazish
+      const newUser = {
+        username: username.trim(),
+        password: password,
+        name: username.trim(),
+        role: "student",
+        createdAt: new Date().toISOString()
+      };
+      const updatedUsers = [...users, newUser];
+      saveUsers(updatedUsers);
+      setUser(newUser);
+      return { success: true, isNew: true };
+    }
   };
 
   const logout = () => {

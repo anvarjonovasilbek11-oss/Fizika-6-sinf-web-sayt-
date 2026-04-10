@@ -35,7 +35,7 @@ const Navbar = ({ collapsed, setCollapsed }) => {
         <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-white/10">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-semibold text-slate-800 dark:text-white leading-tight">{user?.name}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-300 capitalize">{user?.role === 'admin' ? 'Admin' : `${user?.class} o'quvchisi`}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-300 capitalize">{user?.role === 'admin' ? 'Foydalanuvchi' : 'Foydalanuvchi'}</p>
           </div>
           <motion.div 
             whileHover={{ scale: 1.05 }}

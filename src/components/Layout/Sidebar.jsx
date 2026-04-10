@@ -43,7 +43,7 @@ const Sidebar = ({ collapsed }) => {
     { name: "Video darslar", icon: <RiVideoLine size={24} />, path: "/videos" },
     { name: "Qo'llanmalar", icon: <RiBookOpenLine size={24} />, path: "/materials" },
     { 
-      name: isAdmin ? "Testlar (AI) — Admin" : "Testlar (AI)", 
+      name: "Testlar (AI)", 
       icon: <RiRobotLine size={24} />, 
       path: isAdmin ? "/quiz" : "/tests" 
     },
