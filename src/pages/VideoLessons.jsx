@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiSearchLine, RiPlayLine, RiCloseLine } from 'react-icons/ri';
 
-const VIDEOS = [
+export const VIDEOS = [
   { id: '1', videoId: 'vx1Nkb_-srE', title: '1. Kirish', topic: 'Kirish', category: 'Kirish' },
   { id: '2', videoId: 'NetSwSnu5T0', title: '2. Fizika nimani oʻrganadi?', topic: 'Fizika asoslari', category: 'Kirish' },
   { id: '3', videoId: 'vIX3X8AM3nE', title: '3. Fizikada ishlatiladigan ayrim kattaliklar', topic: 'Kattaliklar', category: 'Kirish' },
@@ -15,6 +15,7 @@ const VIDEOS = [
   { id: '10', videoId: 'uzQ3ymb161M', title: '10. Qattiq jism, suyuqlik va gazlarning molekulyar tuzilishi', topic: 'Modda holati', category: 'Termodynamika' },
   { id: '11', videoId: 'mumNfuYtu_E', title: '11. Massa va uning birliklari', topic: 'Massa', category: 'Mexanika' },
 ];
+
 
 const VideoCard = ({ video, onSelect }) => (
   <motion.div 

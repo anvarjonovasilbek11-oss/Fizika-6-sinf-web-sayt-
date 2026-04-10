@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { RiVideoLine, RiBookReadLine, RiQuestionAnswerLine, RiDoubleQuotesL } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
+import { VIDEOS } from './VideoLessons';
 
 const StatsCard = ({ icon, label, count, color }) => (
   <motion.div 
@@ -24,6 +25,35 @@ const Home = () => {
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
   const [quoteIdx, setQuoteIdx] = useState(0);
+
+  // Real sonlarni hisoblash
+  const [materialsCount, setMaterialsCount] = useState(0);
+  const [testQuestionsCount, setTestQuestionsCount] = useState(0);
+
+  const refreshCounts = () => {
+    try {
+      const files = JSON.parse(localStorage.getItem('physics_files') || '[]');
+      setMaterialsCount(files.length);
+    } catch { setMaterialsCount(0); }
+
+    try {
+      const quizzes = JSON.parse(localStorage.getItem('approvedQuizzes') || '[]');
+      const total = quizzes.reduce((sum, q) => sum + (q.questions?.length || 0), 0);
+      setTestQuestionsCount(total);
+    } catch { setTestQuestionsCount(0); }
+  };
+
+  useEffect(() => {
+    refreshCounts();
+    // localStorage o'zgarganda qayta hisoblash (boshqa tabdan)
+    window.addEventListener('storage', refreshCounts);
+    // Har 2 sekundda yangilab turish (bir sahifada o'zgarsa ham)
+    const interval = setInterval(refreshCounts, 2000);
+    return () => {
+      window.removeEventListener('storage', refreshCounts);
+      clearInterval(interval);
+    };
+  }, []);
 
   const quotes = [
     { text: "Fizika – bu tabiatning tili.", author: "Richard Feynman" },
@@ -79,7 +109,6 @@ const Home = () => {
           </motion.div>
         </div>
         
-        {/* Animated Background Decor */}
         <motion.div 
           animate={{ rotate: 360, scale: [1, 1.1, 1] }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
@@ -87,24 +116,24 @@ const Home = () => {
         />
       </section>
 
-      {/* Stats Grid */}
+      {/* Stats Grid — Real sonlar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatsCard 
           icon={<RiVideoLine />} 
           label="Video darslar" 
-          count="120+" 
+          count={VIDEOS.length}
           color="text-primary bg-primary" 
         />
         <StatsCard 
           icon={<RiBookReadLine />} 
           label="Qo'llanmalar" 
-          count="45+" 
+          count={materialsCount}
           color="text-secondary bg-secondary" 
         />
         <StatsCard 
           icon={<RiQuestionAnswerLine />} 
           label="Test savollari" 
-          count="300+" 
+          count={testQuestionsCount}
           color="text-accent bg-accent" 
         />
       </div>
