@@ -167,13 +167,13 @@ const StudentQuiz = () => {
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center text-xl font-black">{currentIdx + 1}</div>
               <div>
-                <h3 className="font-black dark:text-white truncate max-w-[250px]">{activeQuiz.topic}</h3>
-                <p className="text-xs text-slate-400 uppercase font-bold">Savol</p>
+                <h3 className="font-black text-slate-800 dark:text-white truncate max-w-[250px]">{activeQuiz.topic}</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Savol</p>
               </div>
             </div>
             <div className="text-right">
               <div className="text-2xl font-black text-primary">{progress}%</div>
-              <p className="text-xs text-slate-400 uppercase font-bold">Jarayon</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Jarayon</p>
             </div>
           </div>
           <div className="w-full bg-slate-200 dark:bg-white/10 rounded-full h-2">
@@ -199,8 +199,8 @@ const StudentQuiz = () => {
                   }
                 `}
               >
-                <span className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${selectedAnswer === key ? (key === q.correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-slate-100 dark:bg-white/10'}`}>{key}</span>
-                {value}
+                <span className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${selectedAnswer === key ? (key === q.correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'}`}>{key}</span>
+                <span className="text-lg font-bold flex-1 text-slate-700 dark:text-white">{value}</span>
               </button>
             ))}
           </div>
@@ -215,8 +215,8 @@ const StudentQuiz = () => {
       <div className="max-w-xl mx-auto glass-card p-12 text-center mt-10">
         <RiTrophyLine size={100} className="mx-auto text-primary mb-6" />
         <h2 className="text-5xl font-black text-gradient mb-4">Natijangiz</h2>
-        <div className="text-8xl font-black mb-2">{score}/{activeQuiz.questions.length}</div>
-        <p className="text-2xl font-bold text-slate-500 mb-10">{pct}% Muvaffaqiyat</p>
+        <div className="text-8xl font-black mb-2 text-slate-800 dark:text-white">{score}/{activeQuiz.questions.length}</div>
+        <p className="text-2xl font-bold text-slate-500 dark:text-slate-400 mb-10">{pct}% Muvaffaqiyat</p>
         <div className="flex gap-4 justify-center">
           <button onClick={() => startQuiz(activeQuiz)} className="px-10 py-4 bg-primary text-white rounded-2xl font-black shadow-xl">Qaytadan</button>
           <button onClick={() => setActiveQuiz(null)} className="px-10 py-4 bg-slate-100 dark:bg-white/10 rounded-2xl font-black">Menyuga</button>
