@@ -52,6 +52,12 @@ const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
     navigate('/login');
   };
 
+  React.useEffect(() => {
+    if (!isExpanded) {
+      setOpenDarslik(false);
+    }
+  }, [isExpanded]);
+
   return (
     <motion.aside 
       initial={false}
@@ -60,11 +66,11 @@ const Sidebar = ({ collapsed, mobileOpen, setMobileOpen }) => {
       animate={{ 
         width: typeof window !== 'undefined' && window.innerWidth < 768 
           ? 280 
-          : (collapsed ? 0 : 280),
+          : (isExpanded ? 280 : 80),
       }}
       className={`
-        fixed md:sticky top-0 h-screen z-40 bg-white dark:bg-dark-surface min-w-[0px]
-        ${collapsed ? 'border-r-0' : 'border-r'} border-slate-200 dark:border-white/10 shadow-xl flex flex-col transition-all duration-300 overflow-hidden
+        fixed md:sticky top-0 h-screen z-40 bg-white dark:bg-dark-surface 
+        border-r border-slate-200 dark:border-white/10 shadow-xl flex flex-col transition-all duration-300 overflow-hidden
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}
     >
