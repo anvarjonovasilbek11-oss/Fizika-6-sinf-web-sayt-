@@ -61,7 +61,15 @@ const VideoLessons = () => {
   const [search, setSearch] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState('__all__');
+  const [customVideos, setCustomVideos] = useState([]);
   const { t } = useLanguage();
+
+  React.useEffect(() => {
+    const saved = localStorage.getItem('customVideos');
+    if (saved) {
+      setCustomVideos(JSON.parse(saved));
+    }
+  }, []);
 
   // Categories: internal key + display label
   const categories = [
@@ -71,7 +79,10 @@ const VideoLessons = () => {
     { key: 'Termodynamika', label: t('cat_thermo') },
   ];
 
-  const filteredVideos = VIDEOS.filter(v =>
+  // Merge static default videos with dynamically CMS uploaded offline videos
+  const finalVideosData = [...VIDEOS, ...customVideos];
+
+  const filteredVideos = finalVideosData.filter(v =>
     v.title.toLowerCase().includes(search.toLowerCase()) &&
     (activeCategory === '__all__' || v.category === activeCategory)
   );

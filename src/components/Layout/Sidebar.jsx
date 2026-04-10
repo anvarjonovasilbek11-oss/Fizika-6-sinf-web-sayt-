@@ -41,13 +41,17 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     }
   };
 
+  // Advanced Pro-Tip hover effect requested: scale-105
+  const hoverEffect = "active:scale-95 group-hover:scale-105 transition-all duration-300";
+
   const menuItems = [
-    { name: t('nav_home'),      icon: <RiDashboardLine size={24} />, path: "/home" },
-    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} />,     path: "#darslik" },
-    { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos" },
-    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials" },
-    { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: isAdmin ? "/quiz" : "/tests" },
-    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings" },
+    { name: t('nav_home'),      icon: <RiDashboardLine size={24} className={hoverEffect} />, path: "/home" },
+    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} className={hoverEffect} />,     path: "#darslik" },
+    { name: t('nav_videos'),    icon: <RiVideoLine size={24} className={hoverEffect} />,     path: "/videos" },
+    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} className={hoverEffect} />,  path: "/materials" },
+    { name: t('nav_tests'),     icon: <RiRobotLine size={24} className={hoverEffect} />,     path: isAdmin ? "/quiz" : "/tests" },
+    ...(isAdmin ? [{ name: "Admin Panel", icon: <RiDashboardLine size={24} className={hoverEffect} />, path: "/admin" }] : []),
+    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} className={hoverEffect} />, path: "/settings" },
   ];
 
   const handleLogout = () => {

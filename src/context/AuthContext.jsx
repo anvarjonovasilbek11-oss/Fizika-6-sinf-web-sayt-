@@ -29,6 +29,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('users', JSON.stringify(updatedUsers));
   };
 
+  const deleteUser = (usernameToDelete) => {
+    // Admin cannot be deleted
+    if (usernameToDelete === ADMIN_USER.username) return false;
+    const updatedUsers = users.filter(u => u.username !== usernameToDelete);
+    saveUsers(updatedUsers);
+    return true;
+  };
+
   const login = (username, password) => {
     if (!username.trim() || !password.trim()) {
       return { success: false, message: "Ism va parolni kiriting" };
@@ -74,7 +82,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, users }}>
+    <AuthContext.Provider value={{ user, login, logout, users, deleteUser }}>
       {children}
     </AuthContext.Provider>
   );

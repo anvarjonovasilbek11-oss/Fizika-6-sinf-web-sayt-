@@ -17,6 +17,7 @@ const AIQuiz = React.lazy(() => import('./pages/AIQuiz'));
 const StudentQuiz = React.lazy(() => import('./pages/StudentQuiz'));
 const Settings = React.lazy(() => import('./pages/Settings'));
 const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const NotFound = React.lazy(() => import('./pages/NotFound'));
 
 const App = () => {
@@ -37,6 +38,7 @@ const App = () => {
               <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
               {/* Admin only: Test generation and management */}
               <Route path="/quiz" element={<AdminRoute><MainLayout><AIQuiz /></MainLayout></AdminRoute>} />
+              <Route path="/admin" element={<AdminRoute><MainLayout><AdminDashboard /></MainLayout></AdminRoute>} />
               {/* Students: Take approved tests only */}
               <Route path="/tests" element={<ProtectedRoute><MainLayout><StudentQuiz /></MainLayout></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
