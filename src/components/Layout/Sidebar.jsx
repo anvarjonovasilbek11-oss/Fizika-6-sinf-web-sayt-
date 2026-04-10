@@ -111,7 +111,7 @@ const Sidebar = ({ collapsed }) => {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden pl-4 space-y-1"
                     >
-                      {TEXTBOOK_DATA.map((chapter) => (
+                      {TEXTBOOK_DATA.map((chapter, idx) => (
                         <div key={chapter.id} className="space-y-1">
                           <button
                             onClick={() => handleChapterClick(chapter.id)}
@@ -122,7 +122,7 @@ const Sidebar = ({ collapsed }) => {
                                 : 'text-slate-500 dark:text-slate-400 hover:text-primary hover:bg-slate-50 dark:hover:bg-white/5'}
                             `}
                           >
-                            <span className="text-left line-clamp-1">{chapter.title}</span>
+                            <span className="text-left line-clamp-1">{t(`chap_${idx + 1}`)}</span>
                             {activeChapter === chapter.id ? <RiArrowUpSLine size={16} /> : <RiArrowDownSLine size={16} />}
                           </button>
 

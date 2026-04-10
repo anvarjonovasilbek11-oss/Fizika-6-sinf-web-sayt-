@@ -17,8 +17,14 @@ export const VIDEOS = [
   { id: '11', videoId: 'mumNfuYtu_E', title: '11. Massa va uning birliklari', topic: 'Massa', category: 'Mexanika' },
 ];
 
+// Category key map: UZ internal name → translation key
+const CATEGORY_KEY_MAP = {
+  'Kirish':       'cat_intro',
+  'Mexanika':     'cat_mechanics',
+  'Termodynamika':'cat_thermo',
+};
 
-const VideoCard = ({ video, onSelect }) => (
+const VideoCard = ({ video, onSelect, categoryLabel }) => (
   <motion.div 
     layout
     initial={{ opacity: 0, scale: 0.9 }}
@@ -41,12 +47,12 @@ const VideoCard = ({ video, onSelect }) => (
         </button>
       </div>
       <div className="absolute top-2 right-2 px-2 py-1 bg-primary text-white text-xs font-bold rounded-lg shadow-lg">
-        {video.category}
+        {categoryLabel}
       </div>
     </div>
     <div className="p-4">
       <h3 className="text-lg font-bold text-slate-800 dark:text-white line-clamp-2">{video.title}</h3>
-      <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">Mavzu: {video.topic}</p>
+      <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">{video.topic}</p>
     </div>
   </motion.div>
 );
@@ -54,14 +60,20 @@ const VideoCard = ({ video, onSelect }) => (
 const VideoLessons = () => {
   const [search, setSearch] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [activeCategory, setActiveCategory] = useState('Hammasi');
+  const [activeCategory, setActiveCategory] = useState('__all__');
   const { t } = useLanguage();
 
-  const categories = [t('videos_all'), 'Kirish', 'Mexanika', 'Termodynamika'];
+  // Categories: internal key + display label
+  const categories = [
+    { key: '__all__',       label: t('cat_all') },
+    { key: 'Kirish',        label: t('cat_intro') },
+    { key: 'Mexanika',      label: t('cat_mechanics') },
+    { key: 'Termodynamika', label: t('cat_thermo') },
+  ];
 
-  const filteredVideos = VIDEOS.filter(v => 
+  const filteredVideos = VIDEOS.filter(v =>
     v.title.toLowerCase().includes(search.toLowerCase()) &&
-    (activeCategory === t('videos_all') || v.category === activeCategory)
+    (activeCategory === '__all__' || v.category === activeCategory)
   );
 
   return (
@@ -80,19 +92,19 @@ const VideoLessons = () => {
         </div>
       </div>
 
-      {/* Category Tabs */}
+      {/* Category Tabs — fully translated */}
       <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
         {categories.map(cat => (
           <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
+            key={cat.key}
+            onClick={() => setActiveCategory(cat.key)}
             className={`px-6 py-2 rounded-xl font-semibold transition-all whitespace-nowrap ${
-              activeCategory === cat 
+              activeCategory === cat.key 
                 ? 'bg-primary text-white shadow-lg shadow-primary/30' 
                 : 'bg-white dark:bg-dark-surface text-slate-600 dark:text-slate-200 hover:bg-primary/10'
             }`}
           >
-            {cat}
+            {cat.label}
           </button>
         ))}
       </div>
@@ -104,7 +116,12 @@ const VideoLessons = () => {
       >
         <AnimatePresence>
           {filteredVideos.map(video => (
-            <VideoCard key={video.id} video={video} onSelect={setSelectedVideo} />
+            <VideoCard 
+              key={video.id} 
+              video={video} 
+              onSelect={setSelectedVideo}
+              categoryLabel={t(CATEGORY_KEY_MAP[video.category] || 'cat_all')}
+            />
           ))}
         </AnimatePresence>
       </motion.div>
@@ -145,10 +162,10 @@ const VideoLessons = () => {
                 <h2 className="text-2xl font-bold text-white">{selectedVideo.title}</h2>
                 <div className="flex gap-2 mt-4">
                   <span className="px-3 py-1 bg-primary/20 text-primary rounded-lg text-sm font-bold">
-                    {selectedVideo.category}
+                    {t(CATEGORY_KEY_MAP[selectedVideo.category] || 'cat_all')}
                   </span>
                   <span className="px-3 py-1 bg-white/10 text-white/90 rounded-lg text-sm">
-                    Mavzu: {selectedVideo.topic}
+                    {selectedVideo.topic}
                   </span>
                 </div>
               </div>

@@ -18,6 +18,21 @@ export const TRANSLATIONS = {
     nav_settings: "Sozlamalar",
     nav_logout: "Chiqish",
 
+    // Textbook chapter titles
+    chap_1: "1-BOB. Fizika nimani o'rgatadi?",
+    chap_2: "2-BOB. Fizik kattaliklar va o'lchash",
+    chap_3: "3-BOB. Modda tuzilishi haqida",
+    chap_4: "4-BOB. Mexanik hodisalar",
+    chap_5: "5-BOB. Jismlarning muvozanati",
+    chap_6: "6-BOB. Suyuqlik va gazlar bosimi",
+    chap_7: "7-BOB. Issiqlik hodisalari",
+
+    // Video categories
+    cat_all: "Hammasi",
+    cat_intro: "Kirish",
+    cat_mechanics: "Mexanika",
+    cat_thermo: "Termodynamika",
+
     // Home
     hero_title: "6-sinf Fizika Dunyosiga Xush Kelibsiz!",
     hero_sub: "Bugun nimani o'rganamiz? Mexanika, issiqlik yoki elektr toki? Tanlov sizda!",
@@ -52,6 +67,7 @@ export const TRANSLATIONS = {
     videos_title: "Video darslar",
     videos_search: "Mavzuni qidiring...",
     videos_all: "Hammasi",
+    videos_count: "ta video",
 
     // Materials
     materials_title: "Qo'llanmalar va Kitoblar",
@@ -101,6 +117,7 @@ export const TRANSLATIONS = {
     ai_student_mode: "O'quvchi rejimi",
     ai_student_info: "Faqat admin tomonidan tasdiqlangan (kamida 10 ta savolli) testlargina bu yerda ko'rinadi.",
     ai_announce: "e'lon qilindi",
+    ai_min_questions: "Kamida 10 ta savol bo'lishi shart!",
 
     // Settings
     settings_title: "Sozlamalar",
@@ -129,6 +146,21 @@ export const TRANSLATIONS = {
     nav_tests: "Тесты (ИИ)",
     nav_settings: "Настройки",
     nav_logout: "Выйти",
+
+    // Textbook chapter titles
+    chap_1: "ГЛАВА 1. Что изучает физика?",
+    chap_2: "ГЛАВА 2. Физ. величины и измерения",
+    chap_3: "ГЛАВА 3. Строение вещества",
+    chap_4: "ГЛАВА 4. Механические явления",
+    chap_5: "ГЛАВА 5. Равновесие тел",
+    chap_6: "ГЛАВА 6. Давление жидкостей и газов",
+    chap_7: "ГЛАВА 7. Тепловые явления",
+
+    // Video categories
+    cat_all: "Все",
+    cat_intro: "Введение",
+    cat_mechanics: "Механика",
+    cat_thermo: "Термодинамика",
 
     // Home
     hero_title: "Добро пожаловать в мир физики 6-го класса!",
@@ -164,6 +196,7 @@ export const TRANSLATIONS = {
     videos_title: "Видеоуроки",
     videos_search: "Поиск по теме...",
     videos_all: "Все",
+    videos_count: "видео",
 
     // Materials
     materials_title: "Материалы и книги",
@@ -213,6 +246,7 @@ export const TRANSLATIONS = {
     ai_student_mode: "Режим ученика",
     ai_student_info: "Здесь отображаются только тесты, подтверждённые администратором (минимум 10 вопросов).",
     ai_announce: "объявлено",
+    ai_min_questions: "Минимум 10 вопросов обязательно!",
 
     // Settings
     settings_title: "Настройки",
@@ -241,6 +275,21 @@ export const TRANSLATIONS = {
     nav_tests: "Tests (AI)",
     nav_settings: "Settings",
     nav_logout: "Logout",
+
+    // Textbook chapter titles
+    chap_1: "CHAPTER 1. What does Physics study?",
+    chap_2: "CHAPTER 2. Physical quantities & measurement",
+    chap_3: "CHAPTER 3. Structure of matter",
+    chap_4: "CHAPTER 4. Mechanical phenomena",
+    chap_5: "CHAPTER 5. Equilibrium of bodies",
+    chap_6: "CHAPTER 6. Pressure in liquids & gases",
+    chap_7: "CHAPTER 7. Thermal phenomena",
+
+    // Video categories
+    cat_all: "All",
+    cat_intro: "Introduction",
+    cat_mechanics: "Mechanics",
+    cat_thermo: "Thermodynamics",
 
     // Home
     hero_title: "Welcome to the World of 6th Grade Physics!",
@@ -276,6 +325,7 @@ export const TRANSLATIONS = {
     videos_title: "Video Lessons",
     videos_search: "Search by topic...",
     videos_all: "All",
+    videos_count: "videos",
 
     // Materials
     materials_title: "Materials & Books",
@@ -325,6 +375,7 @@ export const TRANSLATIONS = {
     ai_student_mode: "Student Mode",
     ai_student_info: "Only tests approved by the admin (with at least 10 questions) are shown here.",
     ai_announce: "announced",
+    ai_min_questions: "Minimum 10 questions required!",
 
     // Settings
     settings_title: "Settings",
