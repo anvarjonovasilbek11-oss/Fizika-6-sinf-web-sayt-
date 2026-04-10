@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   RiGroupLine, 
   RiVideoLine, 
@@ -23,7 +24,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('students');
   const [searchQuery, setSearchQuery] = useState('');
   const [showPasswords, setShowPasswords] = useState({});
-  const [showStats, setShowStats] = useState({ students: false, books: false, videos: false });
+  const navigate = useNavigate();
   
   // CMS State
   const [cmsTitle, setCmsTitle] = useState('');
@@ -46,10 +47,6 @@ const AdminDashboard = () => {
 
   const togglePassword = (username) => {
     setShowPasswords(prev => ({ ...prev, [username]: !prev[username] }));
-  };
-
-  const toggleStat = (statName) => {
-    setShowStats(prev => ({ ...prev, [statName]: !prev[statName] }));
   };
 
   const handleDeleteUser = (username) => {
@@ -120,68 +117,43 @@ const AdminDashboard = () => {
       {/* Stats Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div 
-          onClick={() => toggleStat('students')}
+          onClick={() => setActiveTab('students')}
           initial={{ y: 20, opacity: 0 }} 
           animate={{ y: 0, opacity: 1 }} 
           className="bg-gradient-to-br from-[#1b1b2f] to-[#121223] border border-indigo-500/20 p-6 rounded-3xl shadow-lg relative overflow-hidden group hover:border-indigo-500/50 transition-all cursor-pointer"
-          title="Ko'rish uchun bosing"
+          title="Talabalar ro'yxatiga o'tish"
         >
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
-          <div className="flex justify-between items-start">
-            <RiGroupLine className="text-indigo-400 mb-4" size={32} />
-            <span className="text-indigo-400/30 group-hover:text-indigo-400/80 transition-colors">
-              {showStats.students ? <RiEyeLine size={20} /> : <RiEyeOffLine size={20} />}
-            </span>
-          </div>
-          <h3 className="text-3xl font-black text-white">
-            {showStats.students ? students.length : '***'}
-          </h3>
+          <RiGroupLine className="text-indigo-400 mb-4" size={32} />
+          <h3 className="text-3xl font-black text-white">{students.length}</h3>
           <p className="text-indigo-300/80 text-sm font-medium mt-1">Jami Talabalar Soni</p>
         </motion.div>
         
         <motion.div 
-          onClick={() => toggleStat('books')}
+          onClick={() => navigate('/materials')}
           initial={{ y: 20, opacity: 0 }} 
           animate={{ y: 0, opacity: 1 }} 
           transition={{ delay: 0.1 }} 
           className="bg-gradient-to-br from-[#1b1b2f] to-[#121223] border border-violet-500/20 p-6 rounded-3xl shadow-lg relative overflow-hidden group hover:border-violet-500/50 transition-all cursor-pointer"
-          title="Ko'rish uchun bosing"
+          title="Darsliklar sahifasiga o'tish"
         >
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-violet-500/10 rounded-full blur-2xl group-hover:bg-violet-500/20 transition-all"></div>
-          <div className="flex justify-between items-start">
-            <RiBook3Line className="text-violet-400 mb-4" size={32} />
-             <span className="text-violet-400/30 group-hover:text-violet-400/80 transition-colors">
-              {showStats.books ? <RiEyeLine size={20} /> : <RiEyeOffLine size={20} />}
-            </span>
-          </div>
-          <h3 className="text-3xl font-black text-white">
-            {showStats.books ? (
-              <>{totalLessons} <span className="text-sm font-normal text-slate-500">/{TEXTBOOK_DATA.length} bo'lim</span></>
-            ) : '***'}
-          </h3>
+          <RiBook3Line className="text-violet-400 mb-4" size={32} />
+          <h3 className="text-3xl font-black text-white">{totalLessons} <span className="text-sm font-normal text-slate-500">/{TEXTBOOK_DATA.length} bo'lim</span></h3>
           <p className="text-violet-300/80 text-sm font-medium mt-1">Yuklangan Darsliklar</p>
         </motion.div>
 
         <motion.div 
-          onClick={() => toggleStat('videos')}
+          onClick={() => navigate('/videos')}
           initial={{ y: 20, opacity: 0 }} 
           animate={{ y: 0, opacity: 1 }} 
           transition={{ delay: 0.2 }} 
           className="bg-gradient-to-br from-[#1b1b2f] to-[#121223] border border-fuchsia-500/20 p-6 rounded-3xl shadow-lg relative overflow-hidden group hover:border-fuchsia-500/50 transition-all cursor-pointer"
-          title="Ko'rish uchun bosing"
+          title="Video darslar sahifasiga o'tish"
         >
           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-fuchsia-500/10 rounded-full blur-2xl group-hover:bg-fuchsia-500/20 transition-all"></div>
-          <div className="flex justify-between items-start">
-            <RiVideoLine className="text-fuchsia-400 mb-4" size={32} />
-            <span className="text-fuchsia-400/30 group-hover:text-fuchsia-400/80 transition-colors">
-              {showStats.videos ? <RiEyeLine size={20} /> : <RiEyeOffLine size={20} />}
-            </span>
-          </div>
-          <h3 className="text-3xl font-black text-white">
-            {showStats.videos ? (
-              <>{totalVideos} <span className="text-sm font-normal text-slate-500">({customVideos.length} custom)</span></>
-            ) : '***'}
-          </h3>
+          <RiVideoLine className="text-fuchsia-400 mb-4" size={32} />
+          <h3 className="text-3xl font-black text-white">{totalVideos} <span className="text-sm font-normal text-slate-500">({customVideos.length} custom)</span></h3>
           <p className="text-fuchsia-300/80 text-sm font-medium mt-1">Video Darslar Miqdori</p>
         </motion.div>
       </div>
