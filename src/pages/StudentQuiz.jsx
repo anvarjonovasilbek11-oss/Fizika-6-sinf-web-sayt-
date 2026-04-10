@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   RiRobotLine, 
   RiCheckLine, 
@@ -9,7 +10,8 @@ import {
   RiTrophyLine,
   RiDeleteBin6Line,
   RiShieldCheckLine,
-  RiCloseLine
+  RiCloseLine,
+  RiHome4Line
 } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
@@ -18,6 +20,7 @@ import { useAuth } from '../context/AuthContext';
 import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
 
 const StudentQuiz = () => {
+  const navigate = useNavigate();
   const [approvedQuizzes, setApprovedQuizzes] = useState([]);
   const [pendingQuizzes, setPendingQuizzes] = useState([]);
   const [activeQuiz, setActiveQuiz] = useState(null);
@@ -217,9 +220,19 @@ const StudentQuiz = () => {
         <h2 className="text-5xl font-black text-gradient mb-4">Natijangiz</h2>
         <div className="text-8xl font-black mb-2 text-slate-800 dark:text-white">{score}/{activeQuiz.questions.length}</div>
         <p className="text-2xl font-bold text-slate-500 dark:text-slate-400 mb-10">{pct}% Muvaffaqiyat</p>
-        <div className="flex gap-4 justify-center">
-          <button onClick={() => startQuiz(activeQuiz)} className="px-10 py-4 bg-primary text-white rounded-2xl font-black shadow-xl">Qaytadan</button>
-          <button onClick={() => setActiveQuiz(null)} className="px-10 py-4 bg-slate-100 dark:bg-white/10 rounded-2xl font-black">Menyuga</button>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button 
+            onClick={() => startQuiz(activeQuiz)} 
+            className="px-8 py-4 bg-primary text-white rounded-2xl font-black shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
+          >
+            <RiRestartLine size={24} /> Qayta boshlash
+          </button>
+          <button 
+            onClick={() => navigate('/')} 
+            className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black shadow-xl hover:scale-105 transition-transform flex items-center justify-center gap-2"
+          >
+            <RiHome4Line size={24} /> Bosh menyu
+          </button>
         </div>
       </div>
     );
