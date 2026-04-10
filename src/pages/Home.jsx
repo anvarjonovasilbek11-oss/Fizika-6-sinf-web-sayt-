@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { RiVideoLine, RiBookReadLine, RiQuestionAnswerLine, RiDoubleQuotesL } from 'react-icons/ri';
+import { RiVideoLine, RiBookReadLine, RiQuestionAnswerLine, RiDoubleQuotesL, RiUser3Line, RiFileTextLine } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { VIDEOS } from './VideoLessons';
+import { getCombinedTextbooks } from '../services/textbookService';
+import localforage from 'localforage';
 
 // StatsCards removed due to in-place architecture requested by user
 
@@ -21,7 +23,42 @@ const Home = () => {
     { text: "Menga tayanch nuqtasini bering, men Yer yuzini qimirlataman.", author: "Arximed" },
   ];
 
+  const [counts, setCounts] = useState({
+    videos: 0,
+    lessons: 0,
+    materials: 0,
+    tests: 0,
+    users: 250 // Mock user count as requested
+  });
+
   useEffect(() => {
+    const fetchData = async () => {
+      // 1. Lessons
+      const books = getCombinedTextbooks();
+      const lessonCount = books.reduce((acc, curr) => acc + curr.lessons.length, 0);
+
+      // 2. Videos
+      const savedVideos = JSON.parse(localStorage.getItem('customVideos') || '[]');
+      const videoCount = VIDEOS.length + savedVideos.length;
+
+      // 3. Materials
+      const materials = await localforage.getItem('physics_files') || [];
+      const materialCount = materials.length;
+
+      // 4. Tests
+      const tests = JSON.parse(localStorage.getItem('custom_tests') || '[]');
+      const testCount = tests.length;
+
+      setCounts(prev => ({
+        ...prev,
+        lessons: lessonCount,
+        videos: videoCount,
+        materials: materialCount,
+        tests: testCount
+      }));
+    };
+
+    fetchData();
     const timer = setInterval(() => setQuoteIdx(p => (p + 1) % quotes.length), 4000);
     return () => clearInterval(timer);
   }, []);
@@ -57,22 +94,72 @@ const Home = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass-card p-8 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-6"
+        className="glass-card p-6 md:p-10 bg-gradient-to-r from-primary/10 via-white/5 to-accent/10 border border-primary/20"
       >
-        <div className="text-center md:text-left">
-          <h2 className="text-3xl font-heading font-black text-slate-800 dark:text-white leading-tight">
-            {isAdmin ? `Salom, ${user?.name || 'Asilbek'}!` : `Salom, ${user?.name || 'Talaba'}!`}
-          </h2>
-          <p className="text-slate-500 dark:text-slate-300 mt-2 font-medium max-w-xl">
-            {isAdmin 
-              ? 'Siz admin darajasidasiz. Barcha bo\'limlarda ma\'lumotlarni tahrirlash va o\'chirish huquqiga egasiz.' 
-              : 'Bugun fizika olamidan qanday yangi bilimlarni egallashni istaysiz?'}
-          </p>
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="text-center lg:text-left space-y-4">
+            <h2 className="text-3xl md:text-5xl font-heading font-black text-slate-800 dark:text-white leading-tight">
+              {counts.videos} ta video, {counts.lessons} ta dars, {counts.materials} ta qo'llanma
+            </h2>
+            <p className="text-xl md:text-2xl text-primary font-bold">
+              Hozirgi kunda {counts.users}+ kishi ushbu saytdan foydalanmoqda
+            </p>
+            <p className="text-slate-500 dark:text-slate-300 font-medium max-w-xl">
+              {isAdmin 
+                ? 'Admin: Darslarni boshqarish va yangi materiallar qo\'shish imkoniyati mavjud.' 
+                : 'Fizika olamidagi eng sara darsliklar va testlar to\'plami.'}
+            </p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center lg:justify-end gap-3">
+             <StatPill 
+               icon={<RiVideoLine />} 
+               count={counts.videos} 
+               label="Video" 
+               color="bg-red-500"
+               onClick={() => navigate('/videos')}
+             />
+             <StatPill 
+               icon={<RiBookReadLine />} 
+               count={counts.lessons} 
+               label="Dars" 
+               color="bg-primary"
+               onClick={() => navigate('/textbook/bob-1/1')}
+             />
+             <StatPill 
+               icon={<RiFileTextLine />} 
+               count={counts.materials} 
+               label="Qo'llanma" 
+               color="bg-amber-500"
+               onClick={() => navigate('/materials')}
+             />
+             <StatPill 
+               icon={<RiQuestionAnswerLine />} 
+               count={counts.tests} 
+               label="Test" 
+               color="bg-emerald-500"
+               onClick={() => navigate('/tests')}
+             />
+             <StatPill 
+               icon={<RiUser3Line />} 
+               count={counts.users} 
+               label="Kishi" 
+               color="bg-secondary"
+               onClick={() => {}}
+             />
+          </div>
         </div>
-        <div className="flex-shrink-0">
-           <div className="px-6 py-2 bg-primary text-white rounded-full font-bold text-sm shadow-lg shadow-primary/20">
-             {isAdmin ? "ADMIN MODE" : "STUDENT MODE"}
+        
+        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-white/10 flex items-center justify-between">
+           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+             Tizim to'liq barqaror holatda
            </div>
+           {isAdmin && (
+             <div className="flex px-4 py-1.5 bg-primary/10 text-primary rounded-full font-bold text-[10px] tracking-tighter uppercase">
+               Boshqaruv Paneli Faol
+             </div>
+           )}
         </div>
       </motion.div>
 
@@ -100,5 +187,22 @@ const Home = () => {
     </div>
   );
 };
+
+const StatPill = ({ icon, count, label, color, onClick }) => (
+  <motion.button
+    whileHover={{ y: -4, scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={onClick}
+    className="flex items-center gap-3 p-1.5 pl-4 pr-5 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 rounded-2xl shadow-sm hover:shadow-md transition-all group"
+  >
+    <div className={`w-10 h-10 ${color} text-white rounded-xl flex items-center justify-center shadow-lg shadow-${color.split('-')[1]}/20 group-hover:scale-110 transition-transform`}>
+      {React.cloneElement(icon, { size: 20 })}
+    </div>
+    <div className="text-left">
+      <div className="text-lg font-black text-slate-800 dark:text-white leading-none">{count}</div>
+      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label}</div>
+    </div>
+  </motion.button>
+);
 
 export default Home;
