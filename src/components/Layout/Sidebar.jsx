@@ -142,9 +142,18 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                           : 'text-slate-400 hover:bg-white/5 hover:text-white'}
                       `}
                     >
-                      <div className="flex-shrink-0">{item.icon}</div>
-                      {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
-                      {isActive && <motion.div layoutId="glow" className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" />}
+                      {({ isActive }) => (
+                        <>
+                          <div className="flex-shrink-0">{item.icon}</div>
+                          {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
+                          {isActive && (
+                            <motion.div 
+                              layoutId="glow" 
+                              className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" 
+                            />
+                          )}
+                        </>
+                      )}
                     </NavLink>
                   )}
                 </React.Fragment>
