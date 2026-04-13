@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import { useSessionStorage } from '../hooks/useSessionStorage';
 
 const AuthContext = createContext();
 
@@ -21,7 +21,7 @@ const getInitialUsers = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useLocalStorage('currentUser', null);
+  const [user, setUser] = useSessionStorage('currentUser', null);
   const [users, setUsers] = useState(getInitialUsers);
 
   const saveUsers = (updatedUsers) => {
