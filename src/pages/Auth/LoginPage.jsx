@@ -18,7 +18,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const result = login(username, password);
+    const result = login(username, password, isAdmin ? 'admin' : 'student');
     if (result.success) {
       if (result.isNew) {
         toast.success(`${t('login_welcome')}, ${username}! ${t('login_welcome_new')}`);
@@ -74,14 +74,14 @@ const LoginPage = () => {
               transition={{ type: "spring", stiffness: 350, damping: 25 }}
             />
             <button 
-              onClick={() => setIsAdmin(false)}
+              onClick={() => { setIsAdmin(false); setUsername(''); setPassword(''); }}
               className={`relative z-10 flex-1 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${!isAdmin ? 'text-primary dark:text-white font-bold' : 'text-slate-500 hover:text-slate-700'}`}
             >
               <FaUserGraduate className={!isAdmin ? "scale-110" : ""} /> 
               <span>{t('login_student')}</span>
             </button>
             <button 
-              onClick={() => setIsAdmin(true)}
+              onClick={() => { setIsAdmin(true); setUsername(''); setPassword(''); }}
               className={`relative z-10 flex-1 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${isAdmin ? 'text-primary dark:text-white font-bold' : 'text-slate-500 hover:text-slate-700'}`}
             >
               <FaUserShield className={isAdmin ? "scale-110" : ""} /> 
@@ -95,7 +95,7 @@ const LoginPage = () => {
               <div className="relative">
                 <RiUserLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
                 <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
-                  className="premium-input" placeholder={t('login_name_placeholder')} />
+                  className="premium-input" placeholder={t('login_name_placeholder')} autoComplete="off" />
               </div>
             </motion.div>
 
@@ -104,7 +104,7 @@ const LoginPage = () => {
               <div className="relative">
                 <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="premium-input" placeholder={t('login_pass_placeholder')} />
+                  className="premium-input" placeholder={t('login_pass_placeholder')} autoComplete="off" />
               </div>
             </motion.div>
 

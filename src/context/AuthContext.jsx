@@ -37,24 +37,35 @@ export const AuthProvider = ({ children }) => {
     return true;
   };
 
-  const login = (username, password) => {
+  const login = (username, password, targetRole = 'student') => {
     if (!username.trim() || !password.trim()) {
       return { success: false, message: "Ism va parolni kiriting" };
     }
 
-    // Admin tekshiruvi (case-sensitive)
-    if (username === ADMIN_USER.username && password === ADMIN_USER.password) {
-      setUser(ADMIN_USER);
-      return { success: true };
+    const trimmedUsername = username.trim();
+
+    // Admin tekshiruvi (faqat admin tabida bo'lganda)
+    if (targetRole === 'admin') {
+      if (trimmedUsername === ADMIN_USER.username && password === ADMIN_USER.password) {
+        setUser(ADMIN_USER);
+        return { success: true };
+      } else {
+        return { success: false, message: "Admin ma'lumotlari noto'g'ri!" };
+      }
     }
 
-    // Mavjud foydalanuvchini qidirish (harflar farqi yo'q)
+    // Foydalanuvchi tekshiruvi (student tabida)
+    // Agarda student tabida admin ismi yozilsa, uni admin sifatida KIRGIZMAYLIK
+    if (trimmedUsername === ADMIN_USER.username) {
+      return { success: false, message: "Bu ism faqat admin bo'limi uchun!" };
+    }
+
+    // Mavjud foydalanuvchini qidirish
     const existingUser = users.find(
-      u => u.username.toLowerCase() === username.toLowerCase() && u.role !== 'admin'
+      u => u.username.toLowerCase() === trimmedUsername.toLowerCase() && u.role !== 'admin'
     );
 
     if (existingUser) {
-      // Foydalanuvchi mavjud — parolni tekshir
       if (existingUser.password === password) {
         setUser(existingUser);
         return { success: true };
@@ -62,11 +73,11 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: "Parol noto'g'ri! Avval kirgan parolingizni ishlating." };
       }
     } else {
-      // Yangi foydalanuvchi — avtomatik ro'yxatdan o'tkazish
+      // Yangi foydalanuvchi
       const newUser = {
-        username: username.trim(),
+        username: trimmedUsername,
         password: password,
-        name: username.trim(),
+        name: trimmedUsername,
         role: "student",
         createdAt: new Date().toISOString()
       };
