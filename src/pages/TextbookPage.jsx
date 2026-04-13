@@ -9,7 +9,8 @@ import {
   RiFunctions,
   RiCompass3Line,
   RiPulseLine,
-  RiFlashlightLine
+  RiFlashlightLine,
+  RiVideoLine
 } from 'react-icons/ri';
 import { getCombinedTextbooks, getVideoForLesson } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
@@ -135,16 +136,23 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Central Theory Board */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="glass-card p-8 md:p-12 space-y-8 bg-white/[0.03] border-white/5 shadow-2xl relative overflow-hidden group">
-              {/* Subtle background glow */}
-              <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-neon-purple/5 blur-[100px] pointer-events-none group-hover:bg-neon-purple/10 transition-colors" />
-              
-              <div className="relative prose prose-invert prose-slate max-w-none">
-                <p className="leading-[1.8] text-slate-300 font-medium whitespace-pre-wrap tracking-wide text-lg text-justify">
-                  {academicContent.theory}
-                </p>
+              <div className="glass-card p-8 md:p-12 space-y-8 bg-white/[0.03] border-white/5 shadow-2xl relative overflow-hidden group min-h-[400px] flex items-center justify-center">
+                {/* Subtle background glow */}
+                <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-neon-purple/5 blur-[100px] pointer-events-none group-hover:bg-neon-purple/10 transition-colors" />
+                
+                <div className="relative prose prose-invert prose-slate max-w-none w-full">
+                  {!isLessonOne && (!lesson.content?.theory) ? (
+                    <div className="text-center space-y-4 py-10">
+                      <RiPulseLine className="mx-auto text-white/20 animate-pulse" size={48} />
+                      <p className="text-slate-500 font-black uppercase tracking-[0.2em] text-xs">Nazariya tasdiqlanish jarayonida...</p>
+                    </div>
+                  ) : (
+                    <p className="leading-[1.8] text-slate-300 font-medium whitespace-pre-wrap tracking-wide text-lg text-justify">
+                      {academicContent.theory}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
           </div>
 
           {/* Side Info Panel */}
@@ -184,12 +192,16 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
             </motion.section>
 
             {/* Multimedia Integration */}
-            {lessonVideo && (
+            {lessonVideo && lessonVideo.videoId ? (
               <motion.section 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-electric-blue animate-pulse" />
+                  <span className="text-[10px] font-black uppercase text-electric-blue tracking-widest">Media Resurs</span>
+                </div>
                 <a 
                   href={`https://www.youtube.com/watch?v=${lessonVideo.videoId}`} 
                   target="_blank" 
@@ -208,6 +220,11 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
                   </div>
                 </a>
               </motion.section>
+            ) : (
+              <div className="glass-card p-8 border-dashed border-white/10 opacity-40 flex flex-col items-center gap-3">
+                 <RiVideoLine className="text-slate-600" size={32} />
+                 <span className="text-[10px] font-black uppercase text-slate-600 tracking-widest">Video mavjud emas</span>
+              </div>
             )}
           </div>
         </div>
