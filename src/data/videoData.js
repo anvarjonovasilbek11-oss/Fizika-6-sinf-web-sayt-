@@ -11,7 +11,7 @@ export const VIDEOS = [
   { id: '10', videoId: 'uzQ3ymb161M', title: '10. Qattiq jism, suyuqlik va gazlarning molekulyar tuzilishi', topic: 'Modda holati', category: 'Termodynamika' },
   { id: '11', videoId: 'mumNfuYtu_E', title: '11. Massa va uning birliklari', topic: 'Massa', category: 'Mexanika' },
   { id: '12', videoId: 'SV4XUxDMSY4', title: '12. Zichlik va Arximed kuchi', topic: "Zichlik", category: 'Mexanika' },
-  { id: '13', videoId: 'Xv_lD4U8a9A', title: '13. Tezlik va harakat traektoriyasi', topic: 'Mexanika', category: 'Mexanika' },
+  { id: '13', videoId: 'YcHdThAU9n4', title: '13. Harakat traektoriyasi va koʻchish', topic: 'Mexanika', category: 'Mexanika' },
   { id: '14', videoId: 'pLyZsiz4ud4', title: '14. Inersiya va kuch tushunchasi', topic: 'Mexanika', category: 'Mexanika' },
   { id: '15', videoId: 'vIX3X8AM3nE', title: '15. Ish, quvvat va energiya', topic: 'Energiya', category: 'Mexanika' },
   { id: '16', videoId: 'vx1Nkb_-srE', title: '16. Molekulyar kinetik nazariya asoslari', topic: 'Molekulalar', category: 'Termodynamika' },
