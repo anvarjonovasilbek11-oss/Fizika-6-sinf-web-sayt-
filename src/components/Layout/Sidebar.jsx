@@ -50,13 +50,9 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   };
 
   const handleMainItemClick = (path) => {
-    if (path !== '#darslik') {
-      setOpenDarslik(false);
-      setActiveChapter(null);
-      setCollapsed(true); // Auto-collapse on selection
-      if (typeof window !== 'undefined' && window.innerWidth < 768 && setMobileOpen) {
-        setMobileOpen(false);
-      }
+    setCollapsed(true); // Auto-collapse on selection
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && setMobileOpen) {
+      setMobileOpen(false);
     }
   };
 
@@ -64,7 +60,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
 
   const menuItems = [
     { name: t('nav_home'),      icon: <RiDashboardLine size={24} className={hoverEffect} />, path: "/home" },
-    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} className={hoverEffect} />,     path: "#darslik" },
+    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} className={hoverEffect} />,     path: "/darslik" },
     { name: t('nav_videos'),    icon: <RiVideoLine size={24} className={hoverEffect} />,     path: "/videos" },
     { name: t('nav_materials'), icon: <RiBookOpenLine size={24} className={hoverEffect} />,  path: "/materials" },
     { name: t('nav_tests'),     icon: <RiRobotLine size={24} className={hoverEffect} />,     path: "/tests" },
@@ -115,127 +111,40 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
 
       {/* Main Nav */}
       <nav className="flex-1 py-10 px-4 space-y-3 overflow-y-auto no-scrollbar relative">
-        <AnimatePresence mode="wait">
-          {!openDarslik || !isExpanded ? (
-            <motion.div 
-              key="main-nav"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-3"
+        <motion.div 
+          key="main-nav"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          className="space-y-3"
+        >
+          {menuItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={() => handleMainItemClick(item.path)}
+              className={({ isActive }) => `
+                flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative
+                ${isActive 
+                  ? 'bg-gradient-to-r from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue' 
+                  : 'text-slate-400 hover:bg-white/5 hover:text-white'}
+              `}
             >
-              {menuItems.map((item) => (
-                <React.Fragment key={item.path}>
-                  {item.path === '#darslik' ? (
-                    <button
-                      onClick={() => setOpenDarslik(true)}
-                      className="w-full group flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 text-slate-400 hover:bg-white/5 hover:text-white"
-                    >
-                      <div className="flex-shrink-0">{item.icon}</div>
-                      {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
-                    </button>
-                  ) : (
-                    <NavLink
-                      to={item.path}
-                      onClick={() => handleMainItemClick(item.path)}
-                      className={({ isActive }) => `
-                        flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative
-                        ${isActive 
-                          ? 'bg-gradient-to-r from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue' 
-                          : 'text-slate-400 hover:bg-white/5 hover:text-white'}
-                      `}
-                    >
-                      {({ isActive }) => (
-                        <>
-                          <div className="flex-shrink-0">{item.icon}</div>
-                          {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
-                          {isActive && (
-                            <motion.div 
-                              layoutId="glow" 
-                              className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" 
-                            />
-                          )}
-                        </>
-                      )}
-                    </NavLink>
+              {({ isActive }) => (
+                <>
+                  <div className="flex-shrink-0">{item.icon}</div>
+                  {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
+                  {isActive && (
+                    <motion.div 
+                      layoutId="glow" 
+                      className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" 
+                    />
                   )}
-                </React.Fragment>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="textbook-nav"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="space-y-6"
-            >
-              <button
-                onClick={() => setOpenDarslik(false)}
-                className="flex items-center gap-3 text-slate-400 hover:text-white transition-all px-4 py-2 group mb-4"
-              >
-                <RiArrowLeftSLine size={24} className="group-hover:-translate-x-1 transition-transform" />
-                <span className="text-xs font-black uppercase tracking-widest">{t('nav_back')}</span>
-              </button>
-
-              <div className="space-y-3 px-2">
-                {textbooks.map((chapter, idx) => (
-                  <div key={chapter.id} className="space-y-2">
-                    <button
-                      onClick={() => handleChapterClick(chapter.id)}
-                      className={`
-                        w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300
-                        ${activeChapter === chapter.id
-                          ? 'bg-neon-purple/20 text-neon-purple border border-neon-purple/30 shadow-[0_0_20px_rgba(188,19,254,0.2)]' 
-                          : 'text-slate-400 hover:bg-white/5 hover:text-white'}
-                      `}
-                    >
-                      <span className="text-left text-xs font-black uppercase tracking-tight break-all leading-tight">
-                        {chapter?.id?.startsWith('bob-') ? t(`chap_${idx + 1}`) : chapter?.title}
-                      </span>
-                      <RiArrowDownSLine 
-                        size={20} 
-                        className={`transition-transform duration-300 flex-shrink-0 ${activeChapter === chapter.id ? 'rotate-180' : ''}`} 
-                      />
-                    </button>
-
-                    <AnimatePresence>
-                      {activeChapter === chapter.id && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden bg-white/5 rounded-2xl p-1 shadow-inner"
-                        >
-                          <div className="space-y-1 p-2">
-                            {chapter.lessons.map((lesson) => (
-                              <NavLink
-                                key={lesson.id}
-                                to={`/textbook/${chapter.id}/${lesson.id}`}
-                                onClick={() => {
-                                  setCollapsed(true); // Auto-collapse on selection
-                                  if (mobileOpen && setMobileOpen) setMobileOpen(false);
-                                }}
-                                className={({ isActive }) => `
-                                  block w-full text-left py-3 px-4 rounded-xl text-[11px] font-bold transition-all
-                                  ${isActive 
-                                    ? 'bg-white/10 text-white border-l-2 border-neon-purple' 
-                                    : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}
-                                `}
-                              >
-                                {t(`lesson_${lesson.id}`) !== `lesson_${lesson.id}` ? t(`lesson_${lesson.id}`) : lesson.title}
-                              </NavLink>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </motion.div>
       </nav>
 
       {/* Footer Nav */}
