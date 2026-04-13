@@ -75,9 +75,9 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   return (
     <aside 
       className={`
-        fixed inset-y-0 left-0 z-50 bg-[#070b14]/98 backdrop-blur-3xl
-        border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden
-        transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 bg-white dark:bg-[#070b14]/98 backdrop-blur-3xl
+        border-r border-slate-200 dark:border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.05)] dark:shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden
+        transition-all duration-300 ease-in-out
         ${mobileOpen 
           ? 'translate-x-0 w-[280px] sm:w-[300px]' 
           : '-translate-x-full md:translate-x-0'}
@@ -93,10 +93,10 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           </div>
           {(isExpanded || mobileOpen) && (
             <div>
-              <span className="text-2xl font-black text-white tracking-tighter uppercase block leading-none">
+              <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase block leading-none transition-colors">
                 Fizika <span className="text-electric-blue drop-shadow-[0_0_8px_rgba(0,210,255,0.4)]">6</span>
               </span>
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1 block">Universe</span>
+              <span className="text-[10px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-[0.3em] mt-1 block">Universe</span>
             </div>
           )}
         </div>
@@ -123,8 +123,8 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                 className={({ isActive }) => `
                   flex items-center gap-4 p-4 rounded-2xl group relative transition-all duration-300
                   ${isActive 
-                    ? 'bg-gradient-to-r from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue shadow-[lg_rgba(0,210,255,0.1)]' 
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white'}
+                    ? 'bg-gradient-to-r from-electric-blue/20 dark:from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue shadow-[lg_rgba(0,210,255,0.1)]' 
+                    : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}
                 `}
               >
                 {({ isActive }) => (

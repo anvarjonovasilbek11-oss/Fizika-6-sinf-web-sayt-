@@ -21,9 +21,9 @@ const MainLayout = ({ children }) => {
   const isOverlayOpen = mobileOpen;
 
   return (
-    <div className="flex bg-[#070b14] h-[100dvh] transition-colors relative overflow-hidden font-ui">
+    <div className="flex bg-light-bg dark:bg-space-dark text-slate-900 dark:text-white min-h-[100dvh] transition-colors relative overflow-hidden font-ui">
       {/* High-Tech Background Elements */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20 pointer-events-none">
         <svg className="absolute top-0 right-0 w-[800px] h-[800px] text-neon-purple/20 blur-2xl animate-pulse-glow" viewBox="0 0 200 200">
            <circle cx="150" cy="50" r="80" fill="currentColor" />
         </svg>
@@ -37,7 +37,7 @@ const MainLayout = ({ children }) => {
       {/* Universal Drawer Overlay (Only for Mobile) */}
       {isOverlayOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-md"
+          className="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 backdrop-blur-sm dark:backdrop-blur-md transition-all duration-300"
           onClick={() => setMobileOpen(false)}
         />
       )}

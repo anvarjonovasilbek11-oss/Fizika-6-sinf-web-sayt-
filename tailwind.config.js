@@ -11,17 +11,19 @@ export default {
         primary: "#6C63FF",
         secondary: "#FF6584",
         accent: "#43CBFF",
-        'space-dark': "#0f172a",
+        'space-dark': "#070b14",
+        'space-card': "#131b2d",
         'neon-purple': "#bc13fe",
         'electric-blue': "#00d2ff",
         dark: {
-          bg: "#0F172A",
-          surface: "#1E293B",
-          card: "#243047",
+          bg: "#070b14",
+          surface: "#131b2d",
+          card: "#1e293b",
         },
         light: {
           bg: "#F8FAFC",
           surface: "#FFFFFF",
+          card: "#F1F5F9",
         }
       },
       fontFamily: {

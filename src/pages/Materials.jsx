@@ -135,36 +135,37 @@ const Materials = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <h1 className="text-3xl font-heading text-gradient uppercase tracking-tighter">{t('materials_title')}</h1>
+  return (
+    <div className="space-y-8 transition-colors">
+      <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">{t('materials_title')}</h1>
 
       {/* Upload Zone */}
       {isAdmin && (
         <div 
           {...getRootProps()} 
           className={`
-            glass-card p-12 border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center
+            glass-card p-12 border-2 border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center bg-white dark:bg-white/5
             ${isDragActive ? 'border-primary bg-primary/5' : 'border-slate-300 dark:border-white/10 hover:border-primary/50'}
           `}
         >
           <input {...getInputProps()} />
           <motion.div animate={{ y: isDragActive ? -10 : 0 }}
-            className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
-            <RiUploadCloud2Line size={32} />
+            className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4 shadow-inner">
+            <RiUploadCloud2Line size={40} />
           </motion.div>
-          <h3 className="text-xl font-black text-slate-900 dark:text-white">{t('materials_drop')}</h3>
-          <p className="text-slate-700 dark:text-slate-200 mt-2 font-bold">{t('materials_drop_sub')}</p>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 font-black">{t('materials_drop_size')} (Max: 50MB)</p>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('materials_drop')}</h3>
+          <p className="text-slate-700 dark:text-slate-200 mt-2 font-black italic">{t('materials_drop_sub')}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-black uppercase tracking-widest">{t('materials_drop_size')} (Max: 50MB)</p>
         </div>
       )}
 
       {uploading && (
-        <div className="w-full bg-slate-200 dark:bg-white/5 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-slate-200 dark:bg-white/10 rounded-full h-3 overflow-hidden shadow-inner">
           <motion.div 
             initial={{ width: 0 }}
             animate={{ width: '100%' }}
             transition={{ duration: 1.5 }}
-            className="bg-primary h-full"
+            className="bg-primary h-full shadow-[0_0_15px_rgba(108,99,255,0.5)]"
           />
         </div>
       )}
@@ -178,30 +179,31 @@ const Materials = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-card p-4 group"
+              className="glass-card p-6 group bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-lg hover:shadow-2xl transition-all"
             >
               <div className="flex items-start gap-4">
-                <div className="text-4xl">
+                <div className="text-5xl drop-shadow-lg">
                   <FileIcon type={file.type} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-black text-slate-900 dark:text-white truncate text-lg" title={file.name}>
                     {file.name}
                   </h4>
-                  <p className="text-sm font-black text-slate-600 dark:text-slate-400 mt-1 uppercase tracking-tighter">{file.size} • {file.date}</p>
+                  <p className="text-xs font-black text-slate-600 dark:text-slate-500 mt-1 uppercase tracking-widest">{file.size} • {file.date}</p>
                 </div>
               </div>
-              <div className="mt-6 flex items-center gap-2">
+              <div className="mt-8 flex items-center gap-3">
                 <button 
                   onClick={() => downloadFile(file)}
-                  className="flex-1 btn-primary py-2 text-sm flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
                 >
-                  <RiDownload2Line /> {t('materials_download')}
+                  <RiDownload2Line size={18} /> {t('materials_download')}
                 </button>
                 {isAdmin && (
                   <button 
                     onClick={() => deleteFile(file.id)}
-                    className="p-2 bg-secondary/10 text-secondary rounded-xl hover:bg-secondary/20 transition-colors"
+                    className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500/20 transition-colors shadow-sm"
+                    title={t('quiz_toast_delete')}
                   >
                     <RiDeleteBin7Line size={20} />
                   </button>
@@ -216,21 +218,21 @@ const Materials = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center py-20 glass-card max-w-2xl mx-auto"
+          className="text-center py-24 glass-card bg-white dark:bg-white/5 border-dashed border-slate-300 dark:border-white/5 max-w-2xl mx-auto shadow-inner"
         >
-          <div className="w-24 h-24 bg-electric-blue/10 text-electric-blue rounded-full flex items-center justify-center mb-6 mx-auto">
+          <div className="w-24 h-24 bg-electric-blue/10 dark:bg-electric-blue/5 text-electric-blue rounded-full flex items-center justify-center mb-6 mx-auto shadow-sm">
             <RiFileTextLine size={48} />
           </div>
-          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tighter">
             {t('materials_empty_title') || "Hozircha qo'llanmalar yo'q"}
           </h3>
-          <p className="text-slate-700 dark:text-slate-300 font-bold max-w-md mx-auto px-6">
+          <p className="text-slate-700 dark:text-slate-400 font-bold max-w-md mx-auto px-6">
             {isAdmin 
               ? "Tepada joylashgan yuklash bo'limi orqali yangi PDF yoki DOCX materiallarni platformaga qo'shishingiz mumkin."
               : "Ustozingiz tez orada yangi o'quv qo'llanmalari va foydali materiallarni joylaydi. Sahifani kuzatib boring!"}
           </p>
           {!isAdmin && (
-            <div className="mt-8 flex justify-center gap-4">
+            <div className="mt-10 flex justify-center gap-4">
                <div className="w-2 h-2 rounded-full bg-electric-blue animate-bounce [animation-delay:-0.3s]" />
                <div className="w-2 h-2 rounded-full bg-electric-blue animate-bounce [animation-delay:-0.15s]" />
                <div className="w-2 h-2 rounded-full bg-electric-blue animate-bounce" />

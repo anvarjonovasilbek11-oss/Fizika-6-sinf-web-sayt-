@@ -23,112 +23,112 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      <h1 className="text-3xl font-heading text-gradient">Sozlamalar</h1>
+    <div className="max-w-5xl mx-auto space-y-12 pb-20 transition-colors uppercase">
+      <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter transition-colors">Sozlamalar</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         {/* Left Column: Profile */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="glass-card p-8">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-primary/10 text-primary rounded-xl">
-                <RiUserLine size={24} />
+        <div className="lg:col-span-2 space-y-8">
+          <div className="glass-card p-8 md:p-10 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xl">
+            <div className="flex items-center gap-5 mb-10">
+              <div className="p-4 bg-primary/10 text-primary rounded-2xl shadow-inner">
+                <RiUserLine size={28} />
               </div>
-              <h2 className="text-xl font-bold text-slate-800 dark:text-white">Profil sozlamalari</h2>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Profil sozlamalari</h2>
             </div>
 
-            <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Ism va familiya</label>
+            <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase">Ism va familiya</label>
                 <input 
                   type="text" 
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full p-3 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
+                  className="w-full p-4 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:text-white font-bold transition-all shadow-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Username (O'zgartirib bo'lmaydi)</label>
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase">Username (O'zgartirib bo'lmaydi)</label>
                 <input 
                   type="text" 
                   value={user?.username} 
                   disabled
-                  className="w-full p-3 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-slate-400 cursor-not-allowed"
+                  className="w-full p-4 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-400 cursor-not-allowed font-bold"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Yosh</label>
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase">Yosh</label>
                 <input 
                   type="number" 
                   value={formData.age}
                   onChange={(e) => setFormData({...formData, age: e.target.value})}
-                  className="w-full p-3 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
+                  className="w-full p-4 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:text-white font-bold transition-all shadow-sm"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-500 dark:text-slate-300">Sinf</label>
+              <div className="space-y-3">
+                <label className="text-xs font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase">Sinf</label>
                 <input 
                   type="text" 
                   value={formData.class}
                   onChange={(e) => setFormData({...formData, class: e.target.value})}
-                  className="w-full p-3 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
+                  className="w-full p-4 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:text-white font-bold transition-all shadow-sm"
                 />
               </div>
-              <div className="md:col-span-2 pt-4">
-                <button type="submit" className="btn-primary w-full md:w-auto">
+              <div className="md:col-span-2 pt-6">
+                <button type="submit" className="w-full md:w-auto px-10 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                   O'zgarishlarni saqlash
                 </button>
               </div>
             </form>
           </div>
 
-          <div className="glass-card p-8 bg-red-50/50 dark:bg-red-500/5 border-red-100 dark:border-red-500/10">
-            <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-4 flex items-center gap-2">
-              <RiShieldLine /> Xavfsizlik
+          <div className="glass-card p-10 bg-red-500/5 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10 shadow-inner">
+            <h3 className="text-xl font-black text-red-600 dark:text-red-400 mb-6 flex items-center gap-3">
+              <RiShieldLine size={24} /> XAVFSIZLIK
             </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Parolni o'zgartirish yoki hisobni o'chirish.</p>
-            <button className="px-6 py-2 border border-red-200 text-red-600 rounded-xl hover:bg-red-50 transition-colors bg-white dark:bg-transparent">
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-8 font-bold uppercase tracking-tight">Parolni o'zgartirish yoki hisobni o'chirish orqali xavfsizlikni ta'minlang.</p>
+            <button className="px-8 py-3 border-2 border-red-500/20 text-red-600 dark:text-red-400 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-red-600 hover:text-white transition-all shadow-sm">
               Parolni yangilash
             </button>
           </div>
         </div>
 
         {/* Right Column: App Settings */}
-        <div className="space-y-6">
-          <div className="glass-card p-8">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-primary/10 text-primary rounded-xl">
-                <RiSettingsLine size={24} />
+        <div className="space-y-8">
+          <div className="glass-card p-8 md:p-10 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xl">
+            <div className="flex items-center gap-5 mb-10">
+              <div className="p-4 bg-primary/10 text-primary rounded-2xl shadow-inner">
+                <RiSettingsLine size={28} />
               </div>
-              <h2 className="text-xl font-bold text-slate-800 dark:text-white">Ilova sozlamalari</h2>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Ilova sozlamalari</h2>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-slate-800 dark:text-white">Qorong'u rejim</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-300">Ko'zni himoya qilish uchun</p>
+                  <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight">Qorong'u rejim</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Ko'zni himoya qilish uchun</p>
                 </div>
                 <button 
                   onClick={toggleTheme}
                   className={`
-                    w-14 h-8 rounded-full p-1 transition-colors relative
+                    w-16 h-9 rounded-full p-1.5 transition-all relative shadow-inner
                     ${theme === 'dark' ? 'bg-primary' : 'bg-slate-300'}
                   `}
                 >
                   <motion.div 
-                    animate={{ x: theme === 'dark' ? 24 : 0 }}
+                    animate={{ x: theme === 'dark' ? 28 : 0 }}
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md"
+                    className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg"
                   >
                     {theme === 'dark' ? <RiMoonLine size={14} className="text-primary" /> : <RiSunLine size={14} className="text-amber-500" />}
                   </motion.div>
                 </button>
               </div>
 
-              <div className="pt-6 border-t border-slate-200 dark:border-white/10">
-                <p className="text-sm font-bold text-slate-800 dark:text-white mb-2">Til</p>
-                <select className="w-full p-3 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-xl outline-none dark:text-white">
+              <div className="pt-8 border-t border-slate-200 dark:border-white/10">
+                <p className="text-xs font-black text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-widest">LOYIHA TILI</p>
+                <select className="w-full p-4 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:text-white font-bold transition-all shadow-sm">
                   <option>Uzbek (Lotin)</option>
                   <option disabled>Uzbek (Kirill) - Tez kunda</option>
                   <option disabled>English - Tez kunda</option>
@@ -137,13 +137,16 @@ const Settings = () => {
             </div>
           </div>
 
-          <div className="glass-card p-8">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-              <RiInformationLine className="text-primary" /> Ilova haqida
+          <div className="glass-card p-8 md:p-10 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-5 text-primary">
+              <RiInformationLine size={120} />
+            </div>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 relative z-10">
+              <RiInformationLine className="text-primary" size={24} /> ILOVA HAQIDA
             </h3>
-            <div className="space-y-2 text-sm text-slate-500 dark:text-slate-300">
-              <p>Talqin: 1.0.0</p>
-              <p>Dasturchi: Antigravity AI</p>
+            <div className="space-y-3 text-xs text-slate-600 dark:text-slate-400 font-black uppercase tracking-[0.2em] relative z-10">
+              <p>Talqin: <span className="text-primary">1.0.0</span></p>
+              <p>Dasturchi: <span className="text-primary">Antigravity AI</span></p>
               <p>© 2026 FizikaWorld Team</p>
             </div>
           </div>

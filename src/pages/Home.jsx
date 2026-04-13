@@ -93,9 +93,9 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="space-y-12 pb-20 relative">
+    <div className="space-y-12 pb-20 relative transition-colors">
       {/* High-Tech Announcement Ticker */}
-      <div className="absolute top-0 left-0 right-0 h-10 bg-primary/10 overflow-hidden border-y border-primary/10 flex items-center z-20">
+      <div className="absolute top-0 left-0 right-0 h-10 bg-primary/10 dark:bg-primary/5 overflow-hidden border-y border-primary/20 dark:border-primary/10 flex items-center z-20">
         <div className="whitespace-nowrap animate-[marquee_20s_linear_infinite] flex items-center gap-12 text-xs font-black text-primary uppercase tracking-[0.2em]">
           <span>• Tizim yangilandi: Mobil versiya optimallashdi</span>
           <span>• Yangi AI testlar qo'shildi</span>
@@ -105,7 +105,7 @@ const Home = () => {
       </div>
 
       {/* High-Tech Anti-Gravity Hero Section */}
-      <section className="relative min-h-[550px] flex flex-col items-center justify-center text-center p-8 overflow-hidden rounded-[40px] glass-card border-white/5 bg-[#0a1224]/40 mt-14 mb-12 science-grid">
+      <section className="relative min-h-[550px] flex flex-col items-center justify-center text-center p-8 overflow-hidden rounded-[40px] glass-card border-slate-200 dark:border-white/5 bg-white/40 dark:bg-[#0a1224]/40 mt-14 mb-12 science-grid">
         {/* Floating Interactive Background Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
@@ -139,30 +139,30 @@ const Home = () => {
           <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
              <div className="absolute inset-0 border-4 border-dashed border-electric-blue/20 rounded-full animate-spin-slow" />
              <div className="absolute inset-4 border-2 border-dashed border-neon-purple/20 rounded-full animate-reverse-spin" />
-             <RiBookReadLine size={80} className="text-white drop-shadow-[0_0_20px_rgba(0,210,255,0.8)]" />
+             <RiBookReadLine size={80} className="text-slate-900 dark:text-white drop-shadow-[0_0_20px_rgba(0,210,255,0.8)]" />
           </div>
         </motion.div>
 
         <div className="relative z-20 max-w-4xl space-y-8 px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-4xl md:text-7xl font-heading font-black leading-tight tracking-tight">
+            <h1 className="text-4xl md:text-7xl font-heading font-black leading-tight tracking-tight text-slate-900 dark:text-white">
               6-sinf Fizika <br />
-              <span className="text-glow-blue text-white">Dunyosiga</span> <span className="text-glow-purple text-neon-purple italic">Xush Kelibsiz!</span>
+              <span className="text-glow-blue text-electric-blue dark:text-white">Dunyosiga</span> <span className="text-glow-purple text-neon-purple italic">Xush Kelibsiz!</span>
             </h1>
           </motion.div>
           
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="text-lg md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto">
+            className="text-lg md:text-2xl text-slate-600 dark:text-slate-400 font-bold max-w-2xl mx-auto">
             Interaktiv tajribalar, AI testlar va video darslar orqali fizika olamini biz bilan kashf eting.
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <button onClick={() => navigate('/textbook/bob-1/1')} className="btn-hero-primary group">
-              <RiBookReadLine size={24} className="group-hover:rotate-12 transition-transform" /> {t('btn_start')}
+            <button onClick={() => navigate('/textbook/bob-1/1')} className="px-10 py-4 bg-primary text-white rounded-2xl font-black text-lg tracking-wide shadow-xl hover:scale-105 transition-all flex items-center gap-3">
+              <RiBookReadLine size={24} /> {t('btn_start')}
             </button>
-            <button onClick={() => navigate('/tests')} className="btn-hero-secondary group">
-              <RiQuestionAnswerLine size={24} className="group-hover:scale-110 transition-transform" /> {t('btn_test')}
+            <button onClick={() => navigate('/tests')} className="px-10 py-4 border-2 border-primary/30 text-primary dark:text-electric-blue rounded-2xl font-black text-lg tracking-wide hover:bg-primary/10 transition-all flex items-center gap-3">
+              <RiQuestionAnswerLine size={24} /> {t('btn_test')}
             </button>
           </motion.div>
         </div>
@@ -175,7 +175,7 @@ const Home = () => {
            label="Video darslar" 
            description="Mavzuga oid videolar"
            accentColor="text-red-500"
-           glowColor="group-hover:shadow-red-500/20"
+           glowColor="group-hover:shadow-red-500/10"
            onClick={() => navigate('/videos')}
          />
          <ActionCard 
@@ -184,7 +184,7 @@ const Home = () => {
            label="Nazariy darslar" 
            description="Kitobdagi barcha boblar"
            accentColor="text-electric-blue"
-           glowColor="group-hover:shadow-electric-blue/20"
+           glowColor="group-hover:shadow-electric-blue/10"
            onClick={() => navigate('/textbook/bob-1/1')}
          />
          <ActionCard 
@@ -193,7 +193,7 @@ const Home = () => {
            label="O'quv qo'llanmalar" 
            description="PDF, Word va Zip fayllar"
            accentColor="text-amber-500"
-           glowColor="group-hover:shadow-amber-500/20"
+           glowColor="group-hover:shadow-amber-500/10"
            onClick={() => navigate('/materials')}
          />
          <ActionCard 
@@ -202,28 +202,28 @@ const Home = () => {
            label="Obunachilar" 
            description="Ro'yxatdan o'tganlar"
            accentColor="text-neon-purple"
-           glowColor="group-hover:shadow-neon-purple/20"
+           glowColor="group-hover:shadow-neon-purple/10"
            onClick={() => {}}
          />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="glass-card p-8 flex flex-col justify-center min-h-[200px]">
+        <div className="glass-card bg-white dark:bg-white/5 p-8 flex flex-col justify-center min-h-[200px] border border-slate-200 dark:border-white/5 shadow-2xl">
           <RiDoubleQuotesL className="text-4xl text-primary/30 mb-4" />
           <motion.div key={quoteIdx} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-            <p className="text-xl italic font-medium text-slate-800 dark:text-white">"{quotes[quoteIdx].text}"</p>
-            <p className="mt-4 text-primary font-bold">— {quotes[quoteIdx].author}</p>
+            <p className="text-xl italic font-black text-slate-900 dark:text-white">"{quotes[quoteIdx].text}"</p>
+            <p className="mt-4 text-primary font-black uppercase tracking-widest">— {quotes[quoteIdx].author}</p>
           </motion.div>
         </div>
 
-        <div className="glass-card p-8 space-y-4 premium-glow">
-          <h3 className="text-xl font-heading font-black text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-3">
+        <div className="glass-card bg-white dark:bg-white/5 p-8 space-y-4 border border-slate-200 dark:border-white/5 shadow-2xl">
+          <h3 className="text-xl font-heading font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-3">
              <div className="w-2 h-8 bg-primary rounded-full" /> Kun Fakt
           </h3>
-          <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 italic text-lg text-slate-700 dark:text-slate-200 font-medium">
+          <div className="p-6 bg-primary/5 dark:bg-primary/10 rounded-2xl border border-primary/20 dark:border-primary/10 italic text-lg text-slate-800 dark:text-slate-100 font-bold">
              "{getDailyFact()}"
           </div>
-          <p className="text-xs text-slate-500 uppercase font-bold tracking-widest text-right">— Bilasizmi?</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-black tracking-[0.2em] text-right">— Bilasizmi?</p>
         </div>
       </div>
     </div>
@@ -237,14 +237,14 @@ const ActionCard = ({ icon, count, label, description, accentColor, glowColor, o
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 border-white/5 hover:border-white/20 hover:bg-white/10 ${glowColor} shadow-2xl`}
+    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 border-slate-100 dark:border-white/5 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 ${glowColor} shadow-xl hover:shadow-2xl`}
   >
-    <div className={`w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${accentColor}`}>
+    <div className={`w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${accentColor}`}>
       {React.cloneElement(icon, { size: 40 })}
     </div>
-    <div className="text-4xl font-black text-white mb-2 tracking-tighter">{count}</div>
-    <div className="text-sm font-black text-white/90 mb-2 uppercase tracking-widest">{label}</div>
-    <div className="text-xs font-medium text-slate-500 uppercase tracking-tighter leading-relaxed">{description}</div>
+    <div className="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{count}</div>
+    <div className="text-sm font-black text-slate-700 dark:text-white/90 mb-2 uppercase tracking-widest">{label}</div>
+    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight leading-relaxed">{description}</div>
     
     <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-current to-transparent ${accentColor}`} />
   </motion.button>
