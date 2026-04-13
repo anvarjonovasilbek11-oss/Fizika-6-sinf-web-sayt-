@@ -116,27 +116,28 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       <nav className="flex-1 py-10 px-4 space-y-3 overflow-y-auto no-scrollbar relative">
         <div className="space-y-3">
           {menuItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={() => handleMainItemClick(item.path)}
-              className={({ isActive }) => `
-                flex items-center gap-4 p-4 rounded-2xl group relative
-                ${isActive 
-                  ? 'bg-gradient-to-r from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue' 
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white'}
-              `}
-            >
-              {({ isActive }) => (
-                <>
-                  <div className="flex-shrink-0">{item.icon}</div>
-                  {(isExpanded || mobileOpen) && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
-                  {isActive && (
-                    <div className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" />
-                  )}
-                </>
-              )}
-            </NavLink>
+            <motion.div key={item.path} whileHover={{ x: 5 }} whileTap={{ scale: 0.95 }}>
+              <NavLink
+                to={item.path}
+                onClick={() => handleMainItemClick(item.path)}
+                className={({ isActive }) => `
+                  flex items-center gap-4 p-4 rounded-2xl group relative transition-all duration-300
+                  ${isActive 
+                    ? 'bg-gradient-to-r from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue shadow-[lg_rgba(0,210,255,0.1)]' 
+                    : 'text-slate-400 hover:bg-white/5 hover:text-white'}
+                `}
+              >
+                {({ isActive }) => (
+                  <>
+                    <div className="flex-shrink-0">{item.icon}</div>
+                    {(isExpanded || mobileOpen) && <span className="font-black text-xs sm:text-sm uppercase tracking-widest">{item.name}</span>}
+                    {isActive && (
+                      <div className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" />
+                    )}
+                  </>
+                )}
+              </NavLink>
+            </motion.div>
           ))}
         </div>
       </nav>

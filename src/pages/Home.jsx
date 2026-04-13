@@ -23,6 +23,21 @@ const Home = () => {
     { text: "Menga tayanch nuqtasini bering, men Yer yuzini qimirlataman.", author: "Arximed" },
   ];
 
+  const dailyFacts = [
+    "Yorug'lik tezligi sekundiga 300 000 km ni tashkil etadi.",
+    "Fizika so'zi yunoncha 'physikos' – 'tabiat haqida' degan ma'noni anglatadi.",
+    "Ovoz bo'shliqda (vakuumni) tarqalmaydi.",
+    "Yerning tortishish kuchi bo'lmaganda, biz uchib ketgan bo'lardik.",
+    "Eng kichik zarracha – bu kvarklardir.",
+    "Suv 100 darajada qaynaydi, lekin tog' tepasida pastroq temperaturada ham qaynashi mumkin.",
+    "Inson tanasi ham ozgina elektr energiyasi ishlab chiqaradi."
+  ];
+
+  const getDailyFact = () => {
+    const day = new Date().getDate();
+    return dailyFacts[day % dailyFacts.length];
+  };
+
   const [counts, setCounts] = useState({
     videos: 0,
     lessons: 0,
@@ -78,11 +93,24 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="space-y-12 pb-20">
+    <div className="space-y-12 pb-20 relative">
+      {/* High-Tech Announcement Ticker */}
+      <div className="absolute top-0 left-0 right-0 h-10 bg-primary/10 overflow-hidden border-y border-primary/10 flex items-center z-20">
+        <div className="whitespace-nowrap animate-[marquee_20s_linear_infinite] flex items-center gap-12 text-xs font-black text-primary uppercase tracking-[0.2em]">
+          <span>• Tizim yangilandi: Mobil versiya optimallashdi</span>
+          <span>• Yangi AI testlar qo'shildi</span>
+          <span>• Fizika 6-sinf darsliklari to'liq kiritildi</span>
+          <span>• Sayt endi yanada tezroq ishlaydi</span>
+        </div>
+      </div>
+
       {/* High-Tech Anti-Gravity Hero Section */}
-      <section className="relative min-h-[500px] flex flex-col items-center justify-center text-center p-8 overflow-hidden rounded-[40px] glass-card border-white/5 bg-white/5 mb-12">
+      <section className="relative min-h-[550px] flex flex-col items-center justify-center text-center p-8 overflow-hidden rounded-[40px] glass-card border-white/5 bg-[#0a1224]/40 mt-14 mb-12 science-grid">
         {/* Floating Interactive Background Elements */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
+           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+           <div className="absolute top-0 left-0 w-full h-full bg-scan animate-scan opacity-10 pointer-events-none" 
+                style={{ background: 'linear-gradient(to bottom, transparent, #00d2ff, transparent)', height: '10%' }} />
            <motion.div 
              animate={{ 
                y: [0, -30, 0],
@@ -188,16 +216,14 @@ const Home = () => {
           </motion.div>
         </div>
 
-        <div className="glass-card p-8 space-y-4">
-          <h3 className="text-xl font-heading font-bold text-slate-800 dark:text-white">{t('site_features')}</h3>
-          <ul className="space-y-3">
-            {[t('feature_1'), t('feature_2'), t('feature_3'), t('feature_4')].map((feature, i) => (
-              <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-3 text-slate-600 dark:text-slate-200">
-                {feature}
-              </motion.li>
-            ))}
-          </ul>
+        <div className="glass-card p-8 space-y-4 premium-glow">
+          <h3 className="text-xl font-heading font-black text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-3">
+             <div className="w-2 h-8 bg-primary rounded-full" /> Kun Fakt
+          </h3>
+          <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 italic text-lg text-slate-700 dark:text-slate-200 font-medium">
+             "{getDailyFact()}"
+          </div>
+          <p className="text-xs text-slate-500 uppercase font-bold tracking-widest text-right">— Bilasizmi?</p>
         </div>
       </div>
     </div>
