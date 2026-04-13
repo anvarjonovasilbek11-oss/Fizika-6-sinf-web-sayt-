@@ -270,7 +270,7 @@ const StudentQuiz = () => {
                      <input 
                        type="text" value={topic} onChange={(e) => setTopic(e.target.value)}
                        placeholder="Mavzu: Masalan, 1-bob. Fizika nimani o'rgatadi?"
-                       className="flex-1 px-6 py-5 rounded-2xl border-2 border-transparent focus:border-primary outline-none dark:bg-dark-surface font-bold text-lg"
+                       className="flex-1 px-6 py-5 rounded-2xl border-2 border-transparent focus:border-primary outline-none dark:bg-dark-surface dark:text-white font-bold text-lg"
                      />
                      <button disabled={loading} className="px-10 py-5 bg-primary text-white rounded-2xl font-black shadow-xl disabled:opacity-50 min-w-[180px]">
                         {loading ? "Tuzilmoqda..." : "Yaratish"}
@@ -297,7 +297,7 @@ const StudentQuiz = () => {
             {pendingQuizzes.map((q) => (
               <div key={q.id} className="glass-card p-10 border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 transition-all flex flex-col justify-between">
                 <div>
-                  <h4 className="text-2xl font-black mb-4 leading-tight">{q.topic}</h4>
+                  <h4 className="text-2xl font-black mb-4 leading-tight text-slate-800 dark:text-white">{q.topic}</h4>
                   <div className="flex items-center gap-3 text-slate-400 font-bold">
                      <RiHistoryLine /> 10 ta savol 
                   </div>
@@ -342,7 +342,7 @@ const StudentQuiz = () => {
                   <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
                      <RiCheckLine size={120} />
                   </div>
-                  <h4 className="text-2xl font-black mb-8 group-hover:text-primary transition-colors leading-tight">{q.topic}</h4>
+                  <h4 className="text-2xl font-black mb-8 text-slate-800 dark:text-white group-hover:text-primary transition-colors leading-tight">{q.topic}</h4>
                   <div>
                     <button onClick={() => startQuiz(q)} className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black shadow-2xl hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all mb-4">
                        TESTNI BOSHLASH
