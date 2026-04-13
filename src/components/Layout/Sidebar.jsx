@@ -75,13 +75,15 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   return (
     <aside 
       className={`
-        h-screen z-50 bg-[#070b14]/90 backdrop-blur-3xl
-        border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden flex-shrink-0
+        fixed inset-y-0 left-0 z-50 bg-[#070b14]/98 backdrop-blur-3xl
+        border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden
+        transition-transform duration-300 ease-in-out
         ${mobileOpen 
-          ? 'fixed inset-y-0 left-0 translate-x-0' 
-          : 'fixed inset-y-0 left-0 -translate-x-full md:sticky md:top-0 md:translate-x-0'}
-        ${isExpanded ? 'w-[300px]' : 'w-[80px]'}
+          ? 'translate-x-0 w-full' 
+          : '-translate-x-full md:translate-x-0'}
+        ${!mobileOpen && (isExpanded ? 'md:w-[300px]' : 'md:w-[80px]')}
       `}
+      style={{ height: '100dvh' }}
     >
       {/* Logo Section */}
       <div className="h-24 flex items-center justify-between px-7 border-b border-white/5 flex-shrink-0">
@@ -89,7 +91,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           <div className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]">
             <RiPulseLine size={38} />
           </div>
-          {isExpanded && (
+          {(isExpanded || mobileOpen) && (
             <div>
               <span className="text-2xl font-black text-white tracking-tighter uppercase block leading-none">
                 Fizika <span className="text-electric-blue drop-shadow-[0_0_8px_rgba(0,210,255,0.4)]">6</span>
@@ -98,6 +100,16 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
             </div>
           )}
         </div>
+
+        {/* Mobile Close Button */}
+        {mobileOpen && (
+          <button 
+            onClick={() => setMobileOpen(false)}
+            className="p-2 bg-white/5 rounded-xl text-slate-400 hover:text-white md:hidden"
+          >
+            <RiCloseLine size={24} />
+          </button>
+        )}
       </div>
 
       {/* Main Nav */}
@@ -118,7 +130,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
               {({ isActive }) => (
                 <>
                   <div className="flex-shrink-0">{item.icon}</div>
-                  {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
+                  {(isExpanded || mobileOpen) && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
                   {isActive && (
                     <div className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" />
                   )}
@@ -136,7 +148,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           className="w-full flex items-center gap-4 p-4 rounded-2xl text-secondary hover:bg-secondary/10 hover:text-red-400 group"
         >
           <RiLogoutBoxRLine size={24} className="group-hover:translate-x-1" />
-          {isExpanded && <span className="font-black text-xs uppercase tracking-widest">{t('nav_logout')}</span>}
+          {(isExpanded || mobileOpen) && <span className="font-black text-xs uppercase tracking-widest">{t('nav_logout')}</span>}
         </button>
       </div>
     </aside>
