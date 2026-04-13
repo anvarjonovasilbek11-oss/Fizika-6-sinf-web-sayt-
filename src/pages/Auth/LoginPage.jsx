@@ -41,7 +41,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full bg-space-dark flex items-center justify-center overflow-y-auto font-ui bg-space-mesh p-4 py-12">
+    <div className="relative min-h-[100dvh] w-full bg-space-dark flex flex-col items-center overflow-y-auto font-ui bg-space-mesh px-4 py-8 sm:py-20 no-scrollbar">
       {/* Immersive Space Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-neon-purple/10 blur-[120px] animate-pulse-glow" />
