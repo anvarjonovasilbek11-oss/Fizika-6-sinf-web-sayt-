@@ -166,15 +166,6 @@ const LoginPage = () => {
       </motion.div>
     </div>
   );
-};
-          
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-            className="text-center mt-10 text-[10px] text-slate-500 uppercase tracking-[0.3em] font-black">
-            {t('login_footer')}
-          </motion.p>
-        </div>
-      </motion.div>
-    </div>
   );
 };
 
