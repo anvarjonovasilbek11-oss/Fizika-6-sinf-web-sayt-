@@ -41,7 +41,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-light-bg dark:bg-space-dark flex items-center justify-center font-ui px-4 py-8 md:py-12 transition-colors duration-500 overflow-hidden">
+    <div className="relative min-h-screen w-full bg-light-bg dark:bg-space-dark flex items-center justify-center font-ui px-4 py-8 md:py-12 transition-colors duration-500">
       {/* Immersive Background Features */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-neon-purple/20 dark:bg-neon-purple/10 blur-[120px] animate-pulse-glow" />
@@ -58,7 +58,7 @@ const LoginPage = () => {
         {/* Animated Outer Border Glow */}
         <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple rounded-[2.5rem] opacity-20 group-hover:opacity-40 blur-xl transition duration-1000 animate-gradient-slow"></div>
         
-        <div className="relative glass-card p-6 md:p-10 backdrop-blur-3xl border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-2xl bg-white/70 dark:bg-space-dark/60 rounded-[2.5rem] max-h-[90vh] overflow-y-auto purple-scrollbar flex flex-col">
+        <div className="relative glass-card p-6 md:p-10 backdrop-blur-3xl border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-2xl bg-white/70 dark:bg-space-dark/60 rounded-[2.5rem] flex flex-col">
           
           {/* Subtle Inner Highlight */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 dark:via-white/20 to-transparent" />

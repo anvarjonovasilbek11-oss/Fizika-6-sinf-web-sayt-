@@ -21,7 +21,7 @@ const MainLayout = ({ children }) => {
   const isOverlayOpen = mobileOpen;
 
   return (
-    <div className="flex bg-light-bg dark:bg-space-dark text-slate-900 dark:text-white min-h-[100dvh] transition-colors relative overflow-hidden font-ui">
+    <div className="flex bg-light-bg dark:bg-space-dark text-slate-900 dark:text-white min-h-screen transition-colors relative font-ui">
       {/* High-Tech Background Elements */}
       <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20 pointer-events-none">
         <svg className="absolute top-0 right-0 w-[800px] h-[800px] text-neon-purple/20 blur-2xl animate-pulse-glow" viewBox="0 0 200 200">
@@ -43,7 +43,7 @@ const MainLayout = ({ children }) => {
       )}
       
       <div className={`
-        flex-1 flex flex-col min-w-0 w-full relative z-10 transition-all duration-300 h-full
+        flex-1 flex flex-col min-w-0 w-full relative z-10 transition-all duration-300
         pt-16 ${collapsed ? 'md:pl-[80px]' : 'md:pl-[300px]'}
       `}>
         <Navbar 
@@ -53,7 +53,7 @@ const MainLayout = ({ children }) => {
           setMobileOpen={setMobileOpen} 
         />
         
-        <main className="flex-1 overflow-y-auto relative p-6 md:p-10 no-scrollbar">
+        <main className="flex-1 relative p-6 md:p-10">
           {children}
         </main>
       </div>
