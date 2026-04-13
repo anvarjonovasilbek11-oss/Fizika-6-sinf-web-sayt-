@@ -178,8 +178,8 @@ const StudentQuiz = () => {
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center text-xl font-black">{currentIdx + 1}</div>
               <div>
-                <h3 className="font-black text-slate-800 dark:text-white truncate max-w-[250px]">{activeQuiz.topic}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Savol</p>
+                <h3 className="font-black text-slate-900 dark:text-white truncate max-w-[250px]">{activeQuiz.topic}</h3>
+                <p className="text-xs text-slate-600 dark:text-slate-300 uppercase font-black">Savol</p>
               </div>
             </div>
             <div className="text-right">
@@ -210,8 +210,8 @@ const StudentQuiz = () => {
                   }
                 `}
               >
-                <span className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${selectedAnswer === key ? (key === q.correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300'}`}>{key}</span>
-                <span className="text-lg font-bold flex-1 text-slate-700 dark:text-white">{value}</span>
+                <span className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${selectedAnswer === key ? (key === q.correct ? 'bg-green-500 text-white' : 'bg-red-500 text-white') : 'bg-slate-200 dark:bg-white/20 text-slate-700 dark:text-white'}`}>{key}</span>
+                <span className="text-lg font-black flex-1 text-slate-800 dark:text-white">{value}</span>
               </button>
             ))}
           </div>
@@ -252,10 +252,10 @@ const StudentQuiz = () => {
         <div className="inline-flex items-center gap-3 px-6 py-2 bg-primary/10 text-primary rounded-full font-black text-sm uppercase tracking-widest">
            <RiShieldCheckLine /> 6-Sinf Fizika Testlari
         </div>
-        <h1 className="text-5xl md:text-7xl font-black text-slate-800 dark:text-white leading-tight">
+        <h1 className="text-5xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight">
           O'z Bilimingizni <br/> <span className="text-primary italic underline underline-offset-8">Sinab Ko'ring!</span>
         </h1>
-        <p className="text-xl text-slate-400 font-bold max-w-2xl mx-auto">
+        <p className="text-xl text-slate-600 dark:text-slate-200 font-black max-w-2xl mx-auto">
            Har bir bobni mustahkamlash uchun maxsus tuzilgan 10 talik testlar jamlanmasi.
         </p>
         

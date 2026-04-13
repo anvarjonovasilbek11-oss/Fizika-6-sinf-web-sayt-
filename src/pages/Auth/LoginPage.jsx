@@ -41,7 +41,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-space-dark flex items-center justify-center overflow-hidden font-ui bg-space-mesh p-4">
+    <div className="relative min-h-[100dvh] w-full bg-space-dark flex items-center justify-center overflow-y-auto font-ui bg-space-mesh p-4 py-12">
       {/* Immersive Space Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-neon-purple/10 blur-[120px] animate-pulse-glow" />
@@ -52,11 +52,11 @@ const LoginPage = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="z-10 w-full max-w-lg relative group"
+        className="z-10 w-full max-w-lg relative group my-auto"
       >
         <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple rounded-[32px] opacity-20 blur-xl group-hover:opacity-40 transition duration-1000"></div>
         
-        <div className="relative glass-card p-12 backdrop-blur-3xl border-white/10 shadow-2xl overflow-hidden bg-space-dark/40 rounded-[2.5rem]">
+        <div className="relative glass-card p-8 md:p-12 backdrop-blur-3xl border-white/10 shadow-2xl overflow-visible bg-space-dark/40 rounded-[2.5rem]">
           {/* Subtle Inner Glow */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 

@@ -109,10 +109,29 @@ const Materials = () => {
   };
 
   const downloadFile = (file) => {
-    const link = document.createElement('a');
-    link.href = file.data;
-    link.download = file.name;
-    link.click();
+    try {
+      // Base64 dan Blob-ga o'tkazish (Mobil qurilmalarda xavfsizroq yuklash uchun)
+      const byteString = atob(file.data.split(',')[1]);
+      const mimeString = file.data.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ab], { type: mimeString });
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Yuklab olishda xatolik:', err);
+      toast.error('Faylni yuklab bo\'lmadi.');
+    }
   };
 
   return (
@@ -166,10 +185,10 @@ const Materials = () => {
                   <FileIcon type={file.type} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-slate-800 dark:text-white truncate" title={file.name}>
+                  <h4 className="font-black text-slate-800 dark:text-white truncate text-lg" title={file.name}>
                     {file.name}
                   </h4>
-                  <p className="text-xs text-slate-500 dark:text-slate-300 mt-1">{file.size} • {file.date}</p>
+                  <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1">{file.size} • {file.date}</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center gap-2">

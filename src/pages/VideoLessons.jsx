@@ -49,9 +49,9 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
         {categoryLabel}
       </div>
     </div>
-    <div className="p-4">
-      <h3 className="text-lg font-bold text-slate-800 dark:text-white line-clamp-2">{video.title}</h3>
-      <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">{video.topic}</p>
+    <div className="p-5">
+      <h3 className="text-xl font-black text-slate-800 dark:text-white line-clamp-2 md:group-hover:text-primary transition-colors duration-300 mb-2">{video.title}</h3>
+      <p className="text-sm font-bold text-slate-500 dark:text-slate-400">{video.topic}</p>
     </div>
   </motion.div>
 );
