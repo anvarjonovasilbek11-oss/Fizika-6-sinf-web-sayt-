@@ -168,6 +168,10 @@ const StudentQuiz = () => {
     }, 2000);
   };
 
+  if (activeQuiz && !showResults) {
+    const q = activeQuiz.questions[currentIdx];
+    const progress = Math.round(((currentIdx + 1) / activeQuiz.questions.length) * 100);
+
     return (
       <div className="max-w-3xl mx-auto space-y-6 pb-20 px-4 mt-8 transition-colors">
         <div className="glass-card p-6 border-primary/20 bg-white/40 dark:bg-primary/5 shadow-xl">

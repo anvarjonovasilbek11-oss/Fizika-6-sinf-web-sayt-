@@ -135,7 +135,6 @@ const Materials = () => {
   };
 
   return (
-  return (
     <div className="space-y-8 transition-colors">
       <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">{t('materials_title')}</h1>
 

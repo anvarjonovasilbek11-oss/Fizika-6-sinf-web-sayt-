@@ -177,6 +177,9 @@ const LoginPage = () => {
             {t('login_footer')}
           </motion.p>
         </div>
+      </motion.div>
+    </div>
+  );
 };
 
 export default LoginPage;

@@ -277,6 +277,9 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
              <RiArrowRightLine className="group-hover:translate-x-2 transition-transform text-primary" size={24} />
            </button>
         </footer>
+      </motion.div>
+    </div>
+  );
 };
 
 export default TextbookPage;
