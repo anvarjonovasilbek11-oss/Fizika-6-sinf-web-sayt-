@@ -75,9 +75,9 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   return (
     <aside 
       className={`
-        fixed inset-y-0 left-0 z-50 bg-white dark:bg-[#070b14]/98 backdrop-blur-3xl
-        border-r border-slate-200 dark:border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.05)] dark:shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden
-        transition-all duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 bg-white dark:bg-[#0a0f1d]/95 backdrop-blur-3xl
+        border-r border-slate-200 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden
+        transition-all duration-500 ease-in-out
         ${mobileOpen 
           ? 'translate-x-0 w-[280px] sm:w-[300px]' 
           : '-translate-x-full md:translate-x-0'}
@@ -143,7 +143,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       </nav>
 
       {/* Footer Nav */}
-      <div className="p-6 border-t border-white/5 bg-[#0a0f1d]/50">
+      <div className="p-6 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-black/20">
         <button 
           onClick={handleLogout}
           className="w-full flex items-center gap-4 p-4 rounded-2xl text-secondary hover:bg-secondary/10 hover:text-red-400 group"

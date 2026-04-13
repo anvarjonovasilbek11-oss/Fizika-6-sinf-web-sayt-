@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { RiSunLine, RiMoonLine, RiMenuFoldLine, RiMenuUnfoldLine, RiArrowDownSLine } from 'react-icons/ri';
+import { RiSunLine, RiMoonLine, RiMenuFoldLine, RiMenuUnfoldLine, RiArrowDownSLine, RiCloseLine, RiMenuLine } from 'react-icons/ri';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FLAG = { uz: '🇺🇿', ru: '🇷🇺', en: '🇬🇧' };
@@ -40,7 +40,7 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           onClick={handleMenuToggle}
           className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors text-slate-600 dark:text-slate-300"
         >
-          {isMenuClosed ? <RiMenuUnfoldLine size={24} /> : <RiMenuFoldLine size={24} />}
+          {mobileOpen ? <RiCloseLine size={24} /> : (collapsed ? <RiMenuUnfoldLine size={24} /> : <RiMenuFoldLine size={24} />)}
         </button>
         <h2 className="text-xl font-heading text-slate-800 dark:text-white hidden md:block">
           {t('greeting')}, <span className="text-primary">{user?.name}</span>!
