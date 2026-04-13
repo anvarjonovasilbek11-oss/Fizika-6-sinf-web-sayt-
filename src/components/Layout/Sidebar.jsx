@@ -15,9 +15,9 @@ import {
   RiCloseLine, 
   RiArrowLeftSLine, 
   RiSave3Line, 
-  RiAddLine
+  RiAddLine,
+  RiAtomLine
 } from 'react-icons/ri';
-import { Atom, Zap, Layout, BookOpen, Layers } from 'lucide-react';
 import { getCombinedTextbooks, saveCustomLesson } from '../../services/textbookService';
 import toast from 'react-hot-toast';
 
@@ -97,7 +97,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
             className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]"
           >
-            <Atom size={34} strokeWidth={2.5} />
+            <RiAtomLine size={38} className="animate-spin-slow" />
           </motion.div>
           {isExpanded && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

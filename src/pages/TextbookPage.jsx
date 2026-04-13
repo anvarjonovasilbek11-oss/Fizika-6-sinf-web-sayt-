@@ -9,9 +9,12 @@ import {
   RiCheckDoubleLine,
   RiExternalLinkLine,
   RiFlaskLine,
-  RiFunctions
+  RiFunctions,
+  RiAtomLine,
+  RiCompass3Line,
+  RiPulseLine,
+  RiZapLine
 } from 'react-icons/ri';
-import { Atom, Compass, Activity, Zap } from 'lucide-react';
 import { getCombinedTextbooks } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
@@ -75,9 +78,9 @@ Bugungi kunda fizika texnikaning asosi hisoblanadi. Siz foydalanadigan smartfonl
     <div className="relative min-h-screen">
       {/* Background Floating Icons */}
       <div className="fixed inset-0 pointer-events-none opacity-10 overflow-hidden z-0">
-        <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><Atom size={120} /></motion.div>
-        <motion.div animate={{ y: [0, 50, 0], rotate: -360 }} transition={{ duration: 20, repeat: Infinity }} className="absolute bottom-[20%] right-[10%] text-electric-blue"><Compass size={140} /></motion.div>
-        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute top-[40%] right-[5%] text-white/20"><Activity size={100} /></motion.div>
+        <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><RiAtomLine size={120} /></motion.div>
+        <motion.div animate={{ y: [0, 50, 0], rotate: -360 }} transition={{ duration: 20, repeat: Infinity }} className="absolute bottom-[20%] right-[10%] text-electric-blue"><RiCompass3Line size={140} /></motion.div>
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute top-[40%] right-[5%] text-white/20"><RiPulseLine size={100} /></motion.div>
       </div>
 
       <motion.div 
@@ -104,7 +107,7 @@ Bugungi kunda fizika texnikaning asosi hisoblanadi. Siz foydalanadigan smartfonl
               animate={{ x: 0, opacity: 1 }}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon-purple/20 border border-neon-purple/30 text-neon-purple text-xs font-black uppercase tracking-[0.3em]"
             >
-              <Zap size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
+              <RiZapLine size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-heading font-black text-white leading-tight">
               {lessonId}-mavzu. <br />

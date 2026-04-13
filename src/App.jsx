@@ -8,15 +8,15 @@ import AdminRoute from './components/Layout/AdminRoute';
 import MainLayout from './components/Layout/MainLayout';
 import { LanguageProvider } from './context/LanguageContext';
 
-// Lazy load pages
-const LoginPage = React.lazy(() => import('./pages/Auth/LoginPage'));
-const Home = React.lazy(() => import('./pages/Home'));
-const VideoLessons = React.lazy(() => import('./pages/VideoLessons'));
-const Materials = React.lazy(() => import('./pages/Materials'));
-const StudentQuiz = React.lazy(() => import('./pages/StudentQuiz'));
-const Settings = React.lazy(() => import('./pages/Settings'));
-const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
-const NotFound = React.lazy(() => import('./pages/NotFound'));
+// Directly import pages to prevent lazy loading hangs
+import LoginPage from './pages/Auth/LoginPage';
+import Home from './pages/Home';
+import VideoLessons from './pages/VideoLessons';
+import Materials from './pages/Materials';
+import StudentQuiz from './pages/StudentQuiz';
+import Settings from './pages/Settings';
+import TextbookPage from './pages/TextbookPage';
+import NotFound from './pages/NotFound';
 
 const App = () => {
   return (
@@ -24,11 +24,6 @@ const App = () => {
       <AuthProvider>
         <LanguageProvider>
         <ThemeProvider>
-          <React.Suspense fallback={
-            <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-dark-bg">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            </div>
-          }>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/home" element={<ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>} />
@@ -41,7 +36,6 @@ const App = () => {
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </React.Suspense>
           <Toaster position="top-right" />
         </ThemeProvider>
         </LanguageProvider>
