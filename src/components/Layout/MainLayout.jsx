@@ -21,7 +21,21 @@ const MainLayout = ({ children }) => {
   const isOverlayOpen = mobileOpen || (!collapsed && typeof window !== 'undefined' && window.innerWidth >= 768);
 
   return (
-    <div className="flex bg-slate-50 dark:bg-dark-bg min-h-screen transition-colors relative">
+    <div className="flex bg-space-dark min-h-screen transition-colors relative overflow-hidden bg-space-mesh font-ui">
+      {/* High-Tech Background Elements */}
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+        <svg className="absolute top-0 right-0 w-[800px] h-[800px] text-neon-purple/20 blur-2xl animate-pulse-glow" viewBox="0 0 200 200">
+           <circle cx="150" cy="50" r="80" fill="currentColor" />
+        </svg>
+        <svg className="absolute bottom-0 left-0 w-[600px] h-[600px] text-electric-blue/10 blur-3xl animate-pulse-glow animation-delay-4000" viewBox="0 0 200 200">
+           <circle cx="50" cy="150" r="100" fill="currentColor" />
+        </svg>
+        
+        {/* Physics Diagram Watermarks */}
+        <div className="absolute top-20 left-10 w-64 h-64 text-white/5 border border-dashed border-white/10 rounded-full animate-spin-slow" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 text-white/5 border border-dashed border-white/10 rounded-full animate-spin-slow animation-delay-2000" />
+      </div>
+
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       
       {/* Universal Drawer Overlay */}
@@ -31,7 +45,7 @@ const MainLayout = ({ children }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 z-40 backdrop-blur-md"
             onClick={() => {
               setMobileOpen(false);
               setCollapsed(true);
@@ -40,7 +54,7 @@ const MainLayout = ({ children }) => {
         )}
       </AnimatePresence>
       
-      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden md:pl-[80px]">
+      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden md:pl-[80px] relative z-10">
         <Navbar 
           collapsed={collapsed} 
           setCollapsed={setCollapsed} 
@@ -48,14 +62,14 @@ const MainLayout = ({ children }) => {
           setMobileOpen={setMobileOpen} 
         />
         
-        <main className="flex-1 p-4 md:p-6 overflow-x-hidden w-full relative z-0">
+        <main className="flex-1 p-4 md:p-8 overflow-x-hidden w-full relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={window.location.pathname}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.02 }}
+              transition={{ duration: 0.4 }}
               className="w-full max-w-7xl mx-auto"
             >
               {children}

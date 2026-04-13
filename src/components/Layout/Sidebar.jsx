@@ -113,18 +113,18 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           : (isExpanded ? 280 : 80),
       }}
       className={`
-        fixed top-0 left-0 h-screen z-50 bg-white dark:bg-dark-surface 
-        border-r border-slate-200 dark:border-white/10 shadow-xl flex flex-col transition-all duration-300 overflow-hidden
+        fixed top-0 left-0 h-screen z-50 bg-space-dark/80 backdrop-blur-2xl
+        border-r border-white/10 shadow-2xl flex flex-col transition-all duration-300 overflow-hidden
         ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}
     >
       {/* Logo */}
-      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-white/10 overflow-hidden flex-shrink-0">
+      <div className="h-20 flex items-center justify-between px-6 border-b border-white/5 overflow-hidden flex-shrink-0">
         <div className="flex items-center gap-3">
           <motion.div 
             animate={{ rotate: 360 }}
-            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-            className="text-primary flex-shrink-0"
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_8px_rgba(0,210,255,0.5)]"
           >
             <Atom size={32} />
           </motion.div>
@@ -132,9 +132,9 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
             <motion.span 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-xl font-heading font-extrabold text-slate-800 dark:text-white whitespace-nowrap"
+              className="text-xl font-heading font-black text-white whitespace-nowrap tracking-tight"
             >
-              Fizika <span className="text-primary">Olam</span>
+              Fizika <span className="text-electric-blue">Dunyo</span>
             </motion.span>
           )}
         </div>
@@ -188,20 +188,20 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                     to={item.path}
                     onClick={() => handleMainItemClick(item.path)}
                     className={({ isActive }) => `
-                      flex items-center gap-4 p-3 rounded-xl transition-all group relative
+                      flex items-center gap-4 p-3 rounded-2xl transition-all group relative
                       ${isActive 
-                        ? 'bg-primary/10 text-primary' 
-                        : 'text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-primary'}
+                        ? 'bg-electric-blue/10 text-electric-blue border-l-4 border-electric-blue' 
+                        : 'text-slate-400 hover:bg-white/5 hover:text-white'}
                     `}
                   >
                     <div className="flex-shrink-0">{item.icon}</div>
                     {isExpanded && (
-                      <span className="font-medium whitespace-nowrap">
+                      <span className="font-bold text-sm tracking-wide whitespace-nowrap">
                         {item.name}
                       </span>
                     )}
                     {collapsed && (
-                      <div className="absolute left-16 bg-dark-bg text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50">
+                      <div className="absolute left-16 bg-space-dark border border-white/20 text-white px-3 py-1.5 rounded-xl text-xs opacity-0 group-hover:opacity-100 shadow-2xl pointer-events-none transition-all duration-300 whitespace-nowrap z-50">
                         {item.name}
                       </div>
                     )}

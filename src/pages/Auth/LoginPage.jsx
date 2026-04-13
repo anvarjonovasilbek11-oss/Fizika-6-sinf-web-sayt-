@@ -38,96 +38,98 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-slate-50 dark:bg-[#080B14] flex items-center justify-center overflow-hidden font-ui">
+    <div className="relative min-h-screen w-full bg-space-dark flex items-center justify-center overflow-hidden font-ui bg-space-mesh">
+      {/* Immersive Space Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[120px] animate-blob" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/20 blur-[120px] animate-blob animation-delay-2000" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] rounded-full bg-accent/20 blur-[100px] animate-blob animation-delay-4000" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-neon-purple/10 blur-[120px] animate-pulse-glow" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-electric-blue/10 blur-[150px] animate-pulse-glow animation-delay-2000" />
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="z-10 w-full max-w-md p-0 mx-4 relative group"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="z-10 w-full max-w-lg p-0 mx-4 relative group"
       >
-        <div className="absolute -inset-[2px] bg-gradient-to-r from-primary via-accent to-secondary rounded-[26px] opacity-30 group-hover:opacity-100 blur-sm transition duration-1000 group-hover:duration-200 animate-gradient-shift"></div>
+        <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple rounded-[32px] opacity-20 blur-xl group-hover:opacity-40 transition duration-1000"></div>
         
-        <div className="relative bg-white/80 dark:bg-dark-card/80 backdrop-blur-2xl p-8 rounded-[24px] shadow-2xl border border-white/20 dark:border-white/5">
-          <div className="text-center mb-8">
+        <div className="relative glass-card p-10 backdrop-blur-3xl border-white/10 shadow-2xl overflow-hidden bg-space-dark/40">
+          {/* Subtle Inner Glow */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+          <div className="text-center mb-10">
             <motion.div 
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              className="inline-flex items-center justify-center p-4 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl mb-4 text-primary relative"
+              whileHover={{ scale: 1.1, rotate: 15 }}
+              className="inline-flex items-center justify-center p-5 bg-white/5 rounded-3xl mb-6 text-electric-blue relative border border-white/10"
             >
-              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full animate-pulse" />
-              <Atom size={48} className="relative z-10" />
+              <div className="absolute inset-0 bg-electric-blue/20 blur-2xl rounded-full animate-pulse" />
+              <Atom size={56} className="relative z-10 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]" />
             </motion.div>
             
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <h1 className="text-3xl font-heading font-extrabold flex items-center justify-center gap-2 text-center">
-                <span className="text-gradient">{t('login_title')}</span>
-                <Sparkles size={20} className="text-accent animate-pulse" />
+              <h1 className="text-4xl font-heading font-black tracking-tight text-white mb-3 uppercase">
+                {t('login_title')}
               </h1>
-              <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">{t('login_sub')}</p>
+              <p className="text-slate-400 font-medium tracking-wide">{t('login_sub')}</p>
             </motion.div>
           </div>
 
           {/* Tab Switcher */}
-          <div className="flex bg-slate-100 dark:bg-[#151D2F] p-1.5 rounded-2xl mb-8 relative shadow-inner">
+          <div className="flex bg-white/5 p-2 rounded-2xl mb-10 relative border border-white/5">
             <motion.div
-              className="absolute h-[calc(100%-12px)] w-[calc(50%-6px)] bg-white dark:bg-primary shadow-lg rounded-xl z-0"
-              animate={{ x: isAdmin ? '100.5%' : '0%' }}
-              transition={{ type: "spring", stiffness: 350, damping: 25 }}
+              className="absolute h-[calc(100%-16px)] w-[calc(50%-8px)] bg-gradient-to-r from-neon-purple to-neon-purple/80 shadow-[0_0_20px_rgba(188,19,254,0.4)] rounded-xl z-0"
+              animate={{ x: isAdmin ? '100%' : '0%' }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
             />
             <button 
               onClick={() => { setIsAdmin(false); setUsername(''); setPassword(''); }}
-              className={`relative z-10 flex-1 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${!isAdmin ? 'text-primary dark:text-white font-bold' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`relative z-10 flex-1 py-3 flex items-center justify-center gap-3 rounded-xl transition-all duration-300 ${!isAdmin ? 'text-white font-black' : 'text-slate-500 hover:text-slate-300'}`}
             >
-              <FaUserGraduate className={!isAdmin ? "scale-110" : ""} /> 
-              <span>{t('login_student')}</span>
+              <FaUserGraduate className={!isAdmin ? "scale-110" : ""} size={20} /> 
+              <span className="uppercase text-xs tracking-widest">{t('login_student')}</span>
             </button>
             <button 
               onClick={() => { setIsAdmin(true); setUsername(''); setPassword(''); }}
-              className={`relative z-10 flex-1 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all duration-300 ${isAdmin ? 'text-primary dark:text-white font-bold' : 'text-slate-500 hover:text-slate-700'}`}
+              className={`relative z-10 flex-1 py-3 flex items-center justify-center gap-3 rounded-xl transition-all duration-300 ${isAdmin ? 'text-white font-black' : 'text-slate-500 hover:text-slate-300'}`}
             >
-              <FaUserShield className={isAdmin ? "scale-110" : ""} /> 
-              <span>{t('login_admin')}</span>
+              <FaUserShield className={isAdmin ? "scale-110" : ""} size={20} /> 
+              <span className="uppercase text-xs tracking-widest">{t('login_admin')}</span>
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="relative">
-              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2 ml-1">{t('login_name_label')}</label>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-2">
+              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">{t('login_name_label')}</label>
               <div className="relative">
-                <RiUserLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
+                <RiUserLine className="absolute left-5 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10" />
                 <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
-                  className="premium-input" placeholder={t('login_name_placeholder')} autoComplete="off" />
+                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-14" placeholder={t('login_name_placeholder')} autoComplete="off" />
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="relative">
-              <label className="block text-sm font-semibold text-slate-600 dark:text-slate-400 mb-2 ml-1">{t('login_pass_label')}</label>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="space-y-2">
+              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">{t('login_pass_label')}</label>
               <div className="relative">
-                <RiLockPasswordLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
+                <RiLockPasswordLine className="absolute left-5 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10" />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="premium-input" placeholder={t('login_pass_placeholder')} autoComplete="off" />
+                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-14" placeholder={t('login_pass_placeholder')} autoComplete="off" />
               </div>
             </motion.div>
 
             <motion.button 
-              whileHover={{ scale: 1.02, boxShadow: "0 20px 25px -5px rgb(108 99 255 / 0.3)" }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-accent text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-primary/20 hover:brightness-110 transition-all flex items-center justify-center gap-2"
+              className="w-full btn-hero-primary py-5 rounded-2xl flex items-center justify-center gap-3 mt-4"
             >
-              {t('login_btn')}
-              <RiApps2Line />
+              <span className="uppercase tracking-[0.2em] font-black">{t('login_btn')}</span>
+              <RiApps2Line size={24} />
             </motion.button>
           </form>
           
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-            className="text-center mt-8 text-xs text-slate-400 uppercase tracking-widest font-bold">
+            className="text-center mt-10 text-[10px] text-slate-500 uppercase tracking-[0.3em] font-black">
             {t('login_footer')}
           </motion.p>
         </div>

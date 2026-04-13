@@ -69,48 +69,77 @@ const Home = () => {
 
   return (
     <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-accent p-8 md:p-12 text-white shadow-2xl shadow-primary/20">
-        <div className="relative z-10 max-w-2xl">
-          <motion.h1 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-            className="text-4xl md:text-5xl font-heading font-extrabold leading-tight">
-            {t('hero_title')}
-          </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className="mt-4 text-lg text-white/80">
+    <div className="space-y-12 pb-20">
+      {/* High-Tech Anti-Gravity Hero Section */}
+      <section className="relative min-h-[500px] flex flex-col items-center justify-center text-center p-8 overflow-hidden rounded-[40px] glass-card border-white/5 bg-white/5 mb-12">
+        {/* Floating Interactive Background Elements */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+           <motion.div 
+             animate={{ 
+               y: [0, -30, 0],
+               rotate: [0, 5, 0]
+             }} 
+             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+             className="absolute top-1/4 left-1/4 w-64 h-64 bg-neon-purple/20 blur-[100px] rounded-full"
+           />
+           <motion.div 
+             animate={{ 
+               y: [0, 40, 0],
+               rotate: [0, -10, 0]
+             }} 
+             transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+             className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-electric-blue/20 blur-[120px] rounded-full"
+           />
+        </div>
+
+        {/* The Central Floating Atom/Scene */}
+        <motion.div 
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="relative z-10 mb-12 group cursor-pointer"
+        >
+          <div className="absolute inset-0 bg-electric-blue/30 blur-3xl rounded-full scale-75 group-hover:scale-110 transition-transform duration-700" />
+          <svg width="240" height="240" viewBox="0 0 200 200" className="relative drop-shadow-[0_0_20px_rgba(0,210,255,0.8)]">
+             <motion.circle cx="100" cy="100" r="15" fill="#fff" className="animate-pulse" />
+             <motion.ellipse cx="100" cy="100" rx="80" ry="30" fill="none" stroke="#bc13fe" strokeWidth="2" strokeDasharray="10 5" animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} />
+             <motion.ellipse cx="100" cy="100" rx="30" ry="80" fill="none" stroke="#00d2ff" strokeWidth="2" strokeDasharray="10 5" animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} />
+             <motion.ellipse cx="100" cy="100" rx="60" ry="60" fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.2" animate={{ rotate: 180 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} />
+          </svg>
+        </motion.div>
+
+        <div className="relative z-20 max-w-4xl space-y-8">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <h1 className="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight">
+              6-sinf Fizika <br />
+              <span className="text-glow-blue text-white">Dunyosiga</span> <span className="text-glow-purple text-neon-purple italic">Xush Kelibsiz!</span>
+            </h1>
+          </motion.div>
+          
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            className="text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto">
             {t('hero_sub')}
           </motion.p>
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-            className="mt-8 flex flex-col sm:flex-row gap-4">
-            <button onClick={() => navigate('/textbook/bob-1/1')}
-              className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-slate-50 transition-colors shadow-lg w-full sm:w-auto">
-              {t('btn_start')}
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <button onClick={() => navigate('/textbook/bob-1/1')} className="btn-hero-primary">
+              <RiBookReadLine size={24} /> {t('btn_start')}
             </button>
-            <button onClick={() => navigate('/tests')}
-              className="bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3 rounded-xl font-bold hover:bg-white/30 transition-colors w-full sm:w-auto">
-              {t('btn_test')}
+            <button onClick={() => navigate('/tests')} className="btn-hero-secondary">
+              <RiQuestionAnswerLine size={24} /> {t('btn_test')}
             </button>
           </motion.div>
         </div>
-        <motion.div animate={{ rotate: 360, scale: [1, 1.1, 1] }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl p-20 border-[40px] border-white/5" />
       </section>
 
-      <div className="text-center py-4">
-        <h2 className="text-3xl md:text-5xl font-heading font-black text-slate-800 dark:text-white leading-tight">
-          Fizika Olamiga Xush Kelibsiz!
-        </h2>
-        <p className="text-lg text-slate-500 dark:text-slate-400 mt-2 font-medium">
-          Saytning bugungi holati va umumiy statistikasi
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
          <ActionCard 
            icon={<RiVideoLine />} 
            count={counts.videos} 
            label="Video darslar" 
            description="Mavzuga oid videolar"
-           color="bg-red-500"
+           accentColor="text-red-500"
+           glowColor="group-hover:shadow-red-500/20"
            onClick={() => navigate('/videos')}
          />
          <ActionCard 
@@ -118,7 +147,8 @@ const Home = () => {
            count={counts.lessons} 
            label="Nazariy darslar" 
            description="Kitobdagi barcha boblar"
-           color="bg-primary"
+           accentColor="text-electric-blue"
+           glowColor="group-hover:shadow-electric-blue/20"
            onClick={() => navigate('/textbook/bob-1/1')}
          />
          <ActionCard 
@@ -126,7 +156,8 @@ const Home = () => {
            count={counts.materials} 
            label="O'quv qo'llanmalar" 
            description="PDF, Word va Zip fayllar"
-           color="bg-amber-500"
+           accentColor="text-amber-500"
+           glowColor="group-hover:shadow-amber-500/20"
            onClick={() => navigate('/materials')}
          />
          <ActionCard 
@@ -134,7 +165,8 @@ const Home = () => {
            count={counts.users} 
            label="Obunachilar" 
            description="Ro'yxatdan o'tganlar"
-           color="bg-indigo-500"
+           accentColor="text-neon-purple"
+           glowColor="group-hover:shadow-neon-purple/20"
            onClick={() => {}}
          />
       </div>
@@ -164,21 +196,23 @@ const Home = () => {
   );
 };
 
-const ActionCard = ({ icon, count, label, description, color, onClick }) => (
+const ActionCard = ({ icon, count, label, description, accentColor, glowColor, onClick }) => (
   <motion.button
-    whileHover={{ y: -8, scale: 1.02 }}
+    whileHover={{ y: -12, scale: 1.02 }}
     whileTap={{ scale: 0.98 }}
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className="glass-card p-6 flex flex-col items-center text-center group hover:bg-white/50 dark:hover:bg-white/10 transition-colors border-primary/5 hover:border-primary/20"
+    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 border-white/5 hover:border-white/20 hover:bg-white/10 ${glowColor} shadow-2xl`}
   >
-    <div className={`w-16 h-16 ${color} text-white rounded-2xl flex items-center justify-center shadow-2xl shadow-${color.split('-')[1]}/30 mb-4 group-hover:scale-110 transition-transform`}>
-      {React.cloneElement(icon, { size: 32 })}
+    <div className={`w-20 h-20 bg-white/5 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${accentColor}`}>
+      {React.cloneElement(icon, { size: 40 })}
     </div>
-    <div className="text-3xl font-black text-slate-800 dark:text-white mb-1">{count}</div>
-    <div className="text-sm font-bold text-slate-900 dark:text-white mb-2">{label}</div>
-    <div className="text-[11px] font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider">{description}</div>
+    <div className="text-4xl font-black text-white mb-2 tracking-tighter">{count}</div>
+    <div className="text-sm font-black text-white/90 mb-2 uppercase tracking-widest">{label}</div>
+    <div className="text-xs font-medium text-slate-500 uppercase tracking-tighter leading-relaxed">{description}</div>
+    
+    <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-current to-transparent ${accentColor}`} />
   </motion.button>
 );
 
