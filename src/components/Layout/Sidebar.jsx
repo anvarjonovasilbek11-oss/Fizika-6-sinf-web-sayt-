@@ -50,13 +50,13 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   };
 
   const handleMainItemClick = (path) => {
-    setCollapsed(true); // Auto-collapse on selection
-    if (typeof window !== 'undefined' && window.innerWidth < 768 && setMobileOpen) {
-      setMobileOpen(false);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setCollapsed(true);
+      if (setMobileOpen) setMobileOpen(false);
     }
   };
 
-  const hoverEffect = "active:scale-95 group-hover:scale-110 transition-all duration-300";
+  const hoverEffect = "active:scale-95 group-hover:text-white transition-colors";
 
   const menuItems = [
     { name: t('nav_home'),      icon: <RiDashboardLine size={24} className={hoverEffect} />, path: "/home" },
@@ -73,58 +73,43 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   };
 
   return (
-    <motion.aside 
-      initial={false}
-      onMouseEnter={() => setCollapsed(false)}
-      onMouseLeave={() => setCollapsed(true)}
-      animate={{ 
-        width: typeof window !== 'undefined' && window.innerWidth < 768 
-          ? 300 
-          : (isExpanded ? 300 : 80),
-      }}
+    <aside 
       className={`
-        fixed top-0 left-0 h-screen z-50 bg-[#070b14]/90 backdrop-blur-3xl
-        border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col transition-all duration-500 overflow-hidden
-        ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        h-screen z-50 bg-[#070b14]/90 backdrop-blur-3xl
+        border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden flex-shrink-0
+        ${mobileOpen 
+          ? 'fixed inset-y-0 left-0 translate-x-0' 
+          : 'fixed inset-y-0 left-0 -translate-x-full md:sticky md:top-0 md:translate-x-0'}
+        ${isExpanded ? 'w-[300px]' : 'w-[80px]'}
       `}
     >
       {/* Logo Section */}
       <div className="h-24 flex items-center justify-between px-7 border-b border-white/5 flex-shrink-0">
         <div className="flex items-center gap-4">
-          <motion.div 
-            animate={{ rotate: [0, 90, 180, 270, 360] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-            className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]"
-          >
-            <RiPulseLine size={38} className="animate-spin-slow" />
-          </motion.div>
+          <div className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]">
+            <RiPulseLine size={38} />
+          </div>
           {isExpanded && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <div>
               <span className="text-2xl font-black text-white tracking-tighter uppercase block leading-none">
                 Fizika <span className="text-electric-blue drop-shadow-[0_0_8px_rgba(0,210,255,0.4)]">6</span>
               </span>
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1 block">Universe</span>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
 
       {/* Main Nav */}
       <nav className="flex-1 py-10 px-4 space-y-3 overflow-y-auto no-scrollbar relative">
-        <motion.div 
-          key="main-nav"
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          className="space-y-3"
-        >
+        <div className="space-y-3">
           {menuItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={() => handleMainItemClick(item.path)}
               className={({ isActive }) => `
-                flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative
+                flex items-center gap-4 p-4 rounded-2xl group relative
                 ${isActive 
                   ? 'bg-gradient-to-r from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue' 
                   : 'text-slate-400 hover:bg-white/5 hover:text-white'}
@@ -135,29 +120,26 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                   <div className="flex-shrink-0">{item.icon}</div>
                   {isExpanded && <span className="font-bold text-sm uppercase tracking-widest">{item.name}</span>}
                   {isActive && (
-                    <motion.div 
-                      layoutId="glow" 
-                      className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" 
-                    />
+                    <div className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" />
                   )}
                 </>
               )}
             </NavLink>
           ))}
-        </motion.div>
+        </div>
       </nav>
 
       {/* Footer Nav */}
       <div className="p-6 border-t border-white/5 bg-[#0a0f1d]/50">
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-4 p-4 rounded-2xl text-secondary hover:bg-secondary/10 hover:text-red-400 transition-all group"
+          className="w-full flex items-center gap-4 p-4 rounded-2xl text-secondary hover:bg-secondary/10 hover:text-red-400 group"
         >
-          <RiLogoutBoxRLine size={24} className="group-hover:translate-x-1 transition-transform" />
+          <RiLogoutBoxRLine size={24} className="group-hover:translate-x-1" />
           {isExpanded && <span className="font-black text-xs uppercase tracking-widest">{t('nav_logout')}</span>}
         </button>
       </div>
-    </motion.aside>
+    </aside>
   );
 };
 

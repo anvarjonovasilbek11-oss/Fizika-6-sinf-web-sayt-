@@ -18,7 +18,7 @@ const MainLayout = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isOverlayOpen = mobileOpen || (!collapsed && typeof window !== 'undefined' && window.innerWidth >= 768);
+  const isOverlayOpen = mobileOpen;
 
   return (
     <div className="flex bg-space-dark min-h-screen transition-colors relative overflow-hidden bg-space-mesh font-ui">
@@ -38,23 +38,15 @@ const MainLayout = ({ children }) => {
 
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
       
-      {/* Universal Drawer Overlay */}
-      <AnimatePresence>
-        {isOverlayOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 z-40 backdrop-blur-md"
-            onClick={() => {
-              setMobileOpen(false);
-              setCollapsed(true);
-            }}
-          />
-        )}
-      </AnimatePresence>
+      {/* Universal Drawer Overlay (Only for Mobile) */}
+      {isOverlayOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-md"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
       
-      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden md:pl-[80px] relative z-10">
+      <div className="flex-1 flex flex-col min-w-0 w-full overflow-hidden relative z-10">
         <Navbar 
           collapsed={collapsed} 
           setCollapsed={setCollapsed} 

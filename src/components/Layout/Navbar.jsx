@@ -60,35 +60,29 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
           >
             <span className="text-lg">{FLAG[lang]}</span>
             <span className="hidden sm:block">{lang.toUpperCase()}</span>
-            <motion.span animate={{ rotate: langOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-              <RiArrowDownSLine size={16} />
-            </motion.span>
+            <span>
+              <RiArrowDownSLine size={16} className={langOpen ? 'rotate-180' : ''} />
+            </span>
           </button>
 
-          <AnimatePresence>
-            {langOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden z-50"
-              >
-                {langs.map(l => (
-                  <button
-                    key={l.code}
-                    onClick={() => { changeLang(l.code); setLangOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all hover:bg-primary/10 hover:text-primary
-                      ${lang === l.code ? 'bg-primary/10 text-primary' : 'text-slate-700 dark:text-slate-200'}`}
-                  >
-                    <span className="text-xl">{l.flag}</span>
-                    {l.label}
-                    {lang === l.code && <span className="ml-auto w-2 h-2 rounded-full bg-primary" />}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {langOpen && (
+            <div
+              className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden z-50"
+            >
+              {langs.map(l => (
+                <button
+                  key={l.code}
+                  onClick={() => { changeLang(l.code); setLangOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all hover:bg-primary/10 hover:text-primary
+                    ${lang === l.code ? 'bg-primary/10 text-primary' : 'text-slate-700 dark:text-slate-200'}`}
+                >
+                  <span className="text-xl">{l.flag}</span>
+                  {l.label}
+                  {lang === l.code && <span className="ml-auto w-2 h-2 rounded-full bg-primary" />}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* User Avatar */}
@@ -99,12 +93,11 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
               {user?.role === 'admin' ? t('role_admin') : t('role_user')}
             </p>
           </div>
-          <motion.div 
-            whileHover={{ scale: 1.05 }}
+          <div 
             className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold shadow-lg shadow-primary/20"
           >
             {user?.name?.charAt(0)}
-          </motion.div>
+          </div>
         </div>
       </div>
     </nav>
