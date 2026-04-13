@@ -10,6 +10,7 @@ import { FaUserGraduate, FaUserShield } from 'react-icons/fa';
 
 const LoginPage = () => {
   const [isRegister, setIsRegister] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [bio, setBio] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
