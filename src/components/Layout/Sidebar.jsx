@@ -79,9 +79,9 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
         border-r border-white/5 shadow-[20px_0_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden
         transition-transform duration-300 ease-in-out
         ${mobileOpen 
-          ? 'translate-x-0 w-full' 
+          ? 'translate-x-0 w-[280px] sm:w-[300px]' 
           : '-translate-x-full md:translate-x-0'}
-        ${!mobileOpen && (isExpanded ? 'md:w-[300px]' : 'md:w-[80px]')}
+        ${isExpanded ? 'md:w-[300px]' : 'md:w-[80px]'}
       `}
       style={{ height: '100dvh' }}
     >

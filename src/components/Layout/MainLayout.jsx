@@ -43,9 +43,9 @@ const MainLayout = ({ children }) => {
       )}
       
       <div className={`
-        flex-1 flex flex-col min-w-0 w-full relative z-10 transition-all duration-300
+        flex-1 flex flex-col min-w-0 w-full relative z-10 transition-all duration-300 h-full
         pt-16 ${collapsed ? 'md:pl-[80px]' : 'md:pl-[300px]'}
-      `} style={{ height: '100dvh' }}>
+      `}>
         <Navbar 
           collapsed={collapsed} 
           setCollapsed={setCollapsed} 

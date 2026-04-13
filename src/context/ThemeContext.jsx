@@ -4,7 +4,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useLocalStorage('theme', 'light');
+  const [theme, setTheme] = useLocalStorage('theme', 'dark');
 
   useEffect(() => {
     const root = window.document.documentElement;

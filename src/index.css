@@ -6,25 +6,19 @@
 
 html, body, #root {
   height: 100%;
-  height: 100dvh;
-  overflow: hidden;
+  min-height: -webkit-fill-available;
   margin: 0;
   padding: 0;
-  position: fixed;
   width: 100%;
+  overflow: hidden; /* MainLayout will handle internal scrolling */
 }
 
-@layer base {
-  body {
-    @apply font-ui text-slate-300 transition-colors duration-300 bg-[#070b14];
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
+/* Fix for mobile address bar */
+@supports (-webkit-touch-callout: none) {
+  #root {
+    height: -webkit-fill-available;
   }
 }
-
-@layer components {
   /* Elite Glassmorphism */
   .glass-card {
     @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] rounded-3xl;

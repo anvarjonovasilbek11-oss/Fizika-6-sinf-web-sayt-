@@ -44,12 +44,16 @@ const StudentQuiz = () => {
 
     if (savedApproved) {
       setApprovedQuizzes(JSON.parse(savedApproved));
+    } else {
+      // If no approved quizzes yet, let's auto-approve the defaults for now
+      // so students see something "ideal" immediately.
+      setApprovedQuizzes(DEFAULT_AI_QUIZZES);
+      localStorage.setItem('approvedQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
     }
 
     if (savedPending) {
       setPendingQuizzes(JSON.parse(savedPending));
     } else {
-      // First time initialization: Load defaults into pending for admin to approve
       setPendingQuizzes(DEFAULT_AI_QUIZZES);
       localStorage.setItem('pendingQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
     }

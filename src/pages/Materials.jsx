@@ -194,12 +194,30 @@ const Materials = () => {
       </div>
 
       {files.length === 0 && !uploading && (
-        <div className="text-center py-20">
-          <div className="text-6xl text-slate-200 dark:text-white/5 mb-4 flex justify-center">
-            <RiFileTextLine />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center py-20 glass-card max-w-2xl mx-auto"
+        >
+          <div className="w-24 h-24 bg-electric-blue/10 text-electric-blue rounded-full flex items-center justify-center mb-6 mx-auto">
+            <RiFileTextLine size={48} />
           </div>
-          <p className="text-slate-400 dark:text-slate-300 mt-2">{t('materials_empty')}</p>
-        </div>
+          <h3 className="text-2xl font-bold text-white mb-4">
+            {t('materials_empty_title') || "Hozircha qo'llanmalar yo'q"}
+          </h3>
+          <p className="text-slate-400 max-w-md mx-auto px-6">
+            {isAdmin 
+              ? "Tepada joylashgan yuklash bo'limi orqali yangi PDF yoki DOCX materiallarni platformaga qo'shishingiz mumkin."
+              : "Ustozingiz tez orada yangi o'quv qo'llanmalari va foydali materiallarni joylaydi. Sahifani kuzatib boring!"}
+          </p>
+          {!isAdmin && (
+            <div className="mt-8 flex justify-center gap-4">
+               <div className="w-2 h-2 rounded-full bg-electric-blue animate-bounce [animation-delay:-0.3s]" />
+               <div className="w-2 h-2 rounded-full bg-electric-blue animate-bounce [animation-delay:-0.15s]" />
+               <div className="w-2 h-2 rounded-full bg-electric-blue animate-bounce" />
+            </div>
+          )}
+        </motion.div>
       )}
     </div>
   );
