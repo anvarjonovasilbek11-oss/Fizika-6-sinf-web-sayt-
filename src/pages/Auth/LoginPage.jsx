@@ -97,34 +97,34 @@ const LoginPage = () => {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-2">
-              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">{t('login_name_label')}</label>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('login_name_label')}</label>
               <div className="relative">
-                <RiUserLine className="absolute left-5 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10" />
+                <RiUserLine className="absolute left-6 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10" size={20} />
                 <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
-                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-14" placeholder={t('login_name_placeholder')} autoComplete="off" />
+                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-5" placeholder={t('login_name_placeholder')} autoComplete="off" />
               </div>
             </motion.div>
-
-            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="space-y-2">
-              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest ml-1">{t('login_pass_label')}</label>
+            
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="space-y-3">
+              <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('login_pass_label')}</label>
               <div className="relative">
-                <RiLockPasswordLine className="absolute left-5 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10" />
+                <RiLockPasswordLine className="absolute left-6 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10" size={20} />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-14" placeholder={t('login_pass_placeholder')} autoComplete="off" />
+                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-5" placeholder={t('login_pass_placeholder')} autoComplete="off" />
               </div>
             </motion.div>
 
             <motion.button 
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(0,210,255,0.4)" }}
               whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
               type="submit"
-              className="w-full btn-hero-primary py-5 rounded-2xl flex items-center justify-center gap-3 mt-4"
+              className="w-full btn-hero-primary py-5 rounded-3xl flex items-center justify-center gap-4 mt-8 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple bg-[length:200%_auto] animate-gradient-slow shadow-2xl"
             >
-              <span className="uppercase tracking-[0.2em] font-black">{t('login_btn')}</span>
-              <RiApps2Line size={24} />
+              <span className="uppercase tracking-[0.2em] font-black text-sm whitespace-nowrap">{t('login_btn')}</span>
+              <RiApps2Line size={24} className="flex-shrink-0" />
             </motion.button>
           </form>
           
