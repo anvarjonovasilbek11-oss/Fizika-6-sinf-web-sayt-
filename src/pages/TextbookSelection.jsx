@@ -23,9 +23,9 @@ const TextbookSelection = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="text-4xl md:text-5xl font-black text-gradient uppercase tracking-tighter">
-            {t('nav_textbook')} <span className="text-slate-500 text-2xl font-normal ml-2 tracking-widest">ARXIV</span>
+            {t('nav_textbook')} <span className="text-slate-600 dark:text-slate-400 text-2xl font-bold ml-2 tracking-widest">ARXIV</span>
           </h1>
-          <p className="text-slate-500 mt-2 font-medium tracking-wide uppercase text-xs">
+          <p className="text-slate-600 dark:text-slate-300 mt-2 font-black tracking-wide uppercase text-xs">
             Fizika darsliklari va nazariy materiallar kutubxonasi
           </p>
         </div>
@@ -39,7 +39,7 @@ const TextbookSelection = () => {
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
         {/* Left Side: Chapter List */}
         <div className="xl:col-span-4 space-y-4">
-          <h2 className="text-xs font-black uppercase text-slate-500 tracking-[0.3em] mb-6 px-2">BOBLARNI TANLANING</h2>
+          <h2 className="text-xs font-black uppercase text-slate-800 dark:text-slate-200 tracking-[0.3em] mb-6 px-2 opacity-80">BOBLARNI TANLANING</h2>
           <div className="grid grid-cols-1 gap-3">
             {chapters.map((chapter, idx) => (
               <motion.button
@@ -63,10 +63,10 @@ const TextbookSelection = () => {
                 
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="flex flex-col gap-1">
-                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${selectedChapter?.id === chapter.id ? 'text-neon-purple' : 'text-slate-500'}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${selectedChapter?.id === chapter.id ? 'text-neon-purple' : 'text-slate-700 dark:text-slate-400'}`}>
                       BOB {idx + 1}
                     </span>
-                    <span className={`text-sm font-bold uppercase tracking-tight ${selectedChapter?.id === chapter.id ? 'text-white' : 'text-slate-300'}`}>
+                    <span className={`text-sm font-black uppercase tracking-tight ${selectedChapter?.id === chapter.id ? 'text-slate-900 dark:text-white' : 'text-slate-800 dark:text-slate-200'}`}>
                       {chapter.title}
                     </span>
                   </div>
@@ -138,8 +138,8 @@ const TextbookSelection = () => {
                 animate={{ opacity: 1 }}
                 className="h-full flex flex-col items-center justify-center text-center p-20 glass-card border-dashed border-white/5 opacity-50"
               >
-                <RiBookReadFill className="text-slate-600 mb-6" size={80} />
-                <h3 className="text-2xl font-black text-slate-500 uppercase tracking-tighter">
+                <RiBookReadFill className="text-slate-400 dark:text-slate-700 mb-6" size={80} />
+                <h3 className="text-2xl font-black text-slate-700 dark:text-slate-500 uppercase tracking-tighter">
                   Mavzularni ko'rish uchun <br/> boblardan birini tanlang
                 </h3>
               </motion.div>

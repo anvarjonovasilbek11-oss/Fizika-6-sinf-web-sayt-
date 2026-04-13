@@ -184,10 +184,10 @@ const StudentQuiz = () => {
             </div>
             <div className="text-right">
               <div className="text-2xl font-black text-primary">{progress}%</div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Jarayon</p>
+              <p className="text-xs text-slate-700 dark:text-slate-300 uppercase font-black">Jarayon</p>
             </div>
           </div>
-          <div className="w-full bg-slate-200 dark:bg-white/10 rounded-full h-2">
+          <div className="w-full bg-slate-300 dark:bg-white/10 rounded-full h-2">
             <div className="bg-primary h-full rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
           </div>
         </div>
@@ -226,8 +226,8 @@ const StudentQuiz = () => {
       <div className="max-w-xl mx-auto glass-card p-12 text-center mt-10">
         <RiTrophyLine size={100} className="mx-auto text-primary mb-6" />
         <h2 className="text-5xl font-black text-gradient mb-4">Natijangiz</h2>
-        <div className="text-8xl font-black mb-2 text-slate-800 dark:text-white">{score}/{activeQuiz.questions.length}</div>
-        <p className="text-2xl font-bold text-slate-500 dark:text-slate-400 mb-10">{pct}% Muvaffaqiyat</p>
+        <div className="text-8xl font-black mb-2 text-slate-900 dark:text-white">{score}/{activeQuiz.questions.length}</div>
+        <p className="text-2xl font-black text-slate-700 dark:text-slate-300 mb-10">{pct}% Muvaffaqiyat</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button 
             onClick={() => startQuiz(activeQuiz)} 
@@ -297,8 +297,8 @@ const StudentQuiz = () => {
               <RiShieldCheckLine size={32} />
             </div>
             <div>
-              <h2 className="text-4xl font-black dark:text-white leading-none">Tasdiqlanishi kutilmoqda</h2>
-              <p className="text-amber-500 font-bold text-lg mt-2">{pendingQuizzes.length} ta yangi test ko'rib chiqishga tayyor</p>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white leading-none">Tasdiqlanishi kutilmoqda</h2>
+              <p className="text-amber-600 dark:text-amber-500 font-black text-lg mt-2">{pendingQuizzes.length} ta yangi test ko'rib chiqishga tayyor</p>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -326,8 +326,8 @@ const StudentQuiz = () => {
             <RiCheckLine size={32} />
           </div>
           <div>
-            <h2 className="text-4xl font-black dark:text-white leading-none">Tasdiqlangan testlar</h2>
-            <p className="text-slate-400 font-bold text-lg mt-2">Barcha o'quvchilar uchun ochiq testlar</p>
+            <h2 className="text-4xl font-black text-slate-900 dark:text-white leading-none">Tasdiqlangan testlar</h2>
+            <p className="text-slate-700 dark:text-slate-300 font-black text-lg mt-2">Barcha o'quvchilar uchun ochiq testlar</p>
           </div>
         </div>
         

@@ -50,8 +50,8 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
       </div>
     </div>
     <div className="p-5">
-      <h3 className="text-xl font-black text-slate-800 dark:text-white line-clamp-2 md:group-hover:text-primary transition-colors duration-300 mb-2">{video.title}</h3>
-      <p className="text-sm font-bold text-slate-500 dark:text-slate-400">{video.topic}</p>
+      <h3 className="text-xl font-black text-slate-900 dark:text-white line-clamp-2 md:group-hover:text-primary transition-colors duration-300 mb-2">{video.title}</h3>
+      <p className="text-sm font-black text-slate-700 dark:text-slate-300 opacity-80">{video.topic}</p>
     </div>
   </motion.div>
 );
@@ -166,7 +166,7 @@ const VideoLessons = () => {
               <h2 className="text-xl font-bold text-primary flex items-center gap-2">
                 <RiAddLine size={24} /> Yangi Video Qo'shish (Admin CMS)
               </h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Yangi o'quv materialini baza saqloviga integratsiya qiling.</p>
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Yangi o'quv materialini baza saqloviga integratsiya qiling.</p>
             </div>
             <button 
               onClick={() => setShowAdminForm(!showAdminForm)}
@@ -246,16 +246,29 @@ const VideoLessons = () => {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"
       >
         <AnimatePresence>
-          {filteredVideos.map(video => (
-            <VideoCard 
-              key={video.id} 
-              video={video} 
-              onSelect={setSelectedVideo}
-              categoryLabel={t(CATEGORY_KEY_MAP[video.category] || 'cat_all')}
-              isAdmin={isAdmin}
-              onDelete={handleDeleteVideo}
-            />
-          ))}
+          {filteredVideos.length > 0 ? (
+            filteredVideos.map(video => (
+              <VideoCard 
+                key={video.id} 
+                video={video} 
+                onSelect={setSelectedVideo}
+                categoryLabel={t(CATEGORY_KEY_MAP[video.category] || 'cat_all')}
+                isAdmin={isAdmin}
+                onDelete={handleDeleteVideo}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-20 text-center">
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
+                {t('materials_empty_title') || "Hozircha videolar yo'q"}
+              </h3>
+              <p className="text-slate-700 dark:text-slate-300 font-bold max-w-md mx-auto px-6">
+                {isAdmin 
+                  ? "Tepada joylashgan yuklash bo'limi orqali yangi video materiallarni platformaga qo'shishingiz mumkin."
+                  : "Ustozingiz tez orada yangi o'quv videolarini joylaydi. Sahifani kuzatib boring!"}
+              </p>
+            </div>
+          )}
         </AnimatePresence>
       </motion.div>
 

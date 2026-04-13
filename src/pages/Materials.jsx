@@ -11,7 +11,7 @@ const FileIcon = ({ type }) => {
   if (type.includes('pdf')) return <RiFilePdfLine className="text-red-500" />;
   if (type.includes('word') || type.includes('doc')) return <RiFileWordLine className="text-blue-500" />;
   if (type.includes('zip') || type.includes('rar')) return <RiFileZipLine className="text-amber-500" />;
-  return <RiFileTextLine className="text-slate-400" />;
+  return <RiFileTextLine className="text-slate-600 dark:text-slate-400" />;
 };
 
 const Materials = () => {
@@ -136,7 +136,7 @@ const Materials = () => {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-heading text-gradient">{t('materials_title')}</h1>
+      <h1 className="text-3xl font-heading text-gradient uppercase tracking-tighter">{t('materials_title')}</h1>
 
       {/* Upload Zone */}
       {isAdmin && (
@@ -152,9 +152,9 @@ const Materials = () => {
             className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
             <RiUploadCloud2Line size={32} />
           </motion.div>
-          <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('materials_drop')}</h3>
-          <p className="text-slate-500 dark:text-slate-200 mt-2">{t('materials_drop_sub')}</p>
-          <p className="text-xs text-slate-400 mt-1">{t('materials_drop_size')} (Max: 50MB)</p>
+          <h3 className="text-xl font-black text-slate-900 dark:text-white">{t('materials_drop')}</h3>
+          <p className="text-slate-700 dark:text-slate-200 mt-2 font-bold">{t('materials_drop_sub')}</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 font-black">{t('materials_drop_size')} (Max: 50MB)</p>
         </div>
       )}
 
@@ -185,10 +185,10 @@ const Materials = () => {
                   <FileIcon type={file.type} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-black text-slate-800 dark:text-white truncate text-lg" title={file.name}>
+                  <h4 className="font-black text-slate-900 dark:text-white truncate text-lg" title={file.name}>
                     {file.name}
                   </h4>
-                  <p className="text-sm font-bold text-slate-500 dark:text-slate-400 mt-1">{file.size} • {file.date}</p>
+                  <p className="text-sm font-black text-slate-600 dark:text-slate-400 mt-1 uppercase tracking-tighter">{file.size} • {file.date}</p>
                 </div>
               </div>
               <div className="mt-6 flex items-center gap-2">
@@ -221,10 +221,10 @@ const Materials = () => {
           <div className="w-24 h-24 bg-electric-blue/10 text-electric-blue rounded-full flex items-center justify-center mb-6 mx-auto">
             <RiFileTextLine size={48} />
           </div>
-          <h3 className="text-2xl font-bold text-white mb-4">
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
             {t('materials_empty_title') || "Hozircha qo'llanmalar yo'q"}
           </h3>
-          <p className="text-slate-400 max-w-md mx-auto px-6">
+          <p className="text-slate-700 dark:text-slate-300 font-bold max-w-md mx-auto px-6">
             {isAdmin 
               ? "Tepada joylashgan yuklash bo'limi orqali yangi PDF yoki DOCX materiallarni platformaga qo'shishingiz mumkin."
               : "Ustozingiz tez orada yangi o'quv qo'llanmalari va foydali materiallarni joylaydi. Sahifani kuzatib boring!"}
