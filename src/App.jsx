@@ -10,15 +10,15 @@ import { LanguageProvider } from './context/LanguageContext';
 import ErrorBoundary from './components/Common/ErrorBoundary';
 import LoadingSpinner from './components/Common/LoadingSpinner';
 
-// Use lazy loading to isolate module scopes and fix build binding errors
-const LoginPage = React.lazy(() => import('./pages/Auth/LoginPage'));
-const Home = React.lazy(() => import('./pages/Home'));
-const VideoLessons = React.lazy(() => import('./pages/VideoLessons'));
-const Materials = React.lazy(() => import('./pages/Materials'));
-const StudentQuiz = React.lazy(() => import('./pages/StudentQuiz'));
-const Settings = React.lazy(() => import('./pages/Settings'));
-const TextbookPage = React.lazy(() => import('./pages/TextbookPage'));
-const NotFound = React.lazy(() => import('./pages/NotFound'));
+// Revert to static imports to simplify bundle graph and fix build crash
+import LoginPage from './pages/Auth/LoginPage';
+import Home from './pages/Home';
+import VideoLessons from './pages/VideoLessons';
+import Materials from './pages/Materials';
+import StudentQuiz from './pages/StudentQuiz';
+import Settings from './pages/Settings';
+import TextbookPage from './pages/TextbookPage';
+import NotFound from './pages/NotFound';
 
 const App = () => {
   return (
@@ -27,20 +27,18 @@ const App = () => {
         <LanguageProvider>
         <ThemeProvider>
             <ErrorBoundary>
-              <React.Suspense fallback={<LoadingSpinner />}>
-                <Routes>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/home" element={<ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>} />
-                  <Route path="/videos" element={<ProtectedRoute><MainLayout><VideoLessons /></MainLayout></ProtectedRoute>} />
-                  <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
-                  {/* Tests: Take or manage tests */}
-                  <Route path="/tests" element={<ProtectedRoute><MainLayout><StudentQuiz /></MainLayout></ProtectedRoute>} />
-                  <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
-                  <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
-                  <Route path="/" element={<Navigate to="/login" replace />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </React.Suspense>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/home" element={<ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>} />
+                <Route path="/videos" element={<ProtectedRoute><MainLayout><VideoLessons /></MainLayout></ProtectedRoute>} />
+                <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
+                {/* Tests: Take or manage tests */}
+                <Route path="/tests" element={<ProtectedRoute><MainLayout><StudentQuiz /></MainLayout></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
+                <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
             </ErrorBoundary>
           <Toaster position="top-right" />
         </ThemeProvider>
@@ -49,6 +47,7 @@ const App = () => {
     </Router>
   );
 };
+
 
 
 export default App;
