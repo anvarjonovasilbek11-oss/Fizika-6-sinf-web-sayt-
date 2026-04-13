@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { RiVideoLine, RiBookReadLine, RiQuestionAnswerLine, RiDoubleQuotesL, RiUser3Line, RiFileTextLine } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { VIDEOS } from './VideoLessons';
+import { VIDEOS } from '../data/videoData';
 import { getCombinedTextbooks } from '../services/textbookService';
 import localforage from 'localforage';
 
