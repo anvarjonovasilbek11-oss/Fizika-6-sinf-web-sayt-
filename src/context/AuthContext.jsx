@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     // Foydalanuvchi tekshiruvi (student tabida)
     // Agarda student tabida admin ismi yozilsa, uni admin sifatida KIRGIZMAYLIK
     if (trimmedUsername === ADMIN_USER.username) {
-      return { success: false, message: "Bu ism faqat admin bo'limi uchun!" };
+      return { success: false, message: "Login yoki parol xato!" };
     }
 
     // Mavjud foydalanuvchini qidirish
