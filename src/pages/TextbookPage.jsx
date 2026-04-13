@@ -1,215 +1,225 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiArrowLeftLine, RiBookOpenLine, RiInformationLine, RiDeleteBin2Line, RiEditLine, RiSave3Line, RiCloseLine } from 'react-icons/ri';
-import { getCombinedTextbooks, saveCustomLesson, deleteCustomLesson } from '../services/textbookService';
+import { 
+  RiArrowLeftLine, 
+  RiArrowRightLine, 
+  RiBookOpenLine, 
+  RiPlayCircleLine,
+  RiCheckDoubleLine,
+  RiExternalLinkLine,
+  RiFlaskLine,
+  RiFunctions
+} from 'react-icons/ri';
+import { Atom, Compass, Activity, Zap } from 'lucide-react';
+import { getCombinedTextbooks } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
 
 const TextbookPage = () => {
   const { chapterId, lessonId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [textbooks, setTextbooks] = React.useState(getCombinedTextbooks());
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [editedTheory, setEditedTheory] = React.useState('');
+  const [textbooks] = React.useState(getCombinedTextbooks());
 
   const chapter = textbooks.find(c => c.id === chapterId);
   const lesson = chapter?.lessons.find(l => l.id === lessonId);
   const { user } = useAuth();
-  const isAdmin = user?.role === 'admin';
 
-  const [activeTab, setActiveTab] = React.useState('theory');
-
+  // Redirect if not found
   React.useEffect(() => {
-    const refresh = () => setTextbooks(getCombinedTextbooks());
-    window.addEventListener('storage', refresh);
-    return () => window.removeEventListener('storage', refresh);
-  }, []);
-
-  React.useEffect(() => {
-    if (lesson) setEditedTheory(lesson.content?.theory || '');
-  }, [lesson]);
-
-  const handleDeleteTextbook = () => {
-    const displayTitle = lesson.title.startsWith('lesson_') ? t(lesson.title) : lesson.title;
-    if (window.confirm(`Rostdan ham "${displayTitle}" darsligini o'chirib tashlamoqchimisiz?`)) {
-      deleteCustomLesson(chapterId, lessonId);
-      toast.success("Darslik o'chirildi");
+    if (!chapter || !lesson) {
       navigate('/home');
     }
-  };
+  }, [chapter, lesson, navigate]);
 
-  const handleSaveEdit = () => {
-    const updatedLesson = {
-      ...lesson,
-      content: {
-        ...lesson.content,
-        theory: editedTheory
-      }
-    };
-    saveCustomLesson(chapterId, updatedLesson);
-    setIsEditing(false);
-    toast.success("O'zgarishlar saqlandi!");
-  };
+  if (!chapter || !lesson) return null;
 
-  if (!chapter || !lesson) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-center">
-        <RiInformationLine size={64} className="text-slate-300 mb-4" />
-        <h1 className="text-2xl font-bold dark:text-white">{t('textbook_not_found')}</h1>
-        <button onClick={() => navigate('/home')} className="mt-4 px-6 py-2 bg-primary text-white rounded-xl">
-          {t('textbook_back')}
-        </button>
-      </div>
-    );
-  }
-
-  const content = lesson.content || {
-    theory: t('textbook_f_theory'),
-    formulas: t('textbook_f_formulas'),
-    experiments: t('textbook_f_experiments')
-  };
+  // Academic Content for Lesson 1: Kirish
+  // Navigation Logic
+  const allLessons = textbooks.flatMap(c => c.lessons.map(l => ({ ...l, chapterId: c.id })));
+  const currentIndex = allLessons.findIndex(l => l.id === lessonId && l.chapterId === chapterId);
+  const prevLesson = allLessons[currentIndex - 1];
+  const nextLesson = allLessons[currentIndex + 1];
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-4xl mx-auto space-y-8 pb-12 px-4"
-    >
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex flex-col md:flex-row md:items-center gap-6">
-          <button 
-            onClick={() => navigate(-1)}
-            className="w-fit p-3 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-2xl text-slate-500 hover:text-primary transition-all shadow-sm"
-          >
-            <RiArrowLeftLine size={24} />
-          </button>
-          <div>
-            <h2 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-1">
-              {chapter.id.startsWith('bob-') ? t(`chap_${chapter.id.split('-')[1]}`) : chapter.title}
-            </h2>
-            <h1 className="text-3xl md:text-4xl font-heading font-extrabold text-slate-800 dark:text-white leading-tight">
-              {t(`lesson_${lesson.id}`) !== `lesson_${lesson.id}` ? t(`lesson_${lesson.id}`) : lesson.title}
+    <div className="relative min-h-screen">
+      {/* Background Floating Icons */}
+      <div className="fixed inset-0 pointer-events-none opacity-10 overflow-hidden z-0">
+        <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><Atom size={120} /></motion.div>
+        <motion.div animate={{ y: [0, 50, 0], rotate: -360 }} transition={{ duration: 20, repeat: Infinity }} className="absolute bottom-[20%] right-[10%] text-electric-blue"><Compass size={140} /></motion.div>
+        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute top-[40%] right-[5%] text-white/20"><Activity size={100} /></motion.div>
+      </div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="max-w-5xl mx-auto space-y-12 pb-24 relative z-10 px-4"
+      >
+        {/* Cinematic Header */}
+        <header className="space-y-4">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => navigate(-1)}
+              className="p-3 glass-card hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-xl"
+            >
+              <RiArrowLeftLine size={24} />
+            </button>
+            <div className="h-px flex-1 bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
+          </div>
+          
+          <div className="space-y-4 pt-4">
+            <motion.div 
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon-purple/20 border border-neon-purple/30 text-neon-purple text-xs font-black uppercase tracking-[0.3em]"
+            >
+              <Zap size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
+            </motion.div>
+            <h1 className="text-5xl md:text-7xl font-heading font-black text-white leading-tight">
+              {lessonId}-mavzu. <br />
+              <span className="text-glow-blue uppercase">{lesson.title}</span>
             </h1>
           </div>
-        </div>
-        
-        {isAdmin && (
-          <div className="flex gap-2">
-            <button 
-              onClick={() => setIsEditing(!isEditing)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all border shadow-sm ${isEditing ? 'bg-slate-100 dark:bg-white/10 text-slate-600' : 'bg-primary/10 text-primary border-primary/20 hover:bg-primary hover:text-white'}`}
-            >
-              <RiEditLine size={20} />
-              {isEditing ? "Yopish" : "Tahrirlash"}
-            </button>
-            <button 
-              onClick={handleDeleteTextbook}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 rounded-xl font-bold hover:bg-red-500 hover:text-white transition-all border border-red-500/20 shadow-sm"
-            >
-              <RiDeleteBin2Line size={20} />
-              O'chirish
-            </button>
-          </div>
-        )}
-      </div>
+        </header>
 
-      {/* Tab Switcher */}
-      <div className="flex p-1.5 bg-slate-100 dark:bg-white/5 rounded-2xl w-fit border border-slate-200 dark:border-white/10">
-        <button
-          onClick={() => setActiveTab('theory')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'theory' ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-md' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-        >
-          <RiBookOpenLine size={20} />
-          {t('textbook_theory')}
-        </button>
-        <button
-          onClick={() => setActiveTab('experiments')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'experiments' ? 'bg-white dark:bg-primary text-primary dark:text-white shadow-md' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
-        >
-          <RiInformationLine size={20} />
-          {t('textbook_experiments')}
-        </button>
-      </div>
-
-      {/* Content Area */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, x: 10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -10 }}
-          transition={{ duration: 0.2 }}
-          className="glass-card overflow-hidden"
-        >
-          {activeTab === 'theory' ? (
-            <div className="p-8 md:p-12 space-y-8 relative">
-              {isEditing ? (
-                <div className="space-y-4 animate-fade-in">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-primary flex items-center gap-2">
-                       <RiEditLine /> Matnni tahrirlash
-                    </h3>
-                  </div>
-                  <textarea 
-                    value={editedTheory}
-                    onChange={(e) => setEditedTheory(e.target.value)}
-                    rows={12}
-                    className="w-full p-6 bg-slate-50 dark:bg-white/5 border-2 border-primary/20 rounded-3xl outline-none focus:border-primary transition-all dark:text-white text-lg leading-relaxed"
-                  />
-                  <div className="flex gap-3 justify-end">
-                    <button onClick={() => setIsEditing(false)} className="px-6 py-2 bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300 rounded-xl font-bold">
-                      Bekor qilish
-                    </button>
-                    <button onClick={handleSaveEdit} className="px-8 py-2 bg-primary text-white rounded-xl font-bold flex items-center gap-2 hover:bg-primary-dark shadow-lg shadow-primary/20">
-                      <RiSave3Line /> Saqlash
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="prose prose-slate dark:prose-invert max-w-none">
-                  <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 font-medium whitespace-pre-wrap">
-                    {content.theory}
-                  </p>
-                </div>
-              )}
-              
-              <div className="pt-8 border-t border-slate-100 dark:border-white/5">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-primary/10 text-primary rounded-lg font-black text-xs uppercase tracking-widest">{t('textbook_formulas')}</div>
-                </div>
-                <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-100 dark:border-white/5 font-mono text-primary dark:text-accent-light">
-                  {content.formulas}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="p-8 md:p-12 space-y-8">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="p-3 bg-secondary/10 text-secondary rounded-2xl">
-                  <RiInformationLine size={32} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold dark:text-white">{t('textbook_experiment_guide')}</h3>
-                  <p className="text-sm text-slate-500">{t('textbook_experiment_sub')}</p>
-                </div>
-              </div>
-              <div className="bg-slate-50 dark:bg-white/5 p-8 rounded-3xl border border-dashed border-slate-200 dark:border-white/10">
-                <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-200 italic">
-                  "{content.experiments}"
+        {/* Main Content Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          {/* Theory Text */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="glass-card p-8 md:p-12 space-y-8 bg-white/5 border-white/5 shadow-2xl">
+              <div className="prose prose-xl prose-invert max-w-none">
+                <p className="leading-[1.9] text-slate-300 font-medium whitespace-pre-wrap tracking-wide text-justify">
+                  {academicContent.theory}
                 </p>
               </div>
-              <div className="p-6 bg-secondary/5 rounded-2xl border border-secondary/10 text-secondary-dark dark:text-secondary text-sm font-medium">
-                {t('textbook_warning')}
+            </div>
+          </div>
+
+          {/* Sidebar Components: Formulas & Video */}
+          <div className="space-y-8">
+            {/* Formula & Constants Block */}
+            <motion.section 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="glass-card p-8 border-neon-purple/20 bg-gradient-to-br from-white/5 to-neon-purple/5 relative group"
+            >
+              <div className="absolute top-0 right-0 p-4 text-neon-purple/20 group-hover:text-neon-purple/40 transition-colors">
+                <RiFunctions size={48} />
+              </div>
+              <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3">
+                <span className="w-2 h-8 bg-neon-purple rounded-full shadow-[0_0_10px_#bc13fe]" />
+                Formulalar va Doimiylar
+              </h3>
+              
+              <div className="space-y-6">
+                {academicContent.formulas.map((f, i) => (
+                  <div key={i} className="p-5 rounded-2xl bg-black/40 border border-white/5 hover:border-neon-purple/30 transition-all shadow-inner group/formula">
+                    <p className="text-xs font-bold text-slate-500 uppercase mb-2 tracking-tighter">{f.label}</p>
+                    <p className="text-3xl font-black text-neon-purple italic drop-shadow-[0_0_12px_rgba(188,19,254,0.6)] group-hover:scale-105 transition-transform origin-left">
+                      {f.notation} <span className="text-sm font-normal text-slate-400 not-italic ml-2">[{f.unit}]</span>
+                    </p>
+                  </div>
+                ))}
+                
+                {academicContent.constants.map((c, i) => (
+                  <div key={i} className="p-5 rounded-2xl bg-black/40 border border-white/5 hover:border-electric-blue/30 transition-all shadow-inner group/const">
+                    <p className="text-xs font-bold text-slate-500 uppercase mb-2 tracking-tighter">{c.label}</p>
+                    <p className="text-3xl font-black text-electric-blue italic drop-shadow-[0_0_12px_rgba(0,210,255,0.6)] group-hover:scale-105 transition-transform origin-left">
+                      {c.notation} <span className="text-sm font-normal text-slate-400 not-italic ml-2">[{c.unit}]</span>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.section>
+
+            {/* Video Lesson Integration */}
+            <motion.section 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+              className="space-y-4"
+            >
+              <a 
+                href="https://www.youtube.com/watch?v=Rp5Ha94Q1Y0&list=PLahTzkIscFVZlVx14Pd8rrCwImD8Sn0-9&index=16" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group relative flex items-center justify-center p-10 rounded-[40px] overflow-hidden shadow-2xl"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-neon-purple to-electric-blue animate-pulse opacity-90 transition-transform group-hover:scale-110 duration-700" />
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
+                
+                <div className="relative z-10 flex flex-col items-center gap-6">
+                  <motion.div
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="p-5 bg-white/20 backdrop-blur-2xl rounded-full shadow-2xl border border-white/40"
+                  >
+                    <RiPlayCircleLine size={56} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
+                  </motion.div>
+                  <span className="text-white font-black text-2xl uppercase tracking-tighter text-center">Video darsni <br /> ko'rish</span>
+                </div>
+              </a>
+            </motion.section>
+          </div>
+        </div>
+
+        {/* Source Verification Footer */}
+        <section className="glass-card p-10 border-white/5 bg-black/40 mt-12 shadow-inner">
+          <div className="flex flex-col md:flex-row items-center gap-8 justify-between">
+            <div className="flex items-center gap-6">
+              <div className="p-4 rounded-3xl bg-white/5 text-electric-blue border border-white/10 shadow-xl">
+                <RiCheckDoubleLine size={40} />
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-xl font-black text-white tracking-wider flex items-center gap-2">
+                   Manba va Tekshirildi
+                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                </h4>
+                <p className="text-base text-slate-400 leading-relaxed font-medium">
+                  Ushbu dars ma'lumotlari: 
+                  <a href="https://ziyonet.uz" target="_blank" rel="noreferrer" className="text-electric-blue hover:text-white underline decoration-2 underline-offset-4 ml-1 font-bold transition-colors">[O'zR XTV Fizika 6-sinf Darsligi (2022)]</a> hamda 
+                  <a href="#" className="text-neon-purple hover:text-white underline decoration-2 underline-offset-4 ml-1 font-bold transition-colors">[Nufuzli Ta'lim Portal]</a> saytlaridan olindi.
+                </p>
               </div>
             </div>
-          )}
-        </motion.div>
-      </AnimatePresence>
-    </motion.div>
+            <div className="flex flex-col items-end gap-2">
+              <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[11px] font-black uppercase text-slate-500 tracking-[0.2em] shadow-inner">Verifikatsiya: #FX-6001</div>
+              <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest italic">Yangilangan sana: 2024-yil may</div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom Navigation */}
+        <footer className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-12 border-t border-white/5">
+           <button 
+             disabled={!prevLesson}
+             onClick={() => prevLesson && navigate(`/textbook/${prevLesson.chapterId}/${prevLesson.id}`)}
+             className={`w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 glass-card transition-all group ${!prevLesson ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white shadow-xl'}`}
+           >
+             <RiArrowLeftLine className={`${prevLesson ? 'group-hover:-translate-x-2' : ''} transition-transform`} size={24} />
+             <div className="text-left">
+               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Dars: {prevLesson?.id || '-'}</p>
+               <span className="font-extrabold text-sm uppercase tracking-widest block">{t('textbook_prev') || 'Oldingi mavzu'}</span>
+             </div>
+           </button>
+           
+           <button 
+             disabled={!nextLesson}
+             onClick={() => nextLesson && navigate(`/textbook/${nextLesson.chapterId}/${nextLesson.id}`)}
+             className={`w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 glass-card transition-all group ${!nextLesson ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white shadow-xl'}`}
+           >
+             <div className="text-right">
+               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Dars: {nextLesson?.id || '-'}</p>
+               <span className="font-extrabold text-sm uppercase tracking-widest block">{t('textbook_next') || 'Keyingi mavzu'}</span>
+             </div>
+             <RiArrowRightLine className={`${nextLesson ? 'group-hover:translate-x-2' : ''} transition-transform`} size={24} />
+           </button>
+        </footer>
+      </motion.div>
+    </div>
   );
 };
 
