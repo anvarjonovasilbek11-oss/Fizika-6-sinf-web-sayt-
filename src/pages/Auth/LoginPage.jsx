@@ -56,29 +56,29 @@ const LoginPage = () => {
       >
         <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple rounded-[32px] opacity-20 blur-xl group-hover:opacity-40 transition duration-1000"></div>
         
-        <div className="relative glass-card p-6 md:p-12 backdrop-blur-3xl border-white/10 shadow-2xl bg-space-dark/40 rounded-[2.5rem] max-h-[90dvh] overflow-y-auto purple-scrollbar h-auto">
+        <div className="relative glass-card p-6 md:p-10 backdrop-blur-3xl border-white/10 shadow-2xl bg-space-dark/40 rounded-[2.5rem] max-h-[85dvh] overflow-y-auto purple-scrollbar h-auto">
           {/* Subtle Inner Glow */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-          <div className="text-center mb-12">
+          <div className="text-center mb-6">
             <motion.div 
               whileHover={{ scale: 1.1, rotate: 15 }}
-              className="inline-flex items-center justify-center p-6 bg-white/5 rounded-3xl mb-8 text-electric-blue relative border border-white/10"
+              className="inline-flex items-center justify-center p-4 bg-white/5 rounded-3xl mb-4 text-electric-blue relative border border-white/10"
             >
               <div className="absolute inset-0 bg-electric-blue/20 blur-2xl rounded-full animate-pulse" />
-              <Atom size={64} className="relative z-10 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]" />
+              <Atom size={48} className="relative z-10 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]" />
             </motion.div>
             
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 uppercase">
+              <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-white mb-2 uppercase">
                 {isRegister ? t('login_btn_register') : t('login_title')}
               </h1>
-              <p className="text-slate-400 font-medium tracking-wide">{t('login_sub')}</p>
+              <p className="text-slate-400 text-sm font-medium tracking-wide">{t('login_sub')}</p>
             </motion.div>
           </div>
 
-          {/* Role Tab Switcher (Visible only in Login mode or for both) */}
-          <div className="flex bg-white/5 p-2 rounded-2xl mb-12 relative border border-white/5">
+          {/* Role Tab Switcher */}
+          <div className="flex bg-white/5 p-1.5 rounded-2xl mb-6 relative border border-white/5">
             <motion.div
               className="absolute h-[calc(100%-16px)] w-[calc(50%-8px)] bg-gradient-to-r from-neon-purple to-neon-purple/80 shadow-[0_0_20px_rgba(188,19,254,0.4)] rounded-xl z-0"
               animate={{ x: isAdmin ? '100%' : '0%' }}
@@ -100,22 +100,22 @@ const LoginPage = () => {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-3">
               <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">{t('login_name_label')}</label>
               <div className="relative group/input">
                 <RiUserLine className="absolute left-6 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10 group-focus-within/input:text-electric-blue transition-colors" size={20} />
                 <input type="text" required value={username} onChange={(e) => setUsername(e.target.value)}
-                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-5 focus:ring-primary/20" placeholder={t('login_name_placeholder')} autoComplete="off" />
+                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-4 focus:ring-primary/20" placeholder={t('login_name_placeholder')} autoComplete="off" />
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">{t('login_pass_label')}</label>
               <div className="relative group/input">
                 <RiLockPasswordLine className="absolute left-6 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10 group-focus-within/input:text-electric-blue transition-colors" size={20} />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
-                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-5 focus:ring-primary/20" placeholder={t('login_pass_placeholder')} autoComplete="off" />
+                  className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-4 focus:ring-primary/20" placeholder={t('login_pass_placeholder')} autoComplete="off" />
               </div>
             </div>
 
@@ -125,13 +125,13 @@ const LoginPage = () => {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  className="space-y-4 overflow-hidden pt-2"
+                  className="space-y-3 overflow-hidden pt-1"
                 >
                   <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-2">{t('login_bio_label')}</label>
                   <div className="relative group/input">
                     <RiApps2Line className="absolute left-6 top-1/2 -translate-y-1/2 text-electric-blue/60 z-10 group-focus-within/input:text-electric-blue transition-colors" size={20} />
                     <input type="text" value={bio} onChange={(e) => setBio(e.target.value)}
-                      className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-5 focus:ring-primary/20" placeholder={t('login_bio_placeholder')} autoComplete="off" />
+                      className="premium-input bg-white/5 border-white/10 hover:border-white/20 pl-16 py-4 focus:ring-primary/20" placeholder={t('login_bio_placeholder')} autoComplete="off" />
                   </div>
                 </motion.div>
               )}
@@ -141,7 +141,7 @@ const LoginPage = () => {
               whileHover={{ scale: 1.02, boxShadow: "0 0 40px rgba(0,210,255,0.4)" }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full btn-hero-primary py-6 rounded-[1.5rem] flex items-center justify-center gap-4 mt-4 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple bg-[length:200%_auto] animate-gradient-slow shadow-2xl relative overflow-hidden group/btn"
+              className="w-full btn-hero-primary py-5 rounded-[1.5rem] flex items-center justify-center gap-4 mt-2 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple bg-[length:200%_auto] animate-gradient-slow shadow-2xl relative overflow-hidden group/btn"
             >
               <span className="uppercase tracking-[0.3em] font-black text-sm relative z-10">
                 {isRegister ? t('login_btn_register') : t('login_btn')}
@@ -150,7 +150,7 @@ const LoginPage = () => {
             </motion.button>
           </form>
 
-          <div className="mt-10 text-center">
+          <div className="mt-6 text-center">
             <button 
               onClick={() => setIsRegister(!isRegister)}
               className="text-[11px] font-black text-electric-blue uppercase tracking-widest hover:text-white transition-colors py-2"
@@ -160,7 +160,7 @@ const LoginPage = () => {
           </div>
           
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-            className="text-center mt-12 text-[9px] text-slate-500 uppercase tracking-[0.5em] font-black opacity-50">
+            className="text-center mt-6 text-[9px] text-slate-500 uppercase tracking-[0.5em] font-black opacity-50">
             {t('login_footer')}
           </motion.p>
         </div>
