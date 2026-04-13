@@ -19,8 +19,8 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
     layout
     initial={{ opacity: 0, scale: 0.9 }}
     animate={{ opacity: 1, scale: 1 }}
-    whileHover={{ y: -5 }}
-    className="glass-card overflow-hidden group relative"
+    whileHover={{ scale: 1.05, y: -8 }}
+    className="glass-card overflow-hidden group relative rounded-[2rem] shadow-2xl hover:shadow-primary/20 transition-all border-white/5"
   >
     {isAdmin && (
       <button
@@ -45,7 +45,7 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
           <RiPlayLine size={24} />
         </button>
       </div>
-      <div className="absolute top-2 right-2 px-2 py-1 bg-primary text-white text-xs font-bold rounded-lg shadow-lg">
+      <div className="absolute top-4 right-4 px-4 py-1.5 bg-primary/90 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-2xl backdrop-blur-md border border-white/10 z-10">
         {categoryLabel}
       </div>
     </div>
@@ -144,17 +144,17 @@ const VideoLessons = () => {
   );
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <h1 className="text-3xl font-heading text-gradient">{t('videos_title')}</h1>
-        <div className="relative w-full md:w-80">
-          <RiSearchLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+    <div className="space-y-12">
+      <div className="flex flex-col md:flex-row gap-10 items-center justify-between mt-8">
+        <h1 className="text-4xl md:text-5xl font-black text-gradient uppercase tracking-tighter">{t('videos_title')}</h1>
+        <div className="relative w-full md:w-96 group">
+          <RiSearchLine className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
           <input 
             type="text" 
             placeholder={t('videos_search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-dark-surface border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary dark:text-white"
+            className="w-full pl-14 pr-6 py-4 bg-white/5 dark:bg-dark-surface/30 backdrop-blur-xl border border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary/50 transition-all dark:text-white font-medium"
           />
         </div>
       </div>
@@ -224,15 +224,15 @@ const VideoLessons = () => {
       )}
 
       {/* Category Tabs — fully translated */}
-      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+      <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar mb-10">
         {categories.map(cat => (
           <button
             key={cat.key}
             onClick={() => setActiveCategory(cat.key)}
-            className={`px-6 py-2 rounded-xl font-semibold transition-all whitespace-nowrap ${
+            className={`px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap border ${
               activeCategory === cat.key 
-                ? 'bg-primary text-white shadow-lg shadow-primary/30' 
-                : 'bg-white dark:bg-dark-surface text-slate-600 dark:text-slate-200 hover:bg-primary/10'
+                ? 'bg-primary text-white shadow-xl shadow-primary/30 border-primary' 
+                : 'bg-white/5 dark:bg-dark-surface/40 text-slate-400 border-white/5 hover:bg-white/10 hover:text-white'
             }`}
           >
             {cat.label}
@@ -243,7 +243,7 @@ const VideoLessons = () => {
       {/* Video Grid */}
       <motion.div 
         layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"
       >
         <AnimatePresence>
           {filteredVideos.map(video => (

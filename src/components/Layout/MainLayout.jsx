@@ -62,7 +62,7 @@ const MainLayout = ({ children }) => {
           setMobileOpen={setMobileOpen} 
         />
         
-          <div className="relative">
+          <div className="relative p-6 md:p-10">
             {children}
           </div>
       </div>
