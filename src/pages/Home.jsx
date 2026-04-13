@@ -78,7 +78,6 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
     <div className="space-y-12 pb-20">
       {/* High-Tech Anti-Gravity Hero Section */}
       <section className="relative min-h-[500px] flex flex-col items-center justify-center text-center p-8 overflow-hidden rounded-[40px] glass-card border-white/5 bg-white/5 mb-12">
@@ -109,34 +108,33 @@ const Home = () => {
           className="relative z-10 mb-12 group cursor-pointer"
         >
           <div className="absolute inset-0 bg-electric-blue/30 blur-3xl rounded-full scale-75 group-hover:scale-110 transition-transform duration-700" />
-          <svg width="240" height="240" viewBox="0 0 200 200" className="relative drop-shadow-[0_0_20px_rgba(0,210,255,0.8)]">
-             <motion.circle cx="100" cy="100" r="15" fill="#fff" className="animate-pulse" />
-             <motion.ellipse cx="100" cy="100" rx="80" ry="30" fill="none" stroke="#bc13fe" strokeWidth="2" strokeDasharray="10 5" animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} />
-             <motion.ellipse cx="100" cy="100" rx="30" ry="80" fill="none" stroke="#00d2ff" strokeWidth="2" strokeDasharray="10 5" animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} />
-             <motion.ellipse cx="100" cy="100" rx="60" ry="60" fill="none" stroke="#ffffff" strokeWidth="1" opacity="0.2" animate={{ rotate: 180 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} />
-          </svg>
+          <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+             <div className="absolute inset-0 border-4 border-dashed border-electric-blue/20 rounded-full animate-spin-slow" />
+             <div className="absolute inset-4 border-2 border-dashed border-neon-purple/20 rounded-full animate-reverse-spin" />
+             <RiBookReadLine size={80} className="text-white drop-shadow-[0_0_20px_rgba(0,210,255,0.8)]" />
+          </div>
         </motion.div>
 
-        <div className="relative z-20 max-w-4xl space-y-8">
+        <div className="relative z-20 max-w-4xl space-y-8 px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="text-5xl md:text-7xl font-heading font-black leading-tight tracking-tight">
+            <h1 className="text-4xl md:text-7xl font-heading font-black leading-tight tracking-tight">
               6-sinf Fizika <br />
               <span className="text-glow-blue text-white">Dunyosiga</span> <span className="text-glow-purple text-neon-purple italic">Xush Kelibsiz!</span>
             </h1>
           </motion.div>
           
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto">
-            {t('hero_sub')}
+            className="text-lg md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto">
+            Interaktiv tajribalar, AI testlar va video darslar orqali fizika olamini biz bilan kashf eting.
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
             className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <button onClick={() => navigate('/textbook/bob-1/1')} className="btn-hero-primary">
-              <RiBookReadLine size={24} /> {t('btn_start')}
+            <button onClick={() => navigate('/textbook/bob-1/1')} className="btn-hero-primary group">
+              <RiBookReadLine size={24} className="group-hover:rotate-12 transition-transform" /> {t('btn_start')}
             </button>
-            <button onClick={() => navigate('/tests')} className="btn-hero-secondary">
-              <RiQuestionAnswerLine size={24} /> {t('btn_test')}
+            <button onClick={() => navigate('/tests')} className="btn-hero-secondary group">
+              <RiQuestionAnswerLine size={24} className="group-hover:scale-110 transition-transform" /> {t('btn_test')}
             </button>
           </motion.div>
         </div>
@@ -201,7 +199,6 @@ const Home = () => {
             ))}
           </ul>
         </div>
-      </div>
       </div>
     </div>
   );

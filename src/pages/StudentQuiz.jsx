@@ -42,19 +42,23 @@ const StudentQuiz = () => {
     const savedApproved = localStorage.getItem('approvedQuizzes');
     const savedPending = localStorage.getItem('pendingQuizzes');
 
+    // Robust Initialization: Always ensure we have content
+    let finalApproved = [];
     if (savedApproved) {
-      setApprovedQuizzes(JSON.parse(savedApproved));
-    } else {
-      // If no approved quizzes yet, let's auto-approve the defaults for now
-      // so students see something "ideal" immediately.
-      setApprovedQuizzes(DEFAULT_AI_QUIZZES);
-      localStorage.setItem('approvedQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
+      finalApproved = JSON.parse(savedApproved);
     }
+    
+    // If empty or first load, inject defaults
+    if (finalApproved.length === 0) {
+      finalApproved = [...DEFAULT_AI_QUIZZES];
+      localStorage.setItem('approvedQuizzes', JSON.stringify(finalApproved));
+    }
+    setApprovedQuizzes(finalApproved);
 
     if (savedPending) {
       setPendingQuizzes(JSON.parse(savedPending));
     } else {
-      setPendingQuizzes(DEFAULT_AI_QUIZZES);
+      setPendingQuizzes(DEFAULT_AI_QUIZZES); // Keep defaults in pending too for admin to see
       localStorage.setItem('pendingQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
     }
   }, []);
