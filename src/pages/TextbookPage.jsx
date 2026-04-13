@@ -114,7 +114,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
             </button>
             <div className="h-px flex-1 bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
             <div className="px-4 py-1.5 rounded-full bg-electric-blue/10 border border-electric-blue/20 text-electric-blue text-[10px] font-black uppercase tracking-widest">
-              Darslik rejimi
+              Mavzu mutolaasi
             </div>
           </div>
           
@@ -127,7 +127,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
               <RiFlashlightLine size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
             </motion.div>
             <h1 className="text-4xl md:text-6xl font-heading font-black text-white leading-tight">
-              {lessonId}. <span className="text-glow-blue uppercase">{lesson.title}</span>
+              <span className="text-glow-blue uppercase">{t(lesson.title)}</span>
             </h1>
           </div>
         </header>
@@ -259,8 +259,8 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
            >
              <RiArrowLeftLine className="group-hover:-translate-x-1 transition-transform" />
              <div className="text-left">
-               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-tight">Oldingi</span>
-               <span className="font-bold text-xs uppercase tracking-wider">{prevLesson?.title || 'Boshlash'}</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-tight">Oldingi mavzu</span>
+               <span className="font-bold text-xs uppercase tracking-wider">{prevLesson ? t(prevLesson.title) : 'Boshlash'}</span>
              </div>
            </button>
            
@@ -270,8 +270,8 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
              className={`w-full sm:w-auto flex items-center gap-10 px-8 py-4 glass-card transition-all group ${!nextLesson ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white'}`}
            >
              <div className="text-right">
-               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-tight">Keyingi</span>
-               <span className="font-bold text-xs uppercase tracking-wider">{nextLesson?.title || 'Yakunlangan'}</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-tight">Keyingi mavzu</span>
+               <span className="font-bold text-xs uppercase tracking-wider">{nextLesson ? t(nextLesson.title) : 'Yakunlangan'}</span>
              </div>
              <RiArrowRightLine className="group-hover:translate-x-1 transition-transform" />
            </button>
