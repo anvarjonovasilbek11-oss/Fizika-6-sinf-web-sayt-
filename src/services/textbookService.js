@@ -3,8 +3,13 @@ import { TEXTBOOK_DATA } from '../data/textbookData';
 const STORAGE_KEY = 'custom_textbooks';
 
 export const getCombinedTextbooks = () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  const customData = saved ? JSON.parse(saved) : [];
+  let customData = [];
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    customData = saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    customData = [];
+  }
   
   // Clone static data to avoid mutations
   let combined = JSON.parse(JSON.stringify(TEXTBOOK_DATA));

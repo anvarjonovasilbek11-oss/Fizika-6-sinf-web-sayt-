@@ -65,7 +65,7 @@ const MainLayout = ({ children }) => {
         <main className="flex-1 p-4 md:p-8 overflow-x-hidden w-full relative">
           <AnimatePresence mode="wait">
             <motion.div
-              key={window.location.pathname}
+              layout
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.02 }}

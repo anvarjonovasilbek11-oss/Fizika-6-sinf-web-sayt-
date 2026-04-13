@@ -179,7 +179,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                       `}
                     >
                       <span className="text-left text-xs font-black uppercase tracking-tight break-all leading-tight">
-                        {chapter.id.startsWith('bob-') ? t(`chap_${idx + 1}`) : chapter.title}
+                        {chapter?.id?.startsWith('bob-') ? t(`chap_${idx + 1}`) : chapter?.title}
                       </span>
                       <RiArrowDownSLine 
                         size={20} 

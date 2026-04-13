@@ -46,12 +46,22 @@ const Home = () => {
       const materialCount = materials.length;
 
       // 4. Tests
-      const tests = JSON.parse(localStorage.getItem('custom_tests') || '[]');
-      const testCount = tests.length;
+      let testCount = 0;
+      try {
+        const tests = JSON.parse(localStorage.getItem('custom_tests') || '[]');
+        testCount = Array.isArray(tests) ? tests.length : 0;
+      } catch (e) {
+        testCount = 0;
+      }
 
-      // 5. Real Users (excluding passwords from calculation for safety)
-      const usersData = JSON.parse(localStorage.getItem('users') || '[]');
-      const userCount = usersData.length;
+      // 5. Real Users
+      let userCount = 0;
+      try {
+        const usersData = JSON.parse(localStorage.getItem('users') || '[]');
+        userCount = Array.isArray(usersData) ? usersData.length : 0;
+      } catch (e) {
+        userCount = 0;
+      }
 
       setCounts({
         lessons: lessonCount,
