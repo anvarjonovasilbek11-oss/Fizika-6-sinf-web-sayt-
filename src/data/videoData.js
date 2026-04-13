@@ -1,0 +1,13 @@
+export const VIDEOS = [
+  { id: '1', videoId: 'vx1Nkb_-srE', title: '1. Kirish', topic: 'Kirish', category: 'Kirish' },
+  { id: '2', videoId: 'NetSwSnu5T0', title: '2. Fizika nimani oʻrganadi?', topic: 'Fizika asoslari', category: 'Kirish' },
+  { id: '3', videoId: 'vIX3X8AM3nE', title: '3. Fizikada ishlatiladigan ayrim kattaliklar', topic: 'Kattaliklar', category: 'Kirish' },
+  { id: '4', videoId: 'pLyZsiz4ud4', title: '4. Kuzatishlar va tajribalar', topic: 'Metodika', category: 'Kirish' },
+  { id: '5', videoId: 'U2yX4SIc7FU', title: "5. Fizika kattaliklar va ularni o'lchash", topic: "O'lchash", category: 'Kirish' },
+  { id: '6', videoId: 'aAUPfJr1K78', title: "6. O'lchash va o'lchash aniqligi", topic: "O'lchash", category: 'Kirish' },
+  { id: '7', videoId: 'dL6uNZyOkpQ', title: '7. Modda tuzilishi haqida Demokrit, Ar-Roziy fikrlari', topic: 'Modda', category: 'Termodynamika' },
+  { id: '8', videoId: 'YFQFFiFP5XY', title: '8. Molekulalar va ularning oʻlchamlari', topic: 'Molekulalar', category: 'Termodynamika' },
+  { id: '9', videoId: '75S7Qv6lZeU', title: '9. Diffuziya hodisasi', topic: 'Diffuziya', category: 'Termodynamika' },
+  { id: '10', videoId: 'uzQ3ymb161M', title: '10. Qattiq jism, suyuqlik va gazlarning molekulyar tuzilishi', topic: 'Modda holati', category: 'Termodynamika' },
+  { id: '11', videoId: 'mumNfuYtu_E', title: '11. Massa va uning birliklari', topic: 'Massa', category: 'Mexanika' },
+];

@@ -1,5 +1,5 @@
 import { TEXTBOOK_DATA } from '../data/textbookData';
-import { VIDEOS } from '../pages/VideoLessons';
+import { VIDEOS } from '../data/videoData';
 
 const STORAGE_KEY = 'custom_textbooks';
 
