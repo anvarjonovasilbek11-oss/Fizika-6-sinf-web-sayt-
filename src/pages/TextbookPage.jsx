@@ -7,10 +7,9 @@ import {
   RiPlayCircleLine,
   RiCheckDoubleLine,
   RiFunctions,
-  RiAtomLine,
   RiCompass3Line,
   RiPulseLine,
-  RiZapLine
+  RiFlashlightLine
 } from 'react-icons/ri';
 import { getCombinedTextbooks, getVideoForLesson } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
@@ -217,9 +216,9 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
         <section className="glass-card p-10 border-white/5 bg-black/40 mt-12">
           <div className="flex flex-col md:flex-row items-center gap-8 justify-between">
             <div className="flex items-center gap-6">
-              <div className="p-4 rounded-2xl bg-white/5 text-electric-blue border border-white/10">
-                <RiCheckDoubleLine size={32} />
-              </div>
+                    <div className="w-12 h-12 rounded-xl bg-electric-blue/10 flex items-center justify-center text-electric-blue">
+                      <RiPulseLine size={24} />
+                    </div>
               <div className="space-y-1">
                 <h4 className="text-lg font-black text-white tracking-wide uppercase">Dars Verifikatsiyasi</h4>
                 <p className="text-sm text-slate-400 font-medium">

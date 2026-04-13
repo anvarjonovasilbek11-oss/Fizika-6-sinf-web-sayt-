@@ -16,7 +16,7 @@ import {
   RiArrowLeftSLine, 
   RiSave3Line, 
   RiAddLine,
-  RiAtomLine
+  RiPulseLine
 } from 'react-icons/ri';
 import { getCombinedTextbooks, saveCustomLesson } from '../../services/textbookService';
 import toast from 'react-hot-toast';
