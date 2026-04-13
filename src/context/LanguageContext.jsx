@@ -17,6 +17,8 @@ export const TRANSLATIONS = {
     nav_tests: "Testlar (AI)",
     nav_settings: "Sozlamalar",
     nav_logout: "Chiqish",
+    nav_back: "Orqaga",
+    nav_back_long: "Bo'limga qaytish",
 
     // Textbook chapter titles
     chap_1: "1-BOB. Fizika nimani o'rgatadi?",
@@ -193,6 +195,8 @@ export const TRANSLATIONS = {
     nav_tests: "Тесты (ИИ)",
     nav_settings: "Настройки",
     nav_logout: "Выйти",
+    nav_back: "Назад",
+    nav_back_long: "Назад к разделу",
 
     // Textbook chapter titles
     chap_1: "ГЛАВА 1. Что изучает физика?",
@@ -369,6 +373,8 @@ export const TRANSLATIONS = {
     nav_tests: "Tests (AI)",
     nav_settings: "Settings",
     nav_logout: "Logout",
+    nav_back: "Back",
+    nav_back_long: "Back to section",
 
     // Textbook chapter titles
     chap_1: "CHAPTER 1. What does Physics study?",

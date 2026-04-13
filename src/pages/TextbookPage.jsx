@@ -36,6 +36,35 @@ const TextbookPage = () => {
   if (!chapter || !lesson) return null;
 
   // Academic Content for Lesson 1: Kirish
+  const isLessonOne = lessonId === '1' && chapterId === 'bob-1';
+  
+  const academicContent = isLessonOne ? {
+    theory: `Fizika – tabiat haqidagi eng asosiy va qadimiy fanlardan biridir. "Fizika" so'zi qadimgi grek tilidagi "physis" so‘zidan olingan bo‘lib, "tabiat" degan ma'noni anglatadi. Ushbu fan bizni o'rab turgan olamning tuzilishini, undagi turli xil hodisalarning sabablarini va qonuniyatlarini o‘rganadi.
+
+Siz har kuni guvohi bo‘ladigan oddiy hodisalar – quyoshning chiqishi va botishi, yomg‘ir yog‘ishi, chaqmoq chaqishi, narsalarning yerga tushishi – bularning barchasi fizik jarayonlardir. Fizika fani mana shu jarayonlarni o'rganish orqali insoniyatga koinot sirlarini ochishga yordam beradi.
+
+Fizikaning asosiy vazifasi – tabiatda sodir bo'ladigan voqealarning umumiy qonuniyatlarini topishdir. Masalan, nima uchun kema suvda suzadi-yu, lekin kichik tosh cho'kib ketadi? Nima uchun ba'zi jismlar elektr tokini o'tkazadi, boshqalari esa yo'q? Fizika fani mana shu kabi savollarga tajriba va kuzatishlar orqali javob beradi.
+
+Fizikada o'rganish usullari asosan ikkiga bo'linadi:
+1. Kuzatish – tabiatdagi hodisaga aralashmagan holda uni diqqat bilan o'rganish.
+2. Tajriba (Eksperiment) – maxsus laboratoriya sharoitida, asboblar yordamida hodisani sun'iy ravishda takrorlash va o'lchashlarni amalga oshirish.
+
+Fizika fani matematikasiz mavjud bo'la olmaydi. Biz tabiat qonunlarini matematik formulalar orqali ifodalaymiz. Bu bizga kelajakdagi hodisalarni oldindan aytib berish (bashorat qilish) imkonini beradi. Masalan, samolyotning qanchalik tez uchishini yoki kosmik kemaning Oyga qachon yetib borishini fizika va matematika yordamida aniq hisoblash mumkin.
+
+Bugungi kunda fizika texnikaning asosi hisoblanadi. Siz foydalanadigan smartfonlar, kompyuterlar, avtomobillar va hatto tibbiyotdagi eng murakkab asboblar ham fizika qonunlari asosida yaratilgan. Fizikani o‘rganish orqali siz nafaqat tabiat sirlarini bilib olasiz, balki kelajak texnologiyalarini tushunishga tayyorlanasiz.`,
+    formulas: [
+      { label: "Tezlik formulasi", notation: "v = s / t", unit: "m/s" },
+      { label: "Zichlik", notation: "ρ = m / V", unit: "kg/m³" }
+    ],
+    constants: [
+      { label: "Erkin tushish tezlanishi", notation: "g ≈ 9.8", unit: "m/s²" }
+    ]
+  } : {
+    theory: lesson.content?.theory || "Ma'lumot mavjud emas",
+    formulas: lesson.content?.formulas ? [{ label: "Formulalar", notation: lesson.content.formulas, unit: "" }] : [],
+    constants: lesson.content?.constants ? [{ label: "Doimiylar", notation: lesson.content.constants, unit: "" }] : []
+  };
+
   // Navigation Logic
   const allLessons = textbooks.flatMap(c => c.lessons.map(l => ({ ...l, chapterId: c.id })));
   const currentIndex = allLessons.findIndex(l => l.id === lessonId && l.chapterId === chapterId);
