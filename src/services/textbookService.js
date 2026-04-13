@@ -1,6 +1,15 @@
 import { TEXTBOOK_DATA } from '../data/textbookData';
+import { VIDEOS } from '../pages/VideoLessons';
 
 const STORAGE_KEY = 'custom_textbooks';
+
+/**
+ * Helper to find a video for a specific lesson
+ */
+export const getVideoForLesson = (lessonId) => {
+  // Try to find by id directly
+  return VIDEOS.find(v => v.id === lessonId) || null;
+};
 
 export const getCombinedTextbooks = () => {
   try {

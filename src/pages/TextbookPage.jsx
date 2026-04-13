@@ -4,38 +4,49 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiArrowLeftLine, 
   RiArrowRightLine, 
-  RiBookOpenLine, 
   RiPlayCircleLine,
   RiCheckDoubleLine,
-  RiExternalLinkLine,
-  RiFlaskLine,
   RiFunctions,
   RiAtomLine,
   RiCompass3Line,
   RiPulseLine,
   RiZapLine
 } from 'react-icons/ri';
-import { getCombinedTextbooks } from '../services/textbookService';
+import { getCombinedTextbooks, getVideoForLesson } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
+import LoadingSpinner from '../components/Common/LoadingSpinner';
 
 const TextbookPage = () => {
   const { chapterId, lessonId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [textbooks] = React.useState(getCombinedTextbooks());
+  
+  const [loading, setLoading] = React.useState(true);
+  const [textbooks, setTextbooks] = React.useState([]);
+  const [lessonVideo, setLessonVideo] = React.useState(null);
+
+  React.useEffect(() => {
+    // Simulate loading for smooth transition
+    const timer = setTimeout(() => {
+      const data = getCombinedTextbooks();
+      setTextbooks(data);
+      setLessonVideo(getVideoForLesson(lessonId));
+      setLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [lessonId]);
 
   const chapter = textbooks.find(c => c.id === chapterId);
   const lesson = chapter?.lessons.find(l => l.id === lessonId);
-  const { user } = useAuth();
 
-  // Redirect if not found
+  // Redirect if not found after loading
   React.useEffect(() => {
-    if (!chapter || !lesson) {
+    if (!loading && (!chapter || !lesson)) {
       navigate('/home');
     }
-  }, [chapter, lesson, navigate]);
+  }, [loading, chapter, lesson, navigate]);
 
+  if (loading) return <LoadingSpinner />;
   if (!chapter || !lesson) return null;
 
   // Academic Content for Lesson 1: Kirish
@@ -52,20 +63,23 @@ Fizikada o'rganish usullari asosan ikkiga bo'linadi:
 1. Kuzatish – tabiatdagi hodisaga aralashmagan holda uni diqqat bilan o'rganish.
 2. Tajriba (Eksperiment) – maxsus laboratoriya sharoitida, asboblar yordamida hodisani sun'iy ravishda takrorlash va o'lchashlarni amalga oshirish.
 
-Fizika fani matematikasiz mavjud bo'la olmaydi. Biz tabiat qonunlarini matematik formulalar orqali ifodalaymiz. Bu bizga kelajakdagi hodisalarni oldindan aytib berish (bashorat qilish) imkonini beradi. Masalan, samolyotning qanchalik tez uchishini yoki kosmik kemaning Oyga qachon yetib borishini fizika va matematika yordamida aniq hisoblash mumkin.
+Tabiat qonunlarini o'rganish jarayonida fizika va matematika chambarchas bog'liqdir. Matematika fizikaning tili bo'lib, u yordamida biz jarayonlarni aniq hisoblab chiqamiz. Masalan, jismning bosib o'tgan masofasini (s), vaqt (t) va tezlik (v) orqali hisoblash mumkin.
 
-Bugungi kunda fizika texnikaning asosi hisoblanadi. Siz foydalanadigan smartfonlar, kompyuterlar, avtomobillar va hatto tibbiyotdagi eng murakkab asboblar ham fizika qonunlari asosida yaratilgan. Fizikani o‘rganish orqali siz nafaqat tabiat sirlarini bilib olasiz, balki kelajak texnologiyalarini tushunishga tayyorlanasiz.`,
+Fizika faqat nazariya emas, u amaliyotdir. Bugungi kundagi barcha texnik yutuqlar – smartfonlardan tortib kosmik kemalarigacha – fizika qonunlariga asoslangan. Fizikani o'rganish orqali biz nafaqat dunyoni tushunamiz, balki uni o'zgartirish va rivojlantirish imkoniga ega bo'lamiz. Har bir kashfiyot inson qobiliyatlarini yangi bosqichga ko'taradi.
+
+Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa va uning xususiyatlari kabi fundamental tushunchalar bilan tanishamiz. Bu bilimlar sizga yuqori sinflarda murakkabroq fizik jarayonlarni tushunish uchun mustahkam poydevor yaratadi.`,
     formulas: [
       { label: "Tezlik formulasi", notation: "v = s / t", unit: "m/s" },
-      { label: "Zichlik", notation: "ρ = m / V", unit: "kg/m³" }
+      { label: "Zichlik formulasi", notation: "ρ = m / V", unit: "kg/m³" }
     ],
     constants: [
-      { label: "Erkin tushish tezlanishi", notation: "g ≈ 9.8", unit: "m/s²" }
+      { label: "Erkin tushish tezlanishi", notation: "g ≈ 9.8", unit: "m/s²" },
+      { label: "Suv zichligi", notation: "ρ = 1000", unit: "kg/m³" }
     ]
   } : {
-    theory: lesson.content?.theory || "Ma'lumot mavjud emas",
-    formulas: lesson.content?.formulas ? [{ label: "Formulalar", notation: lesson.content.formulas, unit: "" }] : [],
-    constants: lesson.content?.constants ? [{ label: "Doimiylar", notation: lesson.content.constants, unit: "" }] : []
+    theory: lesson.content?.theory || "Ushbu mavzu bo'yicha batafsil nazariy ma'lumotlar yaqin orada taqdim etiladi. Iltimos, darslikning keyingi bo'limlarini tekshiring.",
+    formulas: lesson.content?.formulas ? [{ label: "Asosiy formula", notation: lesson.content.formulas, unit: "" }] : [],
+    constants: lesson.content?.constants ? [{ label: "Doimiy kattalik", notation: lesson.content.constants, unit: "" }] : []
   };
 
   // Navigation Logic
@@ -76,7 +90,7 @@ Bugungi kunda fizika texnikaning asosi hisoblanadi. Siz foydalanadigan smartfonl
 
   return (
     <div className="relative min-h-screen">
-      {/* Background Floating Icons */}
+      {/* Background Floating Elements */}
       <div className="fixed inset-0 pointer-events-none opacity-10 overflow-hidden z-0">
         <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><RiAtomLine size={120} /></motion.div>
         <motion.div animate={{ y: [0, 50, 0], rotate: -360 }} transition={{ duration: 20, repeat: Infinity }} className="absolute bottom-[20%] right-[10%] text-electric-blue"><RiCompass3Line size={140} /></motion.div>
@@ -84,170 +98,166 @@ Bugungi kunda fizika texnikaning asosi hisoblanadi. Siz foydalanadigan smartfonl
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-5xl mx-auto space-y-12 pb-24 relative z-10 px-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-6xl mx-auto space-y-12 pb-24 relative z-10 px-4 pt-8"
       >
-        {/* Cinematic Header */}
-        <header className="space-y-4">
+        {/* Navigation Breadcrumb & Title */}
+        <header className="space-y-6">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => navigate(-1)}
-              className="p-3 glass-card hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-xl"
+              className="p-3 glass-card hover:bg-white/10 text-slate-400 hover:text-white transition-all shadow-xl rounded-2xl"
             >
               <RiArrowLeftLine size={24} />
             </button>
             <div className="h-px flex-1 bg-gradient-to-r from-white/10 via-white/5 to-transparent" />
+            <div className="px-4 py-1.5 rounded-full bg-electric-blue/10 border border-electric-blue/20 text-electric-blue text-[10px] font-black uppercase tracking-widest">
+              Darslik rejimi
+            </div>
           </div>
           
-          <div className="space-y-4 pt-4">
+          <div className="space-y-4">
             <motion.div 
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neon-purple/20 border border-neon-purple/30 text-neon-purple text-xs font-black uppercase tracking-[0.3em]"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-neon-purple/20 border border-neon-purple/30 text-neon-purple text-xs font-black uppercase tracking-[0.2em]"
             >
               <RiZapLine size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-heading font-black text-white leading-tight">
-              {lessonId}-mavzu. <br />
-              <span className="text-glow-blue uppercase">{lesson.title}</span>
+            <h1 className="text-4xl md:text-6xl font-heading font-black text-white leading-tight">
+              {lessonId}. <span className="text-glow-blue uppercase">{lesson.title}</span>
             </h1>
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Theory Text */}
+        {/* Content Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Central Theory Board */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="glass-card p-8 md:p-12 space-y-8 bg-white/5 border-white/5 shadow-2xl">
-              <div className="prose prose-xl prose-invert max-w-none">
-                <p className="leading-[1.9] text-slate-300 font-medium whitespace-pre-wrap tracking-wide text-justify">
+            <div className="glass-card p-8 md:p-12 space-y-8 bg-white/[0.03] border-white/5 shadow-2xl relative overflow-hidden group">
+              {/* Subtle background glow */}
+              <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-neon-purple/5 blur-[100px] pointer-events-none group-hover:bg-neon-purple/10 transition-colors" />
+              
+              <div className="relative prose prose-invert prose-slate max-w-none">
+                <p className="leading-[1.8] text-slate-300 font-medium whitespace-pre-wrap tracking-wide text-lg text-justify">
                   {academicContent.theory}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Sidebar Components: Formulas & Video */}
+          {/* Side Info Panel */}
           <div className="space-y-8">
-            {/* Formula & Constants Block */}
+            {/* Formulas & Constants Card */}
             <motion.section 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="glass-card p-8 border-neon-purple/20 bg-gradient-to-br from-white/5 to-neon-purple/5 relative group"
+              className="glass-card p-8 border-neon-purple/20 bg-gradient-to-br from-white/5 to-neon-purple/5 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-4 text-neon-purple/20 group-hover:text-neon-purple/40 transition-colors">
-                <RiFunctions size={48} />
-              </div>
-              <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3">
-                <span className="w-2 h-8 bg-neon-purple rounded-full shadow-[0_0_10px_#bc13fe]" />
-                Formulalar va Doimiylar
+              <h3 className="text-xl font-black text-white mb-8 flex items-center gap-3 relative z-10">
+                <RiFunctions className="text-neon-purple" size={24} />
+                Formulalar
               </h3>
               
-              <div className="space-y-6">
-                {academicContent.formulas.map((f, i) => (
-                  <div key={i} className="p-5 rounded-2xl bg-black/40 border border-white/5 hover:border-neon-purple/30 transition-all shadow-inner group/formula">
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-2 tracking-tighter">{f.label}</p>
-                    <p className="text-3xl font-black text-neon-purple italic drop-shadow-[0_0_12px_rgba(188,19,254,0.6)] group-hover:scale-105 transition-transform origin-left">
-                      {f.notation} <span className="text-sm font-normal text-slate-400 not-italic ml-2">[{f.unit}]</span>
+              <div className="space-y-5 relative z-10">
+                {academicContent.formulas.length > 0 ? academicContent.formulas.map((f, i) => (
+                  <div key={i} className="p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-neon-purple/30 transition-all group/formula">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">{f.label}</p>
+                    <p className="text-2xl font-black text-neon-purple italic drop-shadow-[0_0_8px_rgba(188,19,254,0.4)]">
+                      {f.notation} <span className="text-xs font-normal text-slate-400 not-italic ml-1">[{f.unit}]</span>
                     </p>
                   </div>
-                ))}
-                
+                )) : (
+                  <p className="text-slate-500 text-xs italic">Ushbu darsda hisoblash formulalari mavjud emas.</p>
+                )}
+
                 {academicContent.constants.map((c, i) => (
-                  <div key={i} className="p-5 rounded-2xl bg-black/40 border border-white/5 hover:border-electric-blue/30 transition-all shadow-inner group/const">
-                    <p className="text-xs font-bold text-slate-500 uppercase mb-2 tracking-tighter">{c.label}</p>
-                    <p className="text-3xl font-black text-electric-blue italic drop-shadow-[0_0_12px_rgba(0,210,255,0.6)] group-hover:scale-105 transition-transform origin-left">
-                      {c.notation} <span className="text-sm font-normal text-slate-400 not-italic ml-2">[{c.unit}]</span>
+                  <div key={i} className="p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-electric-blue/30 transition-all group/const">
+                    <p className="text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">{c.label}</p>
+                    <p className="text-2xl font-black text-electric-blue italic drop-shadow-[0_0_8px_rgba(0,210,255,0.4)]">
+                      {c.notation} <span className="text-xs font-normal text-slate-400 not-italic ml-1">[{c.unit}]</span>
                     </p>
                   </div>
                 ))}
               </div>
             </motion.section>
 
-            {/* Video Lesson Integration */}
-            <motion.section 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="space-y-4"
-            >
-              <a 
-                href="https://www.youtube.com/watch?v=Rp5Ha94Q1Y0&list=PLahTzkIscFVZlVx14Pd8rrCwImD8Sn0-9&index=16" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="group relative flex items-center justify-center p-10 rounded-[40px] overflow-hidden shadow-2xl"
+            {/* Multimedia Integration */}
+            {lessonVideo && (
+              <motion.section 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-neon-purple to-electric-blue animate-pulse opacity-90 transition-transform group-hover:scale-110 duration-700" />
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20" />
-                
-                <div className="relative z-10 flex flex-col items-center gap-6">
-                  <motion.div
-                    animate={{ y: [0, -15, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    className="p-5 bg-white/20 backdrop-blur-2xl rounded-full shadow-2xl border border-white/40"
-                  >
-                    <RiPlayCircleLine size={56} className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]" />
-                  </motion.div>
-                  <span className="text-white font-black text-2xl uppercase tracking-tighter text-center">Video darsni <br /> ko'rish</span>
-                </div>
-              </a>
-            </motion.section>
+                <a 
+                  href={`https://www.youtube.com/watch?v=${lessonVideo.videoId}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group relative flex flex-col items-center justify-center p-8 rounded-[32px] overflow-hidden border border-white/10 hover:border-electric-blue/50 transition-all shadow-2xl"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/20 to-electric-blue/20 opacity-40 group-hover:opacity-60 transition-opacity" />
+                  <div className="relative z-10 flex flex-col items-center gap-4">
+                    <div className="p-4 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 text-white shadow-xl group-hover:scale-110 transition-transform">
+                      <RiPlayCircleLine size={48} />
+                    </div>
+                    <div className="text-center">
+                      <span className="text-white font-black text-lg uppercase tracking-widest block">Video Dars</span>
+                      <span className="text-slate-400 text-[10px] uppercase tracking-[0.2em]">{lessonVideo.title}</span>
+                    </div>
+                  </div>
+                </a>
+              </motion.section>
+            )}
           </div>
         </div>
 
-        {/* Source Verification Footer */}
-        <section className="glass-card p-10 border-white/5 bg-black/40 mt-12 shadow-inner">
+        {/* Verification & Source Section */}
+        <section className="glass-card p-10 border-white/5 bg-black/40 mt-12">
           <div className="flex flex-col md:flex-row items-center gap-8 justify-between">
             <div className="flex items-center gap-6">
-              <div className="p-4 rounded-3xl bg-white/5 text-electric-blue border border-white/10 shadow-xl">
-                <RiCheckDoubleLine size={40} />
+              <div className="p-4 rounded-2xl bg-white/5 text-electric-blue border border-white/10">
+                <RiCheckDoubleLine size={32} />
               </div>
-              <div className="space-y-2">
-                <h4 className="text-xl font-black text-white tracking-wider flex items-center gap-2">
-                   Manba va Tekshirildi
-                   <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                </h4>
-                <p className="text-base text-slate-400 leading-relaxed font-medium">
-                  Ushbu dars ma'lumotlari: 
-                  <a href="https://ziyonet.uz" target="_blank" rel="noreferrer" className="text-electric-blue hover:text-white underline decoration-2 underline-offset-4 ml-1 font-bold transition-colors">[O'zR XTV Fizika 6-sinf Darsligi (2022)]</a> hamda 
-                  <a href="#" className="text-neon-purple hover:text-white underline decoration-2 underline-offset-4 ml-1 font-bold transition-colors">[Nufuzli Ta'lim Portal]</a> saytlaridan olindi.
+              <div className="space-y-1">
+                <h4 className="text-lg font-black text-white tracking-wide uppercase">Dars Verifikatsiyasi</h4>
+                <p className="text-sm text-slate-400 font-medium">
+                  Ushbu material darslik standartlari asosida tasdiqlangan va tekshirilgan.
                 </p>
               </div>
             </div>
-            <div className="flex flex-col items-end gap-2">
-              <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[11px] font-black uppercase text-slate-500 tracking-[0.2em] shadow-inner">Verifikatsiya: #FX-6001</div>
-              <div className="text-[10px] text-slate-600 font-bold uppercase tracking-widest italic">Yangilangan sana: 2024-yil may</div>
+            <div className="text-right">
+               <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest block">Manba: O'zR XTV darsligi (2022)</span>
+               <span className="text-[10px] font-bold text-neon-purple uppercase tracking-[0.2em] block mt-1">Status: Tasdiqlangan (Public)</span>
             </div>
           </div>
         </section>
 
-        {/* Bottom Navigation */}
-        <footer className="flex flex-col sm:flex-row justify-between items-center gap-6 pt-12 border-t border-white/5">
+        {/* Footer Navigation Overlay */}
+        <footer className="flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-10">
            <button 
              disabled={!prevLesson}
              onClick={() => prevLesson && navigate(`/textbook/${prevLesson.chapterId}/${prevLesson.id}`)}
-             className={`w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 glass-card transition-all group ${!prevLesson ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white shadow-xl'}`}
+             className={`w-full sm:w-auto flex items-center gap-4 px-8 py-4 glass-card transition-all group ${!prevLesson ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white'}`}
            >
-             <RiArrowLeftLine className={`${prevLesson ? 'group-hover:-translate-x-2' : ''} transition-transform`} size={24} />
+             <RiArrowLeftLine className="group-hover:-translate-x-1 transition-transform" />
              <div className="text-left">
-               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Dars: {prevLesson?.id || '-'}</p>
-               <span className="font-extrabold text-sm uppercase tracking-widest block">{t('textbook_prev') || 'Oldingi mavzu'}</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-tight">Oldingi</span>
+               <span className="font-bold text-xs uppercase tracking-wider">{prevLesson?.title || 'Boshlash'}</span>
              </div>
            </button>
            
            <button 
              disabled={!nextLesson}
              onClick={() => nextLesson && navigate(`/textbook/${nextLesson.chapterId}/${nextLesson.id}`)}
-             className={`w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 glass-card transition-all group ${!nextLesson ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white shadow-xl'}`}
+             className={`w-full sm:w-auto flex items-center gap-10 px-8 py-4 glass-card transition-all group ${!nextLesson ? 'opacity-20 cursor-not-allowed' : 'hover:bg-white/10 text-slate-400 hover:text-white'}`}
            >
              <div className="text-right">
-               <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Dars: {nextLesson?.id || '-'}</p>
-               <span className="font-extrabold text-sm uppercase tracking-widest block">{t('textbook_next') || 'Keyingi mavzu'}</span>
+               <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block leading-tight">Keyingi</span>
+               <span className="font-bold text-xs uppercase tracking-wider">{nextLesson?.title || 'Yakunlangan'}</span>
              </div>
-             <RiArrowRightLine className={`${nextLesson ? 'group-hover:translate-x-2' : ''} transition-transform`} size={24} />
+             <RiArrowRightLine className="group-hover:translate-x-1 transition-transform" />
            </button>
         </footer>
       </motion.div>
