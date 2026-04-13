@@ -53,6 +53,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     if (path !== '#darslik') {
       setOpenDarslik(false);
       setActiveChapter(null);
+      setCollapsed(true); // Auto-collapse on selection
       if (typeof window !== 'undefined' && window.innerWidth < 768 && setMobileOpen) {
         setMobileOpen(false);
       }
@@ -78,6 +79,8 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   return (
     <motion.aside 
       initial={false}
+      onMouseEnter={() => setCollapsed(false)}
+      onMouseLeave={() => setCollapsed(true)}
       animate={{ 
         width: typeof window !== 'undefined' && window.innerWidth < 768 
           ? 300 
@@ -209,7 +212,10 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                               <NavLink
                                 key={lesson.id}
                                 to={`/textbook/${chapter.id}/${lesson.id}`}
-                                onClick={() => mobileOpen && setMobileOpen(false)}
+                                onClick={() => {
+                                  setCollapsed(true); // Auto-collapse on selection
+                                  if (mobileOpen && setMobileOpen) setMobileOpen(false);
+                                }}
                                 className={({ isActive }) => `
                                   block w-full text-left py-3 px-4 rounded-xl text-[11px] font-bold transition-all
                                   ${isActive 
