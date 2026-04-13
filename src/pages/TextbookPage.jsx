@@ -91,7 +91,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
     <div className="relative min-h-screen">
       {/* Background Floating Elements */}
       <div className="fixed inset-0 pointer-events-none opacity-10 overflow-hidden z-0">
-        <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><RiAtomLine size={120} /></motion.div>
+        <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><RiPulseLine size={120} /></motion.div>
         <motion.div animate={{ y: [0, 50, 0], rotate: -360 }} transition={{ duration: 20, repeat: Infinity }} className="absolute bottom-[20%] right-[10%] text-electric-blue"><RiCompass3Line size={140} /></motion.div>
         <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute top-[40%] right-[5%] text-white/20"><RiPulseLine size={100} /></motion.div>
       </div>
@@ -123,7 +123,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
               animate={{ x: 0, opacity: 1 }}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl bg-neon-purple/20 border border-neon-purple/30 text-neon-purple text-xs font-black uppercase tracking-[0.2em]"
             >
-              <RiZapLine size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
+              <RiFlashlightLine size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
             </motion.div>
             <h1 className="text-4xl md:text-6xl font-heading font-black text-white leading-tight">
               {lessonId}. <span className="text-glow-blue uppercase">{lesson.title}</span>

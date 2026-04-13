@@ -97,7 +97,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
             className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]"
           >
-            <RiAtomLine size={38} className="animate-spin-slow" />
+            <RiPulseLine size={38} className="animate-spin-slow" />
           </motion.div>
           {isExpanded && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
