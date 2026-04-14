@@ -567,4 +567,6 @@ Ushbu yakuniy darsda siz darslikimizning barcha boblarini birlashtiruvchi eng bu
           experiments: "Kalorimetr yordamida issiq va sovuq suvni aralashtirish hamda issiqlik balansi tenglamasini tekshirish."
         }
       }
+    ]
+  }
 ];
