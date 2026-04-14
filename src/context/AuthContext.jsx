@@ -4,7 +4,12 @@ import { useSessionStorage } from '../hooks/useSessionStorage';
 const AuthContext = createContext();
 
 // Faqat admin oldindan belgilangan
-const ADMIN_USER = { username: "Asilbek", password: "asilbek0921", name: "Asilbek", role: "admin" };
+const ADMIN_USER = { 
+  username: import.meta.env.VITE_ADMIN_USER || "Asilbek", 
+  password: import.meta.env.VITE_ADMIN_PASS || "asilbek0921", 
+  name: import.meta.env.VITE_ADMIN_USER || "Asilbek", 
+  role: "admin" 
+};
 
 // LocalStorage'dan foydalanuvchilar ro'yxatini olish
 const getInitialUsers = () => {

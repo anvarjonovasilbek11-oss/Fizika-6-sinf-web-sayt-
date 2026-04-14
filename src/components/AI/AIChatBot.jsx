@@ -29,8 +29,6 @@ const AIChatBot = () => {
     setLoading(true);
 
     try {
-      // Placeholder for Groq API
-      // When the user provides the link/key, we will update this part
       setTimeout(() => {
         const assistantMessage = { 
           role: 'assistant', 
