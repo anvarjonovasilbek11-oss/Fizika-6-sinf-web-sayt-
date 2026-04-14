@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import { RiBookReadFill, RiArrowRightSLine, RiArrowLeftSLine, RiPulseLine, RiEyeOffLine, RiCheckLine, RiShieldLine } from 'react-icons/ri';
 import { getCombinedTextbooks, unhideLesson } from '../services/textbookService';
 import { useAuth } from '../context/AuthContext';
@@ -185,11 +189,6 @@ const TextbookSelection = () => {
           </div>
         </section>
       )}
-    </div>
-  );
-};
-
-export default TextbookSelection;
     </div>
   );
 };

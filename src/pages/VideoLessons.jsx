@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiSearchLine, 
   RiPlayLine, 
@@ -5,10 +7,20 @@ import {
   RiDeleteBin6Line, 
   RiAddLine, 
   RiSave3Line,
-  RiEditLine
+  RiEditLine,
+  RiVideoLine
 } from 'react-icons/ri';
+import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
+import { VIDEOS } from '../data/videoData';
+import toast from 'react-hot-toast';
 
-// ... (CATEGORY_KEY_MAP)
+const CATEGORY_KEY_MAP = {
+  'Kirish': 'cat_intro',
+  'Mexanika': 'cat_mechanics',
+  'Termodynamika': 'cat_thermo',
+  '__all__': 'cat_all'
+};
 
 const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete, onEdit }) => (
   <motion.div 

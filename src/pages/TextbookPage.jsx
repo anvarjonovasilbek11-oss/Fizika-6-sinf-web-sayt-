@@ -1,3 +1,6 @@
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiArrowLeftLine, 
   RiArrowRightLine, 

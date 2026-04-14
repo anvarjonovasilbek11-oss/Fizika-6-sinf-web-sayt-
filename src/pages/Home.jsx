@@ -27,13 +27,69 @@ const Home = () => {
   const [quoteIdx, setQuoteIdx] = useState(0);
   const [showUserModal, setShowUserModal] = useState(false);
 
-  // ... (quotes, dailyFacts, getDailyFact, counts state remains same)
+  const quotes = [
+    { text: "Fizika – bu tabiat sirlarini ochuvchi kalit.", author: "Albert Eynshteyn" },
+    { text: "Ilm – bu qorong'ulikka nur bag'ishlovchi mayoq.", author: "Abu Rayhon Beruniy" },
+    { text: "Haqiqat har doim oddiy, lekin har doim ham oson emas.", author: "Isaak Nyuton" }
+  ];
 
-  // ... (fetchData useEffect remains same)
+  const dailyFacts = [
+    "Yorug'lik tezligi sekundiga qariyb 300,000 kilometrni tashkil etadi.",
+    "Suv 100 darajada qaynaydi, lekin tog' cho'qqisida pastroq haroratda qaynaydi.",
+    "Ovoz havoda sekundiga taxminan 340 metr tezlikda tarqaladi."
+  ];
+
+  const getDailyFact = () => dailyFacts[new Date().getDay() % dailyFacts.length];
+
+  const [counts, setCounts] = useState({ videos: 0, lessons: 0, materials: 0, users: 0 });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const textbooks = getCombinedTextbooks(true);
+      const lessonsCount = textbooks.reduce((acc, curr) => acc + curr.lessons.length, 0);
+      
+      const customVideos = JSON.parse(localStorage.getItem('customVideos') || '[]');
+      const finalVideos = VIDEOS.length + customVideos.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
+
+      setCounts({
+        videos: finalVideos,
+        lessons: lessonsCount,
+        materials: 12, 
+        users: allUsers.length
+      });
+    };
+    fetchCounts();
+  }, [allUsers]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setQuoteIdx((prev) => (prev + 1) % quotes.length);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="space-y-12 pb-20 relative transition-colors">
-      {/* ... (Announcement Ticker, Hero Section remains same) */}
+      <div className="bg-primary/10 border-y border-primary/20 py-2 overflow-hidden whitespace-nowrap">
+        <div className="animate-marquee inline-block font-black text-[10px] uppercase tracking-widest text-primary">
+          Fizika 6-sinf fanidan barcha nazariy va amaliy darsliklar jamlanmasi • Yangi AI testlar tizimi orqali bilimingizni sinab ko'ring • Video darslar va topshiriqlar
+        </div>
+      </div>
+
+      <header className="relative space-y-6 pt-10">
+        <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex items-center gap-3">
+          <div className="w-2 h-10 bg-primary rounded-full" />
+          <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">FIZIKA OLAMIGA XUSH KELIBSIZ</h2>
+        </motion.div>
+        
+        <motion.h1 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="text-6xl md:text-9xl font-black text-slate-900 dark:text-white leading-[0.85] tracking-tighter uppercase"
+        >
+          FIZIKA <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-neon-purple to-electric-blue">DUNYOSI</span>
+        </motion.h1>
+      </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
          <ActionCard 

@@ -118,3 +118,7 @@ export const deleteCustomLesson = (chapterId, lessonId) => {
     window.dispatchEvent(new Event('storage'));
   }
 };
+
+export const getVideoForLesson = (lessonId) => {
+  return VIDEOS.find(v => v.lessonId === lessonId || v.id === lessonId) || null;
+};
