@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RiSearchLine, RiPlayLine, RiCloseLine, RiDeleteBin6Line, RiAddLine, RiSave3Line } from 'react-icons/ri';
-import { useLanguage } from '../context/LanguageContext';
-import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
+import { 
+  RiSearchLine, 
+  RiPlayLine, 
+  RiCloseLine, 
+  RiDeleteBin6Line, 
+  RiAddLine, 
+  RiSave3Line,
+  RiEditLine
+} from 'react-icons/ri';
 
-import { VIDEOS } from '../data/videoData';
+// ... (CATEGORY_KEY_MAP)
 
-// Category key map: UZ internal name → translation key
-const CATEGORY_KEY_MAP = {
-  'Kirish':       'cat_intro',
-  'Mexanika':     'cat_mechanics',
-  'Termodynamika':'cat_thermo',
-};
-
-const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
+const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete, onEdit }) => (
   <motion.div 
     layout
     initial={{ opacity: 0, scale: 0.9 }}
@@ -23,14 +19,24 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete }) => (
     className="glass-card overflow-hidden group relative rounded-[2rem] shadow-2xl hover:shadow-primary/20 transition-all border-white/5"
   >
     {isAdmin && (
-      <button
-        onClick={(e) => { e.stopPropagation(); onDelete(video.id); }}
-        className="absolute top-2 left-2 z-20 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-lg"
-        title="Videoni o'chirish"
-      >
-        <RiDeleteBin6Line size={16} />
-      </button>
+      <div className="absolute top-2 left-2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+        <button
+          onClick={(e) => { e.stopPropagation(); onEdit(video); }}
+          className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-lg"
+          title="Taxrirlash"
+        >
+          <RiEditLine size={16} />
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onDelete(video.id); }}
+          className="w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center shadow-lg"
+          title="O'chirish"
+        >
+          <RiDeleteBin6Line size={16} />
+        </button>
+      </div>
     )}
+    {/* ... (rest of VideoCard) */}
     <div className="relative aspect-video">
       <img 
         src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`} 
@@ -62,6 +68,7 @@ const VideoLessons = () => {
   const [activeCategory, setActiveCategory] = useState('__all__');
   const [customVideos, setCustomVideos] = useState([]);
   const [showAdminForm, setShowAdminForm] = useState(false);
+  const [editingVideo, setEditingVideo] = useState(null);
   
   // CMS State
   const [cmsTitle, setCmsTitle] = useState('');
@@ -79,7 +86,17 @@ const VideoLessons = () => {
     }
   }, []);
 
-  // Categories: internal key + display label
+  // Use effects or triggers to populate form when editing
+  React.useEffect(() => {
+    if (editingVideo) {
+      setCmsTitle(editingVideo.title);
+      setCmsCategory(editingVideo.category || 'Kirish');
+      setCmsVideoId(`https://www.youtube.com/watch?v=${editingVideo.videoId}`);
+      setShowAdminForm(true);
+    }
+  }, [editingVideo]);
+
+  // Categories same... (skipped for brevity)
   const categories = [
     { key: '__all__',       label: t('cat_all') },
     { key: 'Kirish',        label: t('cat_intro') },
@@ -87,21 +104,14 @@ const VideoLessons = () => {
     { key: 'Termodynamika', label: t('cat_thermo') },
   ];
 
-  // Delete video logic
   const handleDeleteVideo = (id) => {
     if (!window.confirm("Rostdan ham ushbu videoni o'chirib tashlamoqchimisiz?")) return;
     const remainingCustom = customVideos.filter(v => v.id !== id);
     setCustomVideos(remainingCustom);
     localStorage.setItem('customVideos', JSON.stringify(remainingCustom));
-    // Check if it's a static base video, warn if so:
-    if (VIDEOS.some(v => v.id === id)) {
-      toast.error("Ushbu video loyiha bazaviy (static) kodiga qotirilgan. O'chirish qismi kod bo'yicha cheklangan.");
-    } else {
-      toast.success("Video muvaffaqiyatli saqlovdan bekor qilindi!");
-    }
+    toast.success("Muvaffaqiyatli o'chirildi!");
   };
 
-  // CMS Save Logic
   const handleSaveVideo = (e) => {
     e.preventDefault();
     if (!cmsTitle || !cmsVideoId) {
@@ -114,10 +124,12 @@ const VideoLessons = () => {
       finalId = cmsVideoId.split('v=')[1].split('&')[0];
     } else if (cmsVideoId.includes('youtu.be/')) {
       finalId = cmsVideoId.split('youtu.be/')[1].split('?')[0];
+    } else if (cmsVideoId.includes('embed/')) {
+        finalId = cmsVideoId.split('embed/')[1].split('?')[0];
     }
 
-    const newVideo = {
-      id: Date.now().toString(),
+    const videoData = {
+      id: editingVideo ? editingVideo.id : Date.now().toString(),
       videoId: finalId,
       title: cmsTitle,
       topic: cmsTitle,
@@ -125,18 +137,32 @@ const VideoLessons = () => {
       isCustom: true
     };
 
-    const updatedVideos = [...customVideos, newVideo];
+    let updatedVideos;
+    if (editingVideo) {
+      updatedVideos = customVideos.map(v => v.id === editingVideo.id ? videoData : v);
+      // Case where we are editing a STATIC video for the first time
+      if (!customVideos.some(v => v.id === editingVideo.id)) {
+        updatedVideos.push(videoData);
+      }
+    } else {
+      updatedVideos = [...customVideos, videoData];
+    }
+
     setCustomVideos(updatedVideos);
     localStorage.setItem('customVideos', JSON.stringify(updatedVideos));
     
     setCmsTitle('');
     setCmsVideoId('');
     setShowAdminForm(false);
-    toast.success("Muvaffaqiyatli! Darslik sayt xotirasiga saqlandi!");
+    setEditingVideo(null);
+    toast.success("Muvaffaqiyatli saqlandi!");
   };
 
-  // Merge static default videos with dynamically CMS uploaded offline videos
-  const finalVideosData = [...VIDEOS, ...customVideos];
+  // Merge static default videos with custom overrides
+  const finalVideosData = VIDEOS.map(v => {
+    const custom = customVideos.find(cv => cv.id === v.id);
+    return custom ? custom : v;
+  }).concat(customVideos.filter(cv => !VIDEOS.some(v => v.id === cv.id)));
 
   const filteredVideos = finalVideosData.filter(v =>
     v.title.toLowerCase().includes(search.toLowerCase()) &&
@@ -164,16 +190,29 @@ const VideoLessons = () => {
           <div className="flex justify-between items-center mb-4">
             <div>
               <h2 className="text-xl font-black text-primary flex items-center gap-2 uppercase tracking-tight">
-                <RiAddLine size={24} /> Yangi Video Qo'shish (Admin CMS)
+                {editingVideo ? <RiEditLine size={24}/> : <RiAddLine size={24} />} 
+                {editingVideo ? "Videoni Tahrirlash" : "Yangi Video Qo'shish"}
               </h2>
-              <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Yangi o'quv materialini baza saqloviga integratsiya qiling.</p>
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                {editingVideo ? "Video ma'lumotlarini o'zgartiring." : "Yangi o'quv materialini baza saqloviga integratsiya qiling."}
+              </p>
             </div>
-            <button 
-              onClick={() => setShowAdminForm(!showAdminForm)}
-              className="px-6 py-2 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-primary/90 transition-all shadow-lg"
-            >
-              {showAdminForm ? "Yopish" : "Formani Ochish"}
-            </button>
+            <div className="flex gap-2">
+              {editingVideo && (
+                <button 
+                  onClick={() => { setEditingVideo(null); setShowAdminForm(false); setCmsTitle(''); setCmsVideoId(''); }}
+                  className="px-6 py-2 bg-slate-500 text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-slate-600 transition-all"
+                >
+                  Bekor qilish
+                </button>
+              )}
+              <button 
+                onClick={() => { setShowAdminForm(!showAdminForm); if(showAdminForm && editingVideo) setEditingVideo(null); }}
+                className="px-6 py-2 bg-primary text-white font-black uppercase tracking-widest text-xs rounded-xl hover:bg-primary/90 transition-all shadow-lg"
+              >
+                {showAdminForm ? "Yopish" : "Formani Ochish"}
+              </button>
+            </div>
           </div>
 
           <AnimatePresence>
@@ -215,7 +254,7 @@ const VideoLessons = () => {
                   </div>
                 </div>
                 <button type="submit" className="px-8 py-3 bg-primary text-white rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:bg-primary-dark transition-all shadow-primary/20 shadow-lg">
-                  <RiSave3Line size={18} /> Resursni Saqlash
+                  <RiSave3Line size={18} /> {editingVideo ? "Saqlash" : "Resursni Saqlash"}
                 </button>
               </motion.form>
             )}

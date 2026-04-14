@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     return true;
   };
 
-  const login = (username, password, targetRole = 'student') => {
+  const login = (username, password, targetRole = 'student', bio = '') => {
     if (!username.trim() || !password.trim()) {
       return { success: false, message: "Ism va parolni kiriting" };
     }
@@ -83,7 +83,9 @@ export const AuthProvider = ({ children }) => {
         username: trimmedUsername,
         password: password,
         name: trimmedUsername,
+        bio: bio,
         role: "student",
+        regDate: new Date().toLocaleDateString('uz-UZ'),
         createdAt: new Date().toISOString()
       };
       const updatedUsers = [...users, newUser];

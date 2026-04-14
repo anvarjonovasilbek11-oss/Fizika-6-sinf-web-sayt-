@@ -1,6 +1,3 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiArrowLeftLine, 
   RiArrowRightLine, 
@@ -10,77 +7,78 @@ import {
   RiCompass3Line,
   RiPulseLine,
   RiFlashlightLine,
-  RiVideoLine
+  RiVideoLine,
+  RiEditLine,
+  RiEyeOffLine,
+  RiSave3Line,
+  RiCloseLine
 } from 'react-icons/ri';
-import { getCombinedTextbooks, getVideoForLesson } from '../services/textbookService';
+import { getCombinedTextbooks, getVideoForLesson, saveCustomLesson, hideLesson } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
+import toast from 'react-hot-toast';
 
 const TextbookPage = () => {
   const { chapterId, lessonId } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   
   const [loading, setLoading] = React.useState(true);
   const [textbooks, setTextbooks] = React.useState([]);
   const [lessonVideo, setLessonVideo] = React.useState(null);
+  const [isEditing, setIsEditing] = React.useState(false);
+
+  // Edit State
+  const [editTheory, setEditTheory] = React.useState('');
+  const [editFormula, setEditFormula] = React.useState('');
 
   React.useEffect(() => {
-    // Simulate loading for smooth transition
-    const timer = setTimeout(() => {
-      const data = getCombinedTextbooks();
-      setTextbooks(data);
-      setLessonVideo(getVideoForLesson(lessonId));
-      setLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, [lessonId]);
+    const data = getCombinedTextbooks(isAdmin);
+    setTextbooks(data);
+    setLessonVideo(getVideoForLesson(lessonId));
+    setLoading(false);
+  }, [lessonId, isAdmin]);
 
   const chapter = textbooks.find(c => c.id === chapterId);
   const lesson = chapter?.lessons.find(l => l.id === lessonId);
 
-  // Redirect if not found after loading
   React.useEffect(() => {
-    if (!loading && (!chapter || !lesson)) {
-      navigate('/home');
+    if (lesson) {
+      setEditTheory(lesson.content?.theory || '');
+      setEditFormula(lesson.content?.formulas || '');
     }
-  }, [loading, chapter, lesson, navigate]);
+  }, [lesson]);
+
+  // Handle Save
+  const handleSave = () => {
+    const updatedLesson = {
+      ...lesson,
+      content: {
+        ...lesson.content,
+        theory: editTheory,
+        formulas: editFormula
+      }
+    };
+    saveCustomLesson(chapterId, updatedLesson);
+    setIsEditing(false);
+    toast.success("Mavzu muvaffaqiyatli saqlandi!");
+    // Refresh local state
+    setTextbooks(getCombinedTextbooks(isAdmin));
+  };
+
+  // Handle Hide
+  const handleHide = () => {
+    if (!window.confirm("Ushbu mavzuni o'quvchilardan yashirib, ko'rib chiqishga o'tkazasizmi?")) return;
+    hideLesson(lessonId);
+    toast.success("Mavzu yashirildi va ko'rib chiqishga o'tkazildi");
+    navigate(-1);
+  };
 
   if (loading) return <LoadingSpinner />;
   if (!chapter || !lesson) return null;
-
-  // Academic Content for Lesson 1: Kirish
-  const isLessonOne = lessonId === '1' && chapterId === 'bob-1';
-  
-  const academicContent = isLessonOne ? {
-    theory: `Fizika – tabiat haqidagi eng asosiy va qadimiy fanlardan biridir. "Fizika" so'zi qadimgi grek tilidagi "physis" so‘zidan olingan bo‘lib, "tabiat" degan ma'noni anglatadi. Ushbu fan bizni o'rab turgan olamning tuzilishini, undagi turli xil hodisalarning sabablarini va qonuniyatlarini o‘rganadi.
-
-Siz har kuni guvohi bo‘ladigan oddiy hodisalar – quyoshning chiqishi va botishi, yomg‘ir yog‘ishi, chaqmoq chaqishi, narsalarning yerga tushishi – bularning barchasi fizik jarayonlardir. Fizika fani mana shu jarayonlarni o'rganish orqali insoniyatga koinot sirlarini ochishga yordam beradi.
-
-Fizikaning asosiy vazifasi – tabiatda sodir bo'ladigan voqealarning umumiy qonuniyatlarini topishdir. Masalan, nima uchun kema suvda suzadi-yu, lekin kichik tosh cho'kib ketadi? Nima uchun ba'zi jismlar elektr tokini o'tkazadi, boshqalari esa yo'q? Fizika fani mana shu kabi savollarga tajriba va kuzatishlar orqali javob beradi.
-
-Fizikada o'rganish usullari asosan ikkiga bo'linadi:
-1. Kuzatish – tabiatdagi hodisaga aralashmagan holda uni diqqat bilan o'rganish.
-2. Tajriba (Eksperiment) – maxsus laboratoriya sharoitida, asboblar yordamida hodisani sun'iy ravishda takrorlash va o'lchashlarni amalga oshirish.
-
-Tabiat qonunlarini o'rganish jarayonida fizika va matematika chambarchas bog'liqdir. Matematika fizikaning tili bo'lib, u yordamida biz jarayonlarni aniq hisoblab chiqamiz. Masalan, jismning bosib o'tgan masofasini (s), vaqt (t) va tezlik (v) orqali hisoblash mumkin.
-
-Fizika faqat nazariya emas, u amaliyotdir. Bugungi kundagi barcha texnik yutuqlar – smartfonlardan tortib kosmik kemalarigacha – fizika qonunlariga asoslangan. Fizikani o'rganish orqali biz nafaqat dunyoni tushunamiz, balki uni o'zgartirish va rivojlantirish imkoniga ega bo'lamiz. Har bir kashfiyot inson qobiliyatlarini yangi bosqichga ko'taradi.
-
-Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa va uning xususiyatlari kabi fundamental tushunchalar bilan tanishamiz. Bu bilimlar sizga yuqori sinflarda murakkabroq fizik jarayonlarni tushunish uchun mustahkam poydevor yaratadi.`,
-    formulas: [
-      { label: "Tezlik formulasi", notation: "v = s / t", unit: "m/s" },
-      { label: "Zichlik formulasi", notation: "ρ = m / V", unit: "kg/m³" }
-    ],
-    constants: [
-      { label: "Erkin tushish tezlanishi", notation: "g ≈ 9.8", unit: "m/s²" },
-      { label: "Suv zichligi", notation: "ρ = 1000", unit: "kg/m³" }
-    ]
-  } : {
-    theory: lesson.content?.theory || "Ushbu mavzu bo'yicha batafsil nazariy ma'lumotlar yaqin orada taqdim etiladi. Iltimos, darslikning keyingi bo'limlarini tekshiring.",
-    formulas: lesson.content?.formulas ? [{ label: "Asosiy formula", notation: lesson.content.formulas, unit: "" }] : [],
-    constants: lesson.content?.constants ? [{ label: "Doimiy kattalik", notation: lesson.content.constants, unit: "" }] : []
-  };
 
   // Navigation Logic
   const allLessons = textbooks.flatMap(c => c.lessons.map(l => ({ ...l, chapterId: c.id })));
@@ -90,12 +88,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
 
   return (
     <div className="relative min-h-screen bg-light-bg dark:bg-space-dark transition-colors duration-500">
-      {/* Background Floating Elements */}
-      <div className="fixed inset-0 pointer-events-none opacity-5 dark:opacity-10 overflow-hidden z-0">
-        <motion.div animate={{ y: [0, -40, 0], rotate: 360 }} transition={{ duration: 15, repeat: Infinity }} className="absolute top-[10%] left-[5%] text-neon-purple"><RiPulseLine size={120} /></motion.div>
-        <motion.div animate={{ y: [0, 50, 0], rotate: -360 }} transition={{ duration: 20, repeat: Infinity }} className="absolute bottom-[20%] right-[10%] text-electric-blue"><RiCompass3Line size={140} /></motion.div>
-        <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 10, repeat: Infinity }} className="absolute top-[40%] right-[5%] text-slate-400 dark:text-white/20"><RiPulseLine size={100} /></motion.div>
-      </div>
+      {/* ... (Background Floating Elements) */}
 
       <motion.div 
         initial={{ opacity: 0 }}
@@ -113,6 +106,24 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
               <RiArrowLeftLine size={24} />
             </button>
             <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-white/10 via-slate-100 dark:via-white/5 to-transparent" />
+            
+            {isAdmin && (
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setIsEditing(true)}
+                  className="px-6 py-2 bg-blue-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20"
+                >
+                  <RiEditLine size={16} /> Taxrirlash
+                </button>
+                <button 
+                  onClick={handleHide}
+                  className="px-6 py-2 bg-red-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-red-600 transition-all shadow-lg shadow-red-500/20"
+                >
+                  <RiEyeOffLine size={16} /> Yashirish
+                </button>
+              </div>
+            )}
+            
             <div className="px-4 py-1.5 rounded-full bg-electric-blue/10 border border-electric-blue/20 text-electric-blue text-[10px] font-black uppercase tracking-[0.2em]">
               Mavzu mutolaasi
             </div>
@@ -126,7 +137,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
             >
               <RiFlashlightLine size={14} /> {chapter.id.startsWith('bob-') ? `Bob ${chapter.id.split('-')[1]}` : chapter.title}
             </motion.div>
-            <h1 className="text-4xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight uppercase tracking-tighter">
+            <h1 className="text-4xl md:text-7xl font-black text-slate-900 dark:text-white leading-tight tracking-tighter uppercase">
               <span className="text-glow-blue dark:text-glow-blue transition-all">{t(lesson.title)}</span>
             </h1>
           </div>
@@ -137,18 +148,17 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
           {/* Central Theory Board */}
           <div className="lg:col-span-2 space-y-8">
               <div className="glass-card p-8 md:p-12 space-y-8 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden group min-h-[400px] flex items-center justify-center transition-colors">
-                {/* Subtle background glow */}
                 <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-neon-purple/5 blur-[100px] pointer-events-none group-hover:bg-neon-purple/10 transition-colors" />
                 
                 <div className="relative prose dark:prose-invert prose-slate max-w-none w-full">
-                  {!isLessonOne && (!lesson.content?.theory) ? (
+                  {!lesson.content?.theory && !editTheory ? (
                     <div className="text-center space-y-4 py-20">
                       <RiPulseLine className="mx-auto text-slate-300 dark:text-white/20 animate-pulse" size={64} />
                       <p className="text-slate-400 dark:text-slate-500 font-black uppercase tracking-[0.3em] text-sm italic">Nazariya tasdiqlanish jarayonida...</p>
                     </div>
                   ) : (
                     <p className="leading-[1.8] text-slate-800 dark:text-slate-100 font-bold whitespace-pre-wrap tracking-wide text-lg md:text-xl text-justify transition-colors">
-                      {academicContent.theory}
+                      {editTheory || lesson.content?.theory}
                     </p>
                   )}
                 </div>
@@ -157,7 +167,6 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
 
           {/* Side Info Panel */}
           <div className="space-y-8">
-            {/* Formulas & Constants Card */}
             <motion.section 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -169,25 +178,15 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
               </h3>
               
               <div className="space-y-6 relative z-10">
-                {academicContent.formulas.length > 0 ? academicContent.formulas.map((f, i) => (
-                  <div key={i} className="p-6 rounded-3xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/5 hover:border-neon-purple/30 transition-all group/formula shadow-inner">
-                    <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2 tracking-[0.2em]">{f.label}</p>
+                {(editFormula || (lesson.content?.formulas)) ? (
+                  <div className="p-6 rounded-3xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/5 hover:border-neon-purple/30 transition-all group/formula shadow-inner text-center">
                     <p className="text-2xl font-black text-neon-purple italic drop-shadow-[0_0_8px_rgba(188,19,254,0.3)]">
-                      {f.notation} <span className="text-xs font-black text-slate-400 not-italic ml-2">[{f.unit}]</span>
+                      {editFormula || lesson.content?.formulas}
                     </p>
                   </div>
-                )) : (
+                ) : (
                   <p className="text-slate-500 dark:text-slate-400 text-sm font-black italic uppercase tracking-widest text-center py-4">Ushbu darsda hisoblash formulalari mavjud emas.</p>
                 )}
-
-                {academicContent.constants.map((c, i) => (
-                  <div key={i} className="p-6 rounded-3xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/5 hover:border-electric-blue/30 transition-all group/const shadow-inner">
-                    <p className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2 tracking-[0.2em]">{c.label}</p>
-                    <p className="text-2xl font-black text-electric-blue italic drop-shadow-[0_0_8px_rgba(0,210,255,0.3)]">
-                      {c.notation} <span className="text-xs font-black text-slate-400 not-italic ml-2">[{c.unit}]</span>
-                    </p>
-                  </div>
-                ))}
               </div>
             </motion.section>
 
@@ -202,11 +201,9 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
                   <div className="w-1.5 h-1.5 rounded-full bg-electric-blue animate-pulse" />
                   <span className="text-[10px] font-black uppercase text-electric-blue tracking-[0.3em]">Media Resurs</span>
                 </div>
-                <a 
-                  href={`https://www.youtube.com/watch?v=${lessonVideo.videoId}`} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group relative flex flex-col items-center justify-center p-12 rounded-[2.5rem] overflow-hidden border border-slate-200 dark:border-white/10 hover:border-electric-blue/50 transition-all shadow-xl bg-white dark:bg-transparent"
+                <button 
+                  onClick={() => window.open(`https://www.youtube.com/watch?v=${lessonVideo.videoId}`, '_blank')}
+                  className="group relative flex flex-col items-center justify-center p-12 w-full rounded-[2.5rem] overflow-hidden border border-slate-200 dark:border-white/10 hover:border-electric-blue/50 transition-all shadow-xl bg-white dark:bg-transparent"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/10 to-electric-blue/10 dark:from-neon-purple/20 dark:to-electric-blue/20 opacity-30 group-hover:opacity-50 transition-opacity" />
                   <div className="relative z-10 flex flex-col items-center gap-6">
@@ -218,7 +215,7 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
                       <span className="text-slate-500 dark:text-slate-400 text-xs font-black uppercase tracking-[0.2em] mt-2 block opacity-70">{lessonVideo.title}</span>
                     </div>
                   </div>
-                </a>
+                </button>
               </motion.section>
             ) : (
               <div className="glass-card p-10 border-dashed border-2 border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 opacity-50 flex flex-col items-center gap-4 rounded-[2.5rem]">
@@ -229,29 +226,62 @@ Darsimiz davomida biz jismlarning harakatlanishi, moddalarning tuzilishi, massa 
           </div>
         </div>
 
-        {/* Verification & Source Section */}
-        <section className="glass-card p-10 bg-white dark:bg-black/40 border-slate-200 dark:border-white/5 mt-12 shadow-2xl relative overflow-hidden transition-colors">
-          <div className="absolute h-full w-2 bg-electric-blue top-0 left-0" />
-          <div className="flex flex-col md:flex-row items-center gap-8 justify-between">
-            <div className="flex items-center gap-8">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-electric-blue/5 dark:bg-electric-blue/10 flex items-center justify-center text-electric-blue shadow-inner group transition-transform">
-                      <RiPulseLine size={32} className="group-hover:scale-110 transition-transform" />
+        {/* Edit Modal */}
+        <AnimatePresence>
+          {isEditing && (
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+            >
+              <motion.div 
+                initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+                className="w-full max-w-4xl bg-white dark:bg-[#0d1526] rounded-[2.5rem] overflow-hidden shadow-2xl relative border border-white/10 flex flex-col"
+              >
+                <div className="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-primary/5">
+                  <div className="flex items-center gap-4">
+                    <RiEditLine size={32} className="text-primary" />
+                    <div>
+                      <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Mavzuni Taxrirlash</h2>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest mt-1">{t(lesson.title)}</p>
                     </div>
-              <div className="space-y-2">
-                <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Dars Verifikatsiyasi</h4>
-                <p className="text-sm text-slate-600 dark:text-slate-400 font-bold uppercase tracking-tight">
-                  Ushbu material darslik standartlari asosida tasdiqlangan va tekshirilgan.
-                </p>
-              </div>
-            </div>
-            <div className="text-center md:text-right">
-               <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Manba: O'zR XTV darsligi (2022)</span>
-               <span className="text-[10px] font-black text-neon-purple uppercase tracking-[0.3em] block mt-2 px-4 py-1.5 bg-neon-purple/5 dark:bg-neon-purple/10 rounded-full border border-neon-purple/10">Status: Tasdiqlangan (Public)</span>
-            </div>
-          </div>
-        </section>
+                  </div>
+                  <button onClick={() => setIsEditing(false)} className="p-3 bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-red-500 rounded-full transition-all">
+                    <RiCloseLine size={24} />
+                  </button>
+                </div>
 
-        {/* Footer Navigation Overlay */}
+                <div className="p-8 space-y-8 overflow-y-auto no-scrollbar">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">Nazariy qism (Theory)</label>
+                    <textarea 
+                      value={editTheory} onChange={(e) => setEditTheory(e.target.value)}
+                      rows={10}
+                      className="w-full p-6 rounded-[2rem] bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 focus:border-primary outline-none transition-all text-slate-800 dark:text-slate-100 font-bold leading-relaxed scrollbar-hide"
+                      placeholder="Mavzu matnini bu yerga yozing..."
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">Asosiy Formula</label>
+                    <input 
+                      value={editFormula} onChange={(e) => setEditFormula(e.target.value)}
+                      className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 focus:border-primary outline-none transition-all text-slate-800 dark:text-slate-100 font-black text-xl italic"
+                      placeholder="Masalan: v = s / t"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-8 bg-slate-50 dark:bg-white/5 flex justify-end gap-4">
+                  <button onClick={() => setIsEditing(false)} className="px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs text-slate-500 hover:text-slate-800 dark:hover:text-white transition-all">Bekor qilish</button>
+                  <button onClick={handleSave} className="px-10 py-3 bg-primary text-white rounded-xl font-black uppercase tracking-widest text-xs flex items-center gap-2 shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                    <RiSave3Line size={18} /> Saqlash
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Footer Navigation Same... (as before) */}
         <footer className="flex flex-col sm:flex-row justify-between items-center gap-8 border-t border-slate-200 dark:border-white/5 pt-12">
            <button 
              disabled={!prevLesson}

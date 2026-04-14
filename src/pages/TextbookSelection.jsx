@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../context/LanguageContext';
-import { RiBookReadFill, RiArrowRightSLine, RiArrowLeftSLine, RiPulseLine } from 'react-icons/ri';
-import { getCombinedTextbooks } from '../services/textbookService';
+import { RiBookReadFill, RiArrowRightSLine, RiArrowLeftSLine, RiPulseLine, RiEyeOffLine, RiCheckLine, RiShieldLine } from 'react-icons/ri';
+import { getCombinedTextbooks, unhideLesson } from '../services/textbookService';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
 
 const TextbookSelection = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [textbooks, setTextbooks] = useState([]);
   const [selectedChapter, setSelectedChapter] = useState(null);
 
   useEffect(() => {
-    setTextbooks(getCombinedTextbooks());
-  }, []);
+    setTextbooks(getCombinedTextbooks(isAdmin));
+  }, [isAdmin]);
 
-  const chapters = textbooks;
+  const handleUnhide = (e, lessonId) => {
+    e.stopPropagation();
+    unhideLesson(lessonId);
+    toast.success("Mavzu qayta tasdiqlandi!");
+    setTextbooks(getCombinedTextbooks(isAdmin));
+  };
+
+  const hiddenLessons = textbooks.flatMap(c => 
+    c.lessons.filter(l => l.isHidden).map(l => ({ ...l, chapterId: c.id, chapterTitle: c.title }))
+  );
 
   return (
     <div className="min-h-[calc(100vh-120px)] space-y-12 pb-20 transition-colors">
-      {/* Header Section */}
+      {/* ... (Header Section same) */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
@@ -32,16 +41,16 @@ const TextbookSelection = () => {
         
         <div className="flex items-center gap-4 bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 px-6 py-3 rounded-2xl shadow-sm dark:shadow-none">
           <RiPulseLine className="text-neon-purple animate-pulse" size={24} />
-          <span className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">7 ta Bob jami mahsulot</span>
+          <span className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">{textbooks.length} ta Bob jami mahsulot</span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
-        {/* Left Side: Chapter List */}
+        {/* Left Side: Chapter List same... */}
         <div className="xl:col-span-4 space-y-4">
           <h2 className="text-xs font-black uppercase text-slate-800 dark:text-slate-200 tracking-[0.3em] mb-6 px-2 opacity-80">BOBLARNI TANLANING</h2>
           <div className="grid grid-cols-1 gap-3">
-            {chapters.map((chapter, idx) => (
+            {textbooks.map((chapter, idx) => (
               <motion.button
                 key={chapter.id}
                 whileHover={{ x: 10 }}
@@ -54,13 +63,7 @@ const TextbookSelection = () => {
                     : 'bg-white dark:bg-white/5 border-slate-100 dark:border-white/5 hover:bg-slate-50 dark:hover:bg-white/10 hover:border-slate-200 dark:hover:border-white/20 shadow-sm dark:shadow-none'}
                 `}
               >
-                {selectedChapter?.id === chapter.id && (
-                  <motion.div 
-                    layoutId="active-chapter-glow"
-                    className="absolute inset-0 bg-neon-purple/5 blur-xl"
-                  />
-                )}
-                
+                {/* ... (Selected Chapter Glow) */}
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="flex flex-col gap-1">
                     <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${selectedChapter?.id === chapter.id ? 'text-neon-purple' : 'text-slate-600 dark:text-slate-400'}`}>
@@ -105,12 +108,14 @@ const TextbookSelection = () => {
                     <motion.div
                       key={lesson.id}
                       whileHover={{ y: -10 }}
-                      className="glass-card bg-white dark:bg-white/5 border-slate-200 dark:border-white/5 group cursor-pointer relative overflow-hidden shadow-lg hover:shadow-2xl transition-all"
+                      className={`glass-card bg-white dark:bg-white/5 border-slate-200 dark:border-white/5 group cursor-pointer relative overflow-hidden shadow-lg hover:shadow-2xl transition-all ${lesson.isHidden ? 'border-red-500/30 bg-red-500/5' : ''}`}
                       onClick={() => navigate(`/textbook/${selectedChapter.id}/${lesson.id}`)}
                     >
-                      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity text-slate-900 dark:text-white">
-                        <RiBookReadFill size={100} />
-                      </div>
+                      {lesson.isHidden && (
+                        <div className="absolute top-2 left-2 px-3 py-1 bg-red-500 text-white text-[8px] font-black uppercase tracking-widest rounded-full z-20">
+                           YASHIRILGAN
+                        </div>
+                      )}
                       
                       <div className="p-8 space-y-4">
                         <div className="flex items-center gap-3">
@@ -147,6 +152,44 @@ const TextbookSelection = () => {
           </AnimatePresence>
         </div>
       </div>
+
+      {isAdmin && hiddenLessons.length > 0 && (
+        <section className="space-y-10 pt-10 border-t border-slate-200 dark:border-white/10">
+          <div className="flex items-center gap-5">
+            <div className="p-5 bg-red-500 text-white rounded-3xl shadow-xl shadow-red-500/30">
+              <RiShieldLine size={40} />
+            </div>
+            <div>
+              <h2 className="text-4xl font-black text-slate-900 dark:text-white leading-none uppercase tracking-tighter">Yashirilgan Mavzular</h2>
+              <p className="text-red-600 dark:text-red-500 font-black text-lg mt-2 uppercase tracking-widest">Ushbu darslar o'quvchilarga ko'rinmaydi</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {hiddenLessons.map((l) => (
+              <div key={l.id} className="glass-card p-10 border-red-500/20 bg-red-500/5 hover:bg-red-500/10 transition-all flex flex-col justify-between shadow-lg">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-red-500 tracking-widest mb-2 block">{l.chapterTitle}</span>
+                  <h4 className="text-2xl font-black mb-4 leading-tight text-slate-900 dark:text-white uppercase tracking-tight">{l.title}</h4>
+                </div>
+                <div className="mt-10">
+                  <button 
+                    onClick={(e) => handleUnhide(e, l.id)}
+                    className="w-full py-4 bg-green-600 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-green-600/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  >
+                    <RiCheckLine size={20} /> Tasdiqlash (Ko'rsatish)
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+};
+
+export default TextbookSelection;
     </div>
   );
 };

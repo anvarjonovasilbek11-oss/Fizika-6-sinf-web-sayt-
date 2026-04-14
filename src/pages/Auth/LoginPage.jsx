@@ -27,7 +27,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add logic for bio if register if needed in AuthContext
-    const result = login(username, password, isAdmin ? 'admin' : 'student');
+    const result = login(username, password, isAdmin ? 'admin' : 'student', bio);
     if (result.success) {
       if (result.isNew) {
         toast.success(`${t('login_welcome')}, ${username}! ${t('login_welcome_new')}`);

@@ -127,15 +127,22 @@ const StudentQuiz = () => {
   };
 
   const deleteQuiz = (id, isFromPending = false) => {
-    if (!window.confirm("O'chirilsinmi?")) return;
     if (isFromPending) {
+      if (!window.confirm("Ushbu testni butunlay o'chirasizmi?")) return;
       const updated = pendingQuizzes.filter(q => q.id !== id);
       savePending(updated);
+      toast.success("Test o'chirildi");
     } else {
-      const updated = approvedQuizzes.filter(q => q.id !== id);
-      saveApproved(updated);
+      if (!window.confirm("Ushbu testni tasdiqlanmaganlar qatoriga qaytarasizmi?")) return;
+      const quizToRevert = approvedQuizzes.find(q => q.id === id);
+      if (quizToRevert) {
+        const updatedApproved = approvedQuizzes.filter(q => q.id !== id);
+        const updatedPending = [...pendingQuizzes, { ...quizToRevert, isApproved: false }];
+        saveApproved(updatedApproved);
+        savePending(updatedPending);
+        toast.success("Test tasdiqlanmaganlar qatoriga qaytarildi");
+      }
     }
-    toast.success("Test o'chirildi");
   };
 
   const startQuiz = (quiz) => {
