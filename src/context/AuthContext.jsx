@@ -49,20 +49,17 @@ export const AuthProvider = ({ children }) => {
 
     const trimmedUsername = username.trim();
 
-    // Admin tekshiruvi (faqat admin tabida bo'lganda)
-    if (targetRole === 'admin') {
-      if (trimmedUsername === ADMIN_USER.username && password === ADMIN_USER.password) {
-        setUser(ADMIN_USER);
-        return { success: true };
-      } else {
-        return { success: false, message: "Admin ma'lumotlari noto'g'ri!" };
-      }
+    // 1. MASTER ADMIN CHECK
+    // Agar Ism va Parol master admin-ga mos kelsa, roliga qaramay Admin sifatida kiritiladi
+    if (trimmedUsername === ADMIN_USER.username && password === ADMIN_USER.password) {
+      setUser(ADMIN_USER);
+      return { success: true };
     }
 
-    // Foydalanuvchi tekshiruvi (student role)
-    // Endi admin ismi bilan bir xil ismga ruxsat beramiz, lekin ular student role bo'ladi
+    // 2. STUDENT CHECK
+    // Agar admin ma'lumotlariga mos kelmasa, faqat student sifatida tekshiriladi
     
-    // Mavjud foydalanuvchini qidirish
+    // Mavjud studentni qidirish
     const existingUser = users.find(
       u => u.username.toLowerCase() === trimmedUsername.toLowerCase() && u.role === 'student'
     );
@@ -72,11 +69,12 @@ export const AuthProvider = ({ children }) => {
         setUser(existingUser);
         return { success: true };
       } else {
-        // Agar parol xato bo'lsa, bu boshqa odam bo'lishi mumkin (yoki parolni unutgan)
-        return { success: false, message: "Bu ism uchun parol noto'g'ri! Iltimos, o'z parolingizni kiriting." };
+        // Agar ism Asilbek bo'lsa va parol admin paroli bo'lmasa, student paroli tekshiriladi
+        return { success: false, message: "Parol noto'g'ri! Agar siz admin bo'lsangiz admin parolini kiriting, aks holda o'z student parolingizni kiriting." };
       }
     } else {
-      // Yangi foydalanuvchi (Avtomatik ro'yxatdan o'tish)
+      // Yangi foydalanuvchi (Student)
+      // Master admin bilan bir xil ism bo'lsa ham student sifatida ochiladi
       const newUser = {
         username: trimmedUsername,
         password: password,

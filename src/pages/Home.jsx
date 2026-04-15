@@ -207,7 +207,7 @@ const Home = () => {
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
                     {filteredUsers.map((u) => (
-                      <tr key={u.username} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                      <tr key={`${u.username}-${u.role}`} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                         <td className="py-4 pl-4">
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
