@@ -143,12 +143,15 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       </nav>
 
       {/* Footer Nav */}
-      <div className="p-6 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-black/20">
+      <div className={`p-4 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-black/20 ${isExpanded ? 'px-6' : 'px-2'}`}>
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-4 p-4 rounded-2xl text-secondary hover:bg-secondary/10 hover:text-red-400 group"
+          className={`
+            w-full flex items-center rounded-2xl text-secondary hover:bg-secondary/10 hover:text-red-400 group transition-all duration-300
+            ${isExpanded ? 'p-4 gap-4' : 'p-4 justify-center gap-0'}
+          `}
         >
-          <RiLogoutBoxRLine size={24} className="group-hover:translate-x-1" />
+          <RiLogoutBoxRLine size={24} className="group-hover:translate-x-1 flex-shrink-0" />
           {(isExpanded || mobileOpen) && <span className="font-black text-xs uppercase tracking-widest">{t('nav_logout')}</span>}
         </button>
       </div>
