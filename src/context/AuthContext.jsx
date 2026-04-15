@@ -1,9 +1,11 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSessionStorage } from '../hooks/useSessionStorage';
+import { db } from '../services/firebase';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
 
-// Faqat admin oldindan belgilangan
 const ADMIN_USER = { 
   username: import.meta.env.VITE_ADMIN_USER || "Asilbek", 
   password: import.meta.env.VITE_ADMIN_PASS || "asilbek0921", 
@@ -11,38 +13,60 @@ const ADMIN_USER = {
   role: "admin" 
 };
 
-// LocalStorage'dan foydalanuvchilar ro'yxatini olish
-const getInitialUsers = () => {
-  try {
-    const saved = localStorage.getItem('users');
-    const users = saved ? JSON.parse(saved) : [ADMIN_USER];
-    // Admin har doim ro'yxatda bo'lsin
-    const hasAdmin = users.some(u => u.role === 'admin');
-    if (!hasAdmin) return [ADMIN_USER, ...users];
-    return users;
-  } catch {
-    return [ADMIN_USER];
-  }
-};
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useSessionStorage('currentUser', null);
-  const [users, setUsers] = useState(getInitialUsers);
+  const [users, setUsers] = useState([ADMIN_USER]);
 
-  const saveUsers = (updatedUsers) => {
-    setUsers(updatedUsers);
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
+  // Firebase Firestore dan foydalanuvchilarni real-vaqtda olish
+  useEffect(() => {
+    // Agar Firebase API key bo'lmasa, ogohlantirish (faqat dev-da yoki bir marta)
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
+      console.warn("Firebase API key topilmadi! .env faylni to'ldiring.");
+      // LocalStorage fallback (ixtiyoriy, lekin yaxshiroq)
+      const saved = localStorage.getItem('users');
+      if (saved) setUsers(JSON.parse(saved));
+      return;
+    }
+
+    const unsub = onSnapshot(collection(db, 'users'), (snapshot) => {
+      const usersList = snapshot.docs.map(doc => doc.data());
+      // Admin har doim ro'yxatda bo'lsin (agar Cloud-da bo'lmasa)
+      const hasAdmin = usersList.some(u => u.username === ADMIN_USER.username && u.role === 'admin');
+      if (!hasAdmin) {
+        setUsers([ADMIN_USER, ...usersList]);
+      } else {
+        setUsers(usersList);
+      }
+    });
+
+    return () => unsub();
+  }, []);
+
+  const saveToCloud = async (userData) => {
+    try {
+      await setDoc(doc(db, 'users', `${userData.username}-${userData.role}`), userData);
+    } catch (err) {
+      console.error("Cloud-ga saqlashda xato:", err);
+      // Agar kishi oflayn bo'lsa yoki Firebase sozlanmagan bo'lsa
+      localStorage.setItem('users', JSON.stringify([...users, userData]));
+    }
   };
 
-  const deleteUser = (usernameToDelete) => {
+  const deleteUser = async (usernameToDelete) => {
     // Admin cannot be deleted
     if (usernameToDelete === ADMIN_USER.username) return false;
-    const updatedUsers = users.filter(u => u.username !== usernameToDelete);
-    saveUsers(updatedUsers);
-    return true;
+    
+    try {
+      // Bizda faqat studentlarni o'chirish imkoniyati (xozircha)
+      await deleteDoc(doc(db, 'users', `${usernameToDelete}-student`));
+      return true;
+    } catch (err) {
+      console.error("Cloud-dan o'chirishda xato:", err);
+      return false;
+    }
   };
 
-  const login = (username, password, targetRole = 'student', bio = '') => {
+  const login = async (username, password, targetRole = 'student', bio = '') => {
     if (!username.trim() || !password.trim()) {
       return { success: false, message: "Ism va parolni kiriting" };
     }
@@ -50,16 +74,12 @@ export const AuthProvider = ({ children }) => {
     const trimmedUsername = username.trim();
 
     // 1. MASTER ADMIN CHECK
-    // Ismni kichik harflarga o'tkazib tekshiramiz (Case-insensitive)
     if (trimmedUsername.toLowerCase() === ADMIN_USER.username.toLowerCase() && password === ADMIN_USER.password) {
       setUser(ADMIN_USER);
       return { success: true };
     }
 
     // 2. STUDENT CHECK
-    // Agar admin ma'lumotlariga mos kelmasa, faqat student sifatida tekshiriladi
-    
-    // Mavjud studentni qidirish
     const existingUser = users.find(
       u => u.username.toLowerCase() === trimmedUsername.toLowerCase() && u.role === 'student'
     );
@@ -69,12 +89,10 @@ export const AuthProvider = ({ children }) => {
         setUser(existingUser);
         return { success: true };
       } else {
-        // Agar ism Asilbek bo'lsa va parol admin paroli bo'lmasa, student paroli tekshiriladi
-        return { success: false, message: "Parol noto'g'ri! Agar siz admin bo'lsangiz admin parolini kiriting, aks holda o'z student parolingizni kiriting." };
+        return { success: false, message: "Parol noto'g'ri! Iltimos, o'z parolingizni kiriting." };
       }
     } else {
       // Yangi foydalanuvchi (Student)
-      // Master admin bilan bir xil ism bo'lsa ham student sifatida ochiladi
       const newUser = {
         username: trimmedUsername,
         password: password,
@@ -84,8 +102,8 @@ export const AuthProvider = ({ children }) => {
         regDate: new Date().toLocaleDateString('uz-UZ'),
         createdAt: new Date().toISOString()
       };
-      const updatedUsers = [...users, newUser];
-      saveUsers(updatedUsers);
+      
+      await saveToCloud(newUser);
       setUser(newUser);
       return { success: true, isNew: true };
     }

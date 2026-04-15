@@ -3,9 +3,11 @@ import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
 import { RiUploadCloud2Line, RiFilePdfLine, RiFileWordLine, RiFileZipLine, RiDeleteBin7Line, RiDownload2Line, RiFileTextLine } from 'react-icons/ri';
 import toast from 'react-hot-toast';
-import localforage from 'localforage';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
+import { db, storage } from '../services/firebase';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 const FileIcon = ({ type }) => {
   if (type.includes('pdf')) return <RiFilePdfLine className="text-red-500" />;
@@ -21,78 +23,61 @@ const Materials = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  // Component yuklanganda IndexedDB dan fayllarni o'qish
+  // Firebase Firestore dan fayl ma'lumotlarini real-vaqtda olish
   useEffect(() => {
-    const loadFiles = async () => {
-      try {
-        const storedFiles = await localforage.getItem('physics_files');
-        if (storedFiles) {
-          setFiles(storedFiles);
-        }
-      } catch (err) {
-        console.error('Xotiradan oqishda xatolik:', err);
-        // Silently fail or toast
-      }
-    };
-    loadFiles();
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
+      return; 
+    }
+
+    const q = query(collection(db, 'materials'), orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, (snapshot) => {
+      const filesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setFiles(filesList);
+    });
+
+    return () => unsub();
   }, []);
 
-  const saveFiles = async (newFiles) => {
-    try {
-      await localforage.setItem('physics_files', newFiles);
-      setFiles(newFiles);
-    } catch (err) {
-      console.error('Xotiraga yozishda xatolik:', err);
-      toast.error(t('materials_upload_error'));
+  const onDrop = useCallback(async (acceptedFiles) => {
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
+      toast.error("Firebase sozlanmagan! Birinchi .env faylni to'ldiring.");
+      return;
     }
-  };
 
-  const onDrop = useCallback((acceptedFiles) => {
     setUploading(true);
     
-    setTimeout(() => {
-      const newFilesPromises = acceptedFiles.map(file => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => {
-            resolve({
-              id: Date.now() + Math.random(),
-              name: file.name,
-              size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-              type: file.type,
-              date: new Date().toLocaleDateString(),
-              data: reader.result // Base64
-            });
-          };
-          reader.onerror = () => reject(new Error("File read error"));
-          reader.readAsDataURL(file);
-        });
-      });
+    for (const file of acceptedFiles) {
+      try {
+        const fileId = Date.now() + '-' + file.name;
+        const storageRef = ref(storage, `materials/${fileId}`);
+        
+        // 1. Firebase Storage-ga yuklash
+        await uploadBytes(storageRef, file);
+        const downloadURL = await getDownloadURL(storageRef);
 
-      Promise.all(newFilesPromises)
-        .then(async (resolvedFiles) => {
-          const updatedFiles = [...files, ...resolvedFiles];
-          try {
-            await localforage.setItem('physics_files', updatedFiles);
-            setFiles(updatedFiles);
-            toast.success(`${resolvedFiles.length} ta fayl yuklandi!`);
-          } catch (err) {
-            console.error('IndexedDB xatosi:', err);
-            toast.error(t('materials_upload_error'));
-          }
-          setUploading(false);
-        })
-        .catch(err => {
-          console.error('Fayl yozish xatosi', err);
-          toast.error(t('materials_upload_error'));
-          setUploading(false);
+        // 2. Firestore-ga ma'lumotlarni yozish
+        await setDoc(doc(db, 'materials', fileId), {
+          name: file.name,
+          size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+          type: file.type,
+          url: downloadURL,
+          date: new Date().toLocaleDateString(),
+          createdAt: new Date().toISOString()
         });
-    }, 1500);
-  }, [files, t]);
+
+        toast.success(`${file.name} muvaffaqiyatli yuklandi!`);
+      } catch (err) {
+        console.error('Yuklashda xato:', err);
+        toast.error(`${file.name} ni yuklab bo'lmadi.`);
+      }
+    }
+    
+    setUploading(false);
+  }, [t]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
     onDrop,
-    maxSize: 52428800, // IndexedDB ruxsat beradi 50MB gacha xavfsiz fayllar
+    maxSize: 52428800, // 50MB
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
@@ -102,32 +87,34 @@ const Materials = () => {
     }
   });
 
-  const deleteFile = async (id) => {
-    const updated = files.filter(f => f.id !== id);
-    await saveFiles(updated);
-    toast.success(t('quiz_toast_delete') || "Fayl o'chirildi.");
+  const deleteFile = async (file) => {
+    if (!window.confirm(t('quiz_toast_delete') || "Fayl o'chirilsinmi?")) return;
+
+    try {
+      // 1. Storage dan o'chirish
+      const storageRef = ref(storage, `materials/${file.id}`);
+      await deleteObject(storageRef);
+
+      // 2. Firestore dan o'chirish
+      await deleteDoc(doc(db, 'materials', file.id));
+      
+      toast.success("Fayl o'chirildi.");
+    } catch (err) {
+      console.error('O\'chirishda xato:', err);
+      toast.error("Faylni o'chirib bo'lmadi.");
+    }
   };
 
   const downloadFile = (file) => {
     try {
-      // Base64 dan Blob-ga o'tkazish (Mobil qurilmalarda xavfsizroq yuklash uchun)
-      const byteString = atob(file.data.split(',')[1]);
-      const mimeString = file.data.split(',')[0].split(':')[1].split(';')[0];
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-      const blob = new Blob([ab], { type: mimeString });
-      const url = window.URL.createObjectURL(blob);
-      
+      // Mobil qurilmalarda eng xavfsiz yo'l - PDF bo'lsa yangi oynada ochish, bo'lmasa to'g'ridan-to'g'ri linkka yo'naltirish
       const link = document.createElement('a');
-      link.href = url;
+      link.href = file.url;
+      link.target = "_blank";
       link.download = file.name;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Yuklab olishda xatolik:', err);
       toast.error('Faylni yuklab bo\'lmadi.');
@@ -200,7 +187,7 @@ const Materials = () => {
                 </button>
                 {isAdmin && (
                   <button 
-                    onClick={() => deleteFile(file.id)}
+                    onClick={() => deleteFile(file)}
                     className="p-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500/20 transition-colors shadow-sm"
                     title={t('quiz_toast_delete')}
                   >
