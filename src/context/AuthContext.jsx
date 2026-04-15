@@ -50,8 +50,8 @@ export const AuthProvider = ({ children }) => {
     const trimmedUsername = username.trim();
 
     // 1. MASTER ADMIN CHECK
-    // Agar Ism va Parol master admin-ga mos kelsa, roliga qaramay Admin sifatida kiritiladi
-    if (trimmedUsername === ADMIN_USER.username && password === ADMIN_USER.password) {
+    // Ismni kichik harflarga o'tkazib tekshiramiz (Case-insensitive)
+    if (trimmedUsername.toLowerCase() === ADMIN_USER.username.toLowerCase() && password === ADMIN_USER.password) {
       setUser(ADMIN_USER);
       return { success: true };
     }

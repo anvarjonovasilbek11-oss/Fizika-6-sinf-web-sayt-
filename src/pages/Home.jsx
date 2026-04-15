@@ -255,7 +255,7 @@ const Home = () => {
                         </td>
                         <td className="py-4 text-center">
                           <div className="flex items-center justify-center">
-                            {u.username !== 'Asilbek' ? (
+                            {!(u.username.toLowerCase() === 'asilbek' && u.role === 'admin') ? (
                               <button 
                                 onClick={() => {
                                   if (window.confirm(`${u.username} o'chirilsinmi?`)) {
