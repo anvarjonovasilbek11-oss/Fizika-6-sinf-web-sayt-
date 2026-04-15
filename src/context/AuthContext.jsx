@@ -59,15 +59,12 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-    // Foydalanuvchi tekshiruvi (student tabida)
-    // Agarda student tabida admin ismi yozilsa, uni admin sifatida KIRGIZMAYLIK
-    if (trimmedUsername === ADMIN_USER.username) {
-      return { success: false, message: "Login yoki parol xato!" };
-    }
-
+    // Foydalanuvchi tekshiruvi (student role)
+    // Endi admin ismi bilan bir xil ismga ruxsat beramiz, lekin ular student role bo'ladi
+    
     // Mavjud foydalanuvchini qidirish
     const existingUser = users.find(
-      u => u.username.toLowerCase() === trimmedUsername.toLowerCase() && u.role !== 'admin'
+      u => u.username.toLowerCase() === trimmedUsername.toLowerCase() && u.role === 'student'
     );
 
     if (existingUser) {
@@ -75,10 +72,11 @@ export const AuthProvider = ({ children }) => {
         setUser(existingUser);
         return { success: true };
       } else {
-        return { success: false, message: "Parol noto'g'ri! Avval kirgan parolingizni ishlating." };
+        // Agar parol xato bo'lsa, bu boshqa odam bo'lishi mumkin (yoki parolni unutgan)
+        return { success: false, message: "Bu ism uchun parol noto'g'ri! Iltimos, o'z parolingizni kiriting." };
       }
     } else {
-      // Yangi foydalanuvchi
+      // Yangi foydalanuvchi (Avtomatik ro'yxatdan o'tish)
       const newUser = {
         username: trimmedUsername,
         password: password,

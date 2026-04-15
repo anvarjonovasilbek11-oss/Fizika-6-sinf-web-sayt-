@@ -51,10 +51,21 @@ const Home = () => {
       const customVideos = JSON.parse(localStorage.getItem('customVideos') || '[]');
       const finalVideos = VIDEOS.length + customVideos.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
 
+      // Qo'llanmalar sonini LocalForage (IndexedDB) dan o'qish
+      let materialsCount = 0;
+      try {
+        const storedFiles = await localforage.getItem('physics_files');
+        if (storedFiles && Array.isArray(storedFiles)) {
+          materialsCount = storedFiles.length;
+        }
+      } catch (err) {
+        console.error('Home: materiallar sonini olishda xato:', err);
+      }
+
       setCounts({
         videos: finalVideos,
         lessons: lessonsCount,
-        materials: 12, 
+        materials: materialsCount, 
         users: allUsers.length
       });
     };
