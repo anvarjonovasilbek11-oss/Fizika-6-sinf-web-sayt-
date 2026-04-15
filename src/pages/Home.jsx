@@ -11,7 +11,12 @@ import {
   RiCloseLine,
   RiDeleteBin6Line,
   RiShieldUserLine,
-  RiTimeLine
+  RiTimeLine,
+  RiSearchLine,
+  RiEyeLine,
+  RiEyeOffLine,
+  RiKey2Line,
+  RiInformationLine
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -26,6 +31,20 @@ const Home = () => {
   const isAdmin = user?.role === 'admin';
   const [quoteIdx, setQuoteIdx] = useState(0);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [visiblePasswords, setVisiblePasswords] = useState({});
+
+  const togglePasswordVisibility = (username) => {
+    setVisiblePasswords(prev => ({
+      ...prev,
+      [username]: !prev[username]
+    }));
+  };
+
+  const filteredUsers = allUsers.filter(u => 
+    u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    u.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const quotes = [
     { text: "Fizika – bu tabiat sirlarini ochuvchi kalit.", author: "Albert Eynshteyn" },
@@ -160,53 +179,99 @@ const Home = () => {
                 </button>
               </div>
 
+              {/* Search Bar */}
+              <div className="px-8 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-black/20">
+                <div className="relative group">
+                  <RiSearchLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
+                  <input 
+                    type="text"
+                    placeholder="Foydalanuvchilarni ism yoki username bo'yicha qidirish..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm dark:text-white"
+                  />
+                </div>
+              </div>
+
               <div className="p-8 max-h-[60vh] overflow-y-auto no-scrollbar">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5">
-                      <th className="pb-4 pl-4">Foydalanuvchi</th>
-                      <th className="pb-4">Username</th>
+                    <tr className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 text-center">
+                      <th className="pb-4 pl-4 text-left">Foydalanuvchi</th>
                       <th className="pb-4">Status</th>
+                      <th className="pb-4">Bio / Ma'lumot</th>
+                      <th className="pb-4">Parol</th>
                       <th className="pb-4">Sana</th>
-                      <th className="pb-4 text-center">Amal</th>
+                      <th className="pb-4">Amal</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                    {allUsers.map((u) => (
+                    {filteredUsers.map((u) => (
                       <tr key={u.username} className="group hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                         <td className="py-4 pl-4">
                           <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black flex-shrink-0 ${u.role === 'admin' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
                               {u.username.substring(0, 1).toUpperCase()}
                             </div>
-                            <span className="font-black text-slate-800 dark:text-white">{u.name}</span>
+                            <div className="min-w-0">
+                              <p className="font-black text-slate-800 dark:text-white truncate">@{u.username}</p>
+                              <p className="text-[10px] text-slate-500 font-bold truncate tracking-wide">{u.name}</p>
+                            </div>
                           </div>
                         </td>
-                        <td className="py-4 font-bold text-slate-600 dark:text-slate-400">@{u.username}</td>
-                        <td className="py-4">
+                        <td className="py-4 text-center">
                           <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${u.role === 'admin' ? 'bg-amber-500/20 text-amber-500' : 'bg-green-500/20 text-green-500'}`}>
-                            {u.role === 'admin' ? 'Admin' : 'O\'quvchi'}
+                            {u.role === 'admin' ? 'Admin' : 'Student'}
                           </span>
                         </td>
-                        <td className="py-4">
-                           <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                             <RiTimeLine size={14} /> {u.regDate || 'Noma\'lum'}
+                        <td className="py-4 text-center">
+                          <div className="flex flex-col items-center justify-center max-w-[150px] mx-auto">
+                            {u.bio ? (
+                              <p className="text-xs text-slate-600 dark:text-slate-400 font-medium italic line-clamp-2" title={u.bio}>
+                                {u.bio}
+                              </p>
+                            ) : (
+                              <span className="text-[10px] text-slate-400 italic font-bold">Mavjud emas</span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <code className="bg-slate-100 dark:bg-white/10 px-2 py-1 rounded text-xs font-mono text-primary dark:text-electric-blue">
+                              {visiblePasswords[u.username] ? u.password : '••••••••'}
+                            </code>
+                            <button 
+                              onClick={() => togglePasswordVisibility(u.username)}
+                              className="p-1.5 text-slate-400 hover:text-primary transition-colors"
+                            >
+                              {visiblePasswords[u.username] ? <RiEyeOffLine size={16} /> : <RiEyeLine size={16} />}
+                            </button>
+                          </div>
+                        </td>
+                        <td className="py-4 text-center">
+                           <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-slate-500 whitespace-nowrap">
+                             <RiTimeLine size={14} /> {u.regDate || 'N/A'}
                            </div>
                         </td>
                         <td className="py-4 text-center">
-                          {u.username !== 'Asilbek' && (
-                            <button 
-                              onClick={() => {
-                                if (window.confirm(`${u.username} o'chirilsinmi?`)) {
-                                  deleteUser(u.username);
-                                  toast.success("Foydalanuvchi o'chirildi");
-                                }
-                              }}
-                              className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-                            >
-                              <RiDeleteBin6Line size={20} />
-                            </button>
-                          )}
+                          <div className="flex items-center justify-center">
+                            {u.username !== 'Asilbek' ? (
+                              <button 
+                                onClick={() => {
+                                  if (window.confirm(`${u.username} o'chirilsinmi?`)) {
+                                    deleteUser(u.username);
+                                    toast.success("Foydalanuvchi o'chirildi");
+                                  }
+                                }}
+                                className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                title="Foydalanuvchini o'chirish"
+                              >
+                                <RiDeleteBin6Line size={18} />
+                              </button>
+                            ) : (
+                              <RiShieldUserLine className="text-amber-500/30" size={18} title="Asosiy Adminni o'chirib bo'lmaydi" />
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
