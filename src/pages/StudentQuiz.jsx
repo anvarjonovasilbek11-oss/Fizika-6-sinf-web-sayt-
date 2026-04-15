@@ -6,12 +6,14 @@ import {
   RiCheckLine, 
   RiRestartLine, 
   RiHistoryLine, 
-  RiPlayFill,
-  RiTrophyLine,
-  RiDeleteBin6Line,
-  RiShieldCheckLine,
-  RiCloseLine,
-  RiHome4Line
+  RiPlayFill, 
+  RiTrophyLine, 
+  RiDeleteBin6Line, 
+  RiShieldCheckLine, 
+  RiCloseLine, 
+  RiHome4Line,
+  RiArrowLeftSLine,
+  RiArrowRightSLine
 } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
@@ -33,6 +35,10 @@ const StudentQuiz = () => {
   const [topic, setTopic] = useState('');
   const [loading, setLoading] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
+  
+  // Preview State
+  const [previewQuiz, setPreviewQuiz] = useState(null);
+  const [previewIdx, setPreviewIdx] = useState(0);
 
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -322,9 +328,17 @@ const StudentQuiz = () => {
                      <RiHistoryLine className="text-amber-500" /> 10 ta savol 
                   </div>
                 </div>
-                <div className="mt-10 flex gap-4">
-                  <button onClick={() => approveQuiz(q)} className="flex-1 py-4 bg-green-600 text-white rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-green-600/20 hover:scale-105 active:scale-95 transition-all">Tasdiqlash</button>
-                  <button onClick={() => deleteQuiz(q.id, true)} className="p-4 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"><RiDeleteBin6Line size={24}/></button>
+                <div className="mt-10 space-y-3">
+                  <button 
+                    onClick={() => { setPreviewQuiz(q); setPreviewIdx(0); }}
+                    className="w-full py-4 bg-primary/10 text-primary border border-primary/20 rounded-xl font-black uppercase tracking-widest text-[10px] hover:bg-primary hover:text-white transition-all flex items-center justify-center gap-2"
+                  >
+                    <RiHistoryLine size={16} /> Ko'rib chiqish
+                  </button>
+                  <div className="flex gap-4">
+                    <button onClick={() => approveQuiz(q)} className="flex-1 py-4 bg-green-600 text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-green-600/20 hover:scale-105 active:scale-95 transition-all">Tasdiqlash</button>
+                    <button onClick={() => deleteQuiz(q.id, true)} className="p-4 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"><RiDeleteBin6Line size={24}/></button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -377,6 +391,103 @@ const StudentQuiz = () => {
           </div>
         )}
       </section>
+      {/* Quiz Preview Modal */}
+      <AnimatePresence>
+        {previewQuiz && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-4xl bg-white dark:bg-[#0d1526] rounded-[2.5rem] overflow-hidden shadow-2xl relative border border-white/10 flex flex-col h-[85vh]"
+            >
+              {/* Header */}
+              <div className="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-primary/5">
+                <div className="flex items-center gap-4">
+                  <div className="p-4 bg-amber-500 text-white rounded-2xl shadow-lg shadow-amber-500/20">
+                    <RiShieldCheckLine size={28} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Testni Ko'rib Chiqish</h2>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest mt-1">{previewQuiz.topic} • Savol: {previewIdx + 1}/{previewQuiz.questions.length}</p>
+                  </div>
+                </div>
+                <button onClick={() => setPreviewQuiz(null)} className="p-3 bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-red-500 rounded-full transition-all">
+                  <RiCloseLine size={24} />
+                </button>
+              </div>
+
+              {/* Question Area */}
+              <div className="flex-1 p-8 md:p-12 overflow-y-auto no-scrollbar">
+                <div className="space-y-12">
+                  <h3 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">
+                    {previewQuiz.questions[previewIdx].question}
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 gap-4">
+                    {Object.entries(previewQuiz.questions[previewIdx].options).map(([key, value]) => {
+                      const isCorrect = key === previewQuiz.questions[previewIdx].correct;
+                      return (
+                        <div 
+                          key={key}
+                          className={`p-6 rounded-3xl border-2 flex items-center gap-6 transition-all ${isCorrect ? 'bg-green-500/10 border-green-500 text-green-700 dark:text-green-400' : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/5'}`}
+                        >
+                          <span className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg ${isCorrect ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' : 'bg-white dark:bg-white/10 text-slate-400'}`}>{key}</span>
+                          <span className="text-xl font-bold flex-1">{value}</span>
+                          {isCorrect && <RiCheckLine size={24} className="text-green-500" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer / Navigation */}
+              <div className="p-8 border-t border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/5 flex flex-col md:flex-row gap-6 items-center justify-between">
+                <div className="flex gap-4 w-full md:w-auto">
+                  <button 
+                    disabled={previewIdx === 0}
+                    onClick={() => setPreviewIdx(prev => prev - 1)}
+                    className="flex-1 md:flex-none p-5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-600 dark:text-white disabled:opacity-30 hover:bg-slate-100 dark:hover:bg-white/10 transition-all"
+                  >
+                    <RiArrowLeftSLine size={24} />
+                  </button>
+                  <button 
+                    disabled={previewIdx === previewQuiz.questions.length - 1}
+                    onClick={() => setPreviewIdx(prev => prev + 1)}
+                    className="flex-1 md:flex-none p-5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-600 dark:text-white disabled:opacity-30 hover:bg-slate-100 dark:hover:bg-white/10 transition-all flex items-center gap-2"
+                  >
+                   <span className="hidden md:block font-black uppercase text-[10px] tracking-widest">Keyingi</span> <RiArrowRightSLine size={24} />
+                  </button>
+                </div>
+
+                <div className="flex gap-4 w-full md:w-auto">
+                  <button 
+                    onClick={() => {
+                      if (window.confirm("Ushbu testni o'chirib tashlaysizmi?")) {
+                        deleteQuiz(previewQuiz.id, true);
+                        setPreviewQuiz(null);
+                      }
+                    }}
+                    className="flex-1 md:flex-none px-8 py-5 text-red-500 font-black uppercase tracking-widest text-[10px] hover:bg-red-500/10 rounded-2xl transition-all"
+                  >
+                    O'chirish
+                  </button>
+                  <button 
+                    onClick={() => {
+                      approveQuiz(previewQuiz);
+                      setPreviewQuiz(null);
+                    }}
+                    className="flex-1 md:flex-none px-12 py-5 bg-green-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-green-600/30 hover:scale-105 active:scale-95 transition-all"
+                  >
+                    TASDIQLASH
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
