@@ -79,18 +79,21 @@ const StudentQuiz = () => {
     setLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_AI_API_KEY;
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       if (!apiKey) {
         toast.error("API kaliti topilmadi!");
         setLoading(false);
         return;
       }
 
-      const response = await fetch('https://api.deepseek.com/chat/completions', {
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${apiKey}` 
+        },
         body: JSON.stringify({
-          model: 'deepseek-chat',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: `Sen 6-sinf fizika fani bo'yicha O'zbek tilida professional test tuzuvchi AI assistantsan. QAT'IY RAVISHDA 10 ta test savoli tuz. Format: {"topic": "string", "questions": [{"id": 1, "question": "string", "options": {"A": "string", "B": "string", "C": "string", "D": "string"}, "correct": "A"}]}` },
             { role: 'user', content: `Mavzu: ${topic} bo'yicha 10 ta test savoli tuz.` }

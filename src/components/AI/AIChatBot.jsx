@@ -29,16 +29,48 @@ const AIChatBot = () => {
     setLoading(true);
 
     try {
-      setTimeout(() => {
-        const assistantMessage = { 
-          role: 'assistant', 
-          content: `Hozirda men o'rganish jarayonidaman. "${input}" mavzusi bo'yicha savolingizni qabul qildim. Yaqin orada Groq AI integratsiyasi tugallangach, sizga to'liq javob bera olaman!` 
-        };
-        setMessages(prev => [...prev, assistantMessage]);
-        setLoading(false);
-      }, 1500);
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+      if (!apiKey) {
+        throw new Error("API key not found");
+      }
+
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            { 
+              role: 'system', 
+              content: "Siz 6-sinf o'quvchilari uchun fizika fani bo'yicha professional yordamchisiz. Fizika haqidagi barcha savollarga aniq, sodda va o'quvchi darajasiga mos ravishda O'zbek tilida javob berasiz. Faqat fizika va darslikka oid mavzularda muloqot qiling." 
+            },
+            ...messages.map(msg => ({ role: msg.role, content: msg.content })),
+            userMessage
+          ]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("API response error");
+      }
+
+      const data = await response.json();
+      const assistantMessage = { 
+        role: 'assistant', 
+        content: data.choices[0].message.content 
+      };
+      setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error(error);
+      const errorMessage = { 
+        role: 'assistant', 
+        content: "Uzr, hozirda javob berishda texnik xatolik yuz berdi. Iltimos, API kaliti to'g'ri sozlanganini tekshiring." 
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setLoading(false);
     }
   };
