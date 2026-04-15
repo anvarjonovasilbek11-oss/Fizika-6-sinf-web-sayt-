@@ -69,6 +69,7 @@ const Home = () => {
   }, []);
 
   return (
+    <div className="space-y-12 pb-20 relative transition-colors">
       <header className="relative space-y-4 pt-4">
         <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-2">
           <div className="w-1.5 h-6 bg-primary rounded-full shadow-sm shadow-primary/40" />
