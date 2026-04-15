@@ -5,7 +5,9 @@ const INITIAL_CONSTANTS = [
   { id: '2', name_uz: "Gravitatsiya doimiysi", name_ru: "Гравитационная постоянная", name_en: "Gravitational constant", symbol: "G", value: "6.674 × 10⁻¹¹", unit: "N·m²/kg²" },
   { id: '3', name_uz: "Yorug'lik tezligi", symbol: "c", name_ru: "Скорость света", name_en: "Speed of light", value: "299,792,458", unit: "m/s" },
   { id: '4', name_uz: "Avogadro doimiysi", symbol: "N_A", name_ru: "Постоянная Авогадро", name_en: "Avogadro constant", value: "6.022 × 10²³", unit: "mol⁻¹" },
-  { id: '5', name_uz: "Universal gaz doimiysi", symbol: "R", name_ru: "Универсальная газовая постоянная", name_en: "Universal gas constant", value: "8.314", unit: "J/(mol·K)" }
+  { id: '5', name_uz: "Vaqt birligi (Sekund)", symbol: "t", name_ru: "Единица времени (Секунда)", name_en: "Unit of time (Second)", value: "1", unit: "s" },
+  { id: '6', name_uz: "Massa birligi (Kilogram)", symbol: "m", name_ru: "Единица массы (Килограмм)", name_en: "Unit of mass (Kilogram)", value: "1", unit: "kg" },
+  { id: '7', name_uz: "Elektron massasi", symbol: "m_e", name_ru: "Масса электрона", name_en: "Electron mass", value: "9.109 × 10⁻³¹", unit: "kg" }
 ];
 
 export const getConstants = () => {
