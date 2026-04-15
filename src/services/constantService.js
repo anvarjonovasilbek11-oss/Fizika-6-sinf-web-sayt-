@@ -25,7 +25,12 @@ const INITIAL_CONSTANTS = [
   { id: '22', name_uz: "Atom massa birligi", symbol: "u", name_ru: "Единица атомной массы", name_en: "Atomic mass unit", value: "1.660 × 10⁻²⁷", unit: "kg" },
   { id: '23', name_uz: "Quyosh doimiysi", symbol: "S", name_ru: "Солнечная постоянная", name_en: "Solar constant", value: "1,361", unit: "W/m²" },
   { id: '24', name_uz: "Yer massasi", symbol: "M_E", name_ru: "Масса Земли", name_en: "Earth mass", value: "5.972 × 10²⁴", unit: "kg" },
-  { id: '25', name_uz: "Yer radiusi", symbol: "R_E", name_ru: "Радиус Земли", name_en: "Earth radius", value: "6,371", unit: "km" }
+  { id: '25', name_uz: "Yer radiusi", symbol: "R_E", name_ru: "Радиус Земли", name_en: "Earth radius", value: "6,371", unit: "km" },
+  { id: '26', name_uz: "Kulon doimiysi", symbol: "k_e", name_ru: "Постоянная Кулона", name_en: "Coulomb constant", value: "8.987 × 10⁹", unit: "N·m²/C²" },
+  { id: '27', name_uz: "Oydagi erkin tushish tezlanishi", symbol: "g_moon", name_ru: "Ускорение свободного падения на Луне", name_en: "Gravity on Moon", value: "1.625", unit: "m/s²" },
+  { id: '28', name_uz: "Marsdagi erkin tushish tezlanishi", symbol: "g_mars", name_ru: "Ускорение свободного падения на Марсе", name_en: "Gravity on Mars", value: "3.720", unit: "m/s²" },
+  { id: '29', name_uz: "Yorug'lik yili", symbol: "ly", name_ru: "Световой год", name_en: "Light year", value: "9.461 × 10¹²", unit: "km" },
+  { id: '30', name_uz: "Astronomik birlik", symbol: "AU", name_ru: "Астрономическая единица", name_en: "Astronomical unit", value: "1.496 × 10⁸", unit: "km" }
 ];
 
 export const getConstants = () => {
