@@ -82,15 +82,6 @@ const Settings = () => {
             </form>
           </div>
 
-          <div className="glass-card p-10 bg-red-500/5 dark:bg-red-500/5 border border-red-200 dark:border-red-500/10 shadow-inner">
-            <h3 className="text-xl font-black text-red-600 dark:text-red-400 mb-6 flex items-center gap-3">
-              <RiShieldLine size={24} /> XAVFSIZLIK
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mb-8 font-bold uppercase tracking-tight">Parolni o'zgartirish yoki hisobni o'chirish orqali xavfsizlikni ta'minlang.</p>
-            <button className="px-8 py-3 border-2 border-red-500/20 text-red-600 dark:text-red-400 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-red-600 hover:text-white transition-all shadow-sm">
-              Parolni yangilash
-            </button>
-          </div>
         </div>
 
         {/* Right Column: App Settings */}
