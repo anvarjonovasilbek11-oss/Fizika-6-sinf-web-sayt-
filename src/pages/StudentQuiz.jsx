@@ -457,7 +457,7 @@ const StudentQuiz = () => {
                     onClick={() => setPreviewIdx(prev => prev + 1)}
                     className="flex-1 md:flex-none p-5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-600 dark:text-white disabled:opacity-30 hover:bg-slate-100 dark:hover:bg-white/10 transition-all flex items-center gap-2"
                   >
-                   <span className="hidden md:block font-black uppercase text-[10px] tracking-widest">Keyingi</span> <RiArrowRightSLine size={24} />
+                   <RiArrowRightSLine size={24} />
                   </button>
                 </div>
 
