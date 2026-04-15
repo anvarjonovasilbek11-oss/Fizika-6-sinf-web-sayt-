@@ -31,19 +31,19 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
 
   return (
     <nav className={`
-      h-16 border-b border-slate-200 dark:border-white/10 bg-white/90 dark:bg-space-dark/90 backdrop-blur-md 
-      flex items-center justify-between px-4 md:px-6 fixed top-0 left-0 right-0 z-40 transition-all duration-300
-      ${collapsed ? 'md:left-[80px]' : 'md:left-[300px]'}
+      h-20 border-b border-slate-200/60 dark:border-white/5 bg-white/80 dark:bg-[#070b14]/80 backdrop-blur-xl 
+      flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-40 transition-all duration-500
+      ${collapsed ? 'md:left-[88px]' : 'md:left-[300px]'}
     `}>
       <div className="flex items-center gap-2 md:gap-4">
         <button 
           onClick={handleMenuToggle}
-          className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors text-slate-600 dark:text-slate-300"
+          className="p-3 hover:bg-slate-100 dark:hover:bg-white/5 rounded-2xl transition-colors text-slate-600 dark:text-slate-300"
         >
           {mobileOpen ? <RiCloseLine size={24} /> : (collapsed ? <RiMenuUnfoldLine size={24} /> : <RiMenuFoldLine size={24} />)}
         </button>
-        <h2 className="text-xl font-heading text-slate-800 dark:text-white hidden md:block">
-          {t('greeting')}, <span className="text-primary">{user?.name}</span>!
+        <h2 className="text-xl font-heading font-extrabold text-slate-900 dark:text-white hidden md:block tracking-tight">
+          {t('greeting')}, <span className="text-primary italic">{user?.name}</span>
         </h2>
       </div>
 

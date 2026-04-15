@@ -69,25 +69,18 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="space-y-12 pb-20 relative transition-colors">
-      <div className="bg-primary/10 border-y border-primary/20 py-2 overflow-hidden whitespace-nowrap">
-        <div className="animate-marquee inline-block font-black text-[10px] uppercase tracking-widest text-primary">
-          Fizika 6-sinf fanidan barcha nazariy va amaliy darsliklar jamlanmasi • Yangi AI testlar tizimi orqali bilimingizni sinab ko'ring • Video darslar va topshiriqlar
-        </div>
-      </div>
-
-      <header className="relative space-y-6 pt-10">
-        <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="flex items-center gap-3">
-          <div className="w-2 h-10 bg-primary rounded-full" />
-          <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">FIZIKA OLAMIGA XUSH KELIBSIZ</h2>
+      <header className="relative space-y-4 pt-4">
+        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="flex items-center gap-2">
+          <div className="w-1.5 h-6 bg-primary rounded-full shadow-sm shadow-primary/40" />
+          <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 dark:text-slate-500">FIZIKA OLAMIGA XUSH KELIBSIZ</h2>
         </motion.div>
         
         <motion.h1 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="text-6xl md:text-9xl font-black text-slate-900 dark:text-white leading-[0.85] tracking-tighter uppercase"
+          className="text-6xl md:text-8xl font-black text-slate-900 dark:text-white leading-[0.9] tracking-tighter"
         >
-          FIZIKA <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-neon-purple to-electric-blue">DUNYOSI</span>
+          FIZIKA <span className="text-primary italic">DUNYOSI</span>
         </motion.h1>
       </header>
 
@@ -238,21 +231,21 @@ const Home = () => {
 
 const ActionCard = ({ icon, count, label, description, accentColor, glowColor, onClick }) => (
   <motion.button
-    whileHover={{ y: -12, scale: 1.02 }}
+    whileHover={{ y: -10, scale: 1.01 }}
     whileTap={{ scale: 0.98 }}
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 border-slate-100 dark:border-white/5 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 ${glowColor} shadow-xl hover:shadow-2xl`}
+    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 hover:border-primary/20 ${glowColor} shadow-xl hover:shadow-2xl`}
   >
     <div className={`w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${accentColor}`}>
-      {React.cloneElement(icon, { size: 40 })}
+      {React.cloneElement(icon, { size: 36 })}
     </div>
-    <div className="text-4xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">{count}</div>
-    <div className="text-sm font-black text-slate-700 dark:text-white/90 mb-2 uppercase tracking-widest">{label}</div>
-    <div className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-tight leading-relaxed">{description}</div>
+    <div className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tighter">{count}</div>
+    <div className="text-sm font-bold text-slate-900 dark:text-white/90 mb-2 tracking-tight">{label}</div>
+    <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[150px]">{description}</div>
     
-    <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-transparent via-current to-transparent ${accentColor}`} />
+    <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-primary/20`} />
   </motion.button>
 );
 

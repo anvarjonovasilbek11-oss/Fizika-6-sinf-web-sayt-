@@ -21,15 +21,11 @@ const MainLayout = ({ children }) => {
   const isOverlayOpen = mobileOpen;
 
   return (
-    <div className="flex bg-light-bg dark:bg-space-dark text-slate-900 dark:text-white min-h-screen transition-colors relative font-ui">
-      {/* High-Tech Background Elements */}
-      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-20 pointer-events-none">
-        <svg className="absolute top-0 right-0 w-[800px] h-[800px] text-neon-purple/20 blur-2xl animate-pulse-glow" viewBox="0 0 200 200">
-           <circle cx="150" cy="50" r="80" fill="currentColor" />
-        </svg>
-        <svg className="absolute bottom-0 left-0 w-[600px] h-[600px] text-electric-blue/10 blur-3xl animate-pulse-glow animation-delay-4000" viewBox="0 0 200 200">
-           <circle cx="50" cy="150" r="100" fill="currentColor" />
-        </svg>
+    <div className="flex bg-slate-50 dark:bg-[#070b14] text-slate-900 dark:text-white min-h-screen transition-colors duration-500 relative font-ui selection:bg-primary/20">
+      {/* Professional Backdrop */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-100">
+        <div className="absolute inset-0 science-grid" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent dark:from-primary/[0.02]" />
       </div>
 
       <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />

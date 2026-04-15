@@ -41,36 +41,28 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-light-bg dark:bg-space-dark flex items-center justify-center font-ui px-4 py-8 md:py-12 transition-colors duration-500">
-      {/* Immersive Background Features */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-neon-purple/20 dark:bg-neon-purple/10 blur-[120px] animate-pulse-glow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-electric-blue/20 dark:bg-electric-blue/10 blur-[150px] animate-pulse-glow animation-delay-2000" />
-        <div className="absolute inset-0 bg-space-mesh opacity-30 dark:opacity-100" />
+    <div className="relative min-h-screen w-full bg-slate-50 dark:bg-[#070b14] flex items-center justify-center font-ui px-4 py-8 md:py-12 transition-colors duration-500 selection:bg-primary/20">
+      {/* Professional Backdrop */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-100">
+        <div className="absolute inset-0 science-grid" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent dark:from-primary/[0.02]" />
       </div>
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="z-10 w-full max-w-[480px] relative group"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="z-10 w-full max-w-[480px] relative"
       >
-        {/* Animated Outer Border Glow */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple via-electric-blue to-neon-purple rounded-[2.5rem] opacity-20 group-hover:opacity-40 blur-xl transition duration-1000 animate-gradient-slow"></div>
-        
-        <div className="relative glass-card p-6 md:p-10 backdrop-blur-3xl border-slate-200 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-2xl bg-white/70 dark:bg-space-dark/60 rounded-[2.5rem] flex flex-col">
+        <div className="relative glass-card p-8 md:p-12 border-slate-200/60 dark:border-white/10 shadow-2xl bg-white/90 dark:bg-[#0d1526]/80 rounded-[2.5rem] flex flex-col">
           
           {/* Subtle Inner Highlight */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 dark:via-white/20 to-transparent" />
 
-          <div className="text-center mb-6 shrink-0">
-            <motion.div 
-              whileHover={{ scale: 1.1, rotate: 15 }}
-              className="inline-flex items-center justify-center p-4 bg-primary/10 dark:bg-white/5 rounded-[2rem] mb-4 text-primary dark:text-electric-blue relative border border-primary/20 dark:border-white/10"
-            >
-              <div className="absolute inset-0 bg-primary/20 dark:bg-electric-blue/20 blur-2xl rounded-full animate-pulse" />
-              <Atom size={44} className="relative z-10 drop-shadow-[0_0_10px_rgba(108,99,255,0.6)]" />
-            </motion.div>
+          <div className="text-center mb-10 shrink-0">
+            <div className="inline-flex items-center justify-center p-5 bg-primary/10 rounded-[2rem] mb-6 text-primary border border-primary/10">
+              <Atom size={44} className="animate-float-subtle" />
+            </div>
             
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               <h1 className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white mb-2 uppercase drop-shadow-sm">
@@ -150,16 +142,13 @@ const LoginPage = () => {
             </AnimatePresence>
 
             <motion.button 
-              whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(108,99,255,0.4)" }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              className="w-full py-5 rounded-[1.5rem] flex items-center justify-center gap-4 mt-4 bg-primary text-white shadow-2xl shadow-primary/30 relative overflow-hidden group/btn font-black uppercase tracking-[0.3em] text-sm"
+              className="w-full py-5 rounded-2xl flex items-center justify-center gap-4 mt-6 bg-primary text-white shadow-xl shadow-primary/30 font-bold uppercase tracking-widest text-sm hover:translate-y-[-2px] transition-all"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000" />
-              <span className="relative z-10">
+              <span>
                 {isRegister ? t('login_btn_register') : t('login_btn')}
               </span>
-              <RiApps2Line size={24} className="relative z-10 group-hover/btn:rotate-90 transition-transform duration-500" />
             </motion.button>
           </form>
 

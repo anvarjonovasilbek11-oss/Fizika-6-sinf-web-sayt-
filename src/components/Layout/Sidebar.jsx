@@ -15,11 +15,35 @@ import {
   RiCloseLine, 
   RiArrowLeftSLine, 
   RiSave3Line, 
-  RiAddLine,
-  RiPulseLine
+  RiAddLine
 } from 'react-icons/ri';
-import { getCombinedTextbooks, saveCustomLesson } from '../../services/textbookService';
+import { getCombinedTextbooks } from '../../services/textbookService';
 import toast from 'react-hot-toast';
+const Logo = ({ collapsed }) => (
+  <div className="flex items-center gap-4 group">
+    <div className="relative flex-shrink-0">
+      <svg 
+        width="44" height="44" viewBox="0 0 44 44" fill="none" 
+        xmlns="http://www.w3.org/2000/svg"
+        className="text-primary transition-transform duration-500 group-hover:rotate-12"
+      >
+        <rect width="44" height="44" rx="14" fill="currentColor" fillOpacity="0.1"/>
+        <path d="M14 22C14 17.5817 17.5817 14 22 14C26.4183 14 30 17.5817 30 22C30 26.4183 26.4183 30 22 30C17.5817 30 14 26.4183 14 22Z" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="2 4"/>
+        <path d="M22 18V26" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M18 22H26" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="22" cy="22" r="3" fill="currentColor" className="animate-pulse" />
+      </svg>
+    </div>
+    {!collapsed && (
+      <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">
+          Fizika <span className="text-primary italic">6</span>
+        </h1>
+        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em] mt-1 pl-0.5">Universe</p>
+      </motion.div>
+    )}
+  </div>
+);
 
 const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   const { logout, user } = useAuth();
@@ -56,15 +80,13 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     }
   };
 
-  const hoverEffect = "active:scale-95 group-hover:text-white transition-colors";
-
   const menuItems = [
-    { name: t('nav_home'),      icon: <RiDashboardLine size={24} className={hoverEffect} />, path: "/home" },
-    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} className={hoverEffect} />,     path: "/darslik" },
-    { name: t('nav_videos'),    icon: <RiVideoLine size={24} className={hoverEffect} />,     path: "/videos" },
-    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} className={hoverEffect} />,  path: "/materials" },
-    { name: t('nav_tests'),     icon: <RiRobotLine size={24} className={hoverEffect} />,     path: "/tests" },
-    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} className={hoverEffect} />, path: "/settings" },
+    { name: t('nav_home'),      icon: <RiDashboardLine size={24} />, path: "/home" },
+    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} />,     path: "/darslik" },
+    { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos" },
+    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials" },
+    { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: "/tests" },
+    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings" },
   ];
 
   const handleLogout = () => {
@@ -75,37 +97,24 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   return (
     <aside 
       className={`
-        fixed inset-y-0 left-0 z-50 bg-white dark:bg-[#0a0f1d]/95 backdrop-blur-3xl
-        border-r border-slate-200 dark:border-white/5 shadow-2xl flex flex-col overflow-hidden
-        transition-all duration-500 ease-in-out
+        fixed inset-y-0 left-0 z-50 bg-white/80 dark:bg-[#0a0f1d]/95 backdrop-blur-3xl
+        border-r border-slate-200 dark:border-white/5 flex flex-col overflow-hidden
+        transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)
         ${mobileOpen 
           ? 'translate-x-0 w-[280px] sm:w-[300px]' 
           : '-translate-x-full md:translate-x-0'}
-        ${isExpanded ? 'md:w-[300px]' : 'md:w-[80px]'}
+        ${isExpanded ? 'md:w-[300px]' : 'md:w-[88px]'}
       `}
       style={{ height: '100dvh' }}
     >
       {/* Logo Section */}
-      <div className="h-24 flex items-center justify-between px-7 border-b border-white/5 flex-shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="text-electric-blue flex-shrink-0 drop-shadow-[0_0_15px_rgba(0,210,255,0.6)]">
-            <RiPulseLine size={38} />
-          </div>
-          {(isExpanded || mobileOpen) && (
-            <div>
-              <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase block leading-none transition-colors">
-                Fizika <span className="text-electric-blue drop-shadow-[0_0_8px_rgba(0,210,255,0.4)]">6</span>
-              </span>
-              <span className="text-[10px] font-black text-slate-500 dark:text-slate-500 uppercase tracking-[0.3em] mt-1 block">Universe</span>
-            </div>
-          )}
-        </div>
-
-        {/* Mobile Close Button */}
+      <div className="h-28 flex items-center px-6 border-b border-slate-100 dark:border-white/5 flex-shrink-0">
+        <Logo collapsed={!isExpanded && !mobileOpen} />
+        
         {mobileOpen && (
           <button 
             onClick={() => setMobileOpen(false)}
-            className="p-2 bg-white/5 rounded-xl text-slate-400 hover:text-white md:hidden"
+            className="ml-auto p-3 bg-slate-100 dark:bg-white/5 rounded-2xl text-slate-400 hover:text-red-500 md:hidden transition-all"
           >
             <RiCloseLine size={24} />
           </button>
@@ -121,21 +130,14 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                 to={item.path}
                 onClick={() => handleMainItemClick(item.path)}
                 className={({ isActive }) => `
-                  flex items-center gap-4 p-4 rounded-2xl group relative transition-all duration-300
+                  flex items-center gap-4 p-4 rounded-2xl group transition-all duration-300
                   ${isActive 
-                    ? 'bg-gradient-to-r from-electric-blue/20 dark:from-electric-blue/20 to-transparent text-electric-blue border-l-4 border-electric-blue shadow-[lg_rgba(0,210,255,0.1)]' 
+                    ? 'bg-primary text-white shadow-lg shadow-primary/25' 
                     : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'}
                 `}
               >
-                {({ isActive }) => (
-                  <>
-                    <div className="flex-shrink-0">{item.icon}</div>
-                    {(isExpanded || mobileOpen) && <span className="font-black text-xs sm:text-sm uppercase tracking-widest">{item.name}</span>}
-                    {isActive && (
-                      <div className="absolute inset-0 bg-electric-blue/5 blur-xl pointer-events-none" />
-                    )}
-                  </>
-                )}
+                <div className="flex-shrink-0 transition-transform group-hover:scale-110">{item.icon}</div>
+                {(isExpanded || mobileOpen) && <span className="font-bold text-sm tracking-tight">{item.name}</span>}
               </NavLink>
             </motion.div>
           ))}

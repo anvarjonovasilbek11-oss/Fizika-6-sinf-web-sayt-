@@ -27,8 +27,8 @@ export default {
         }
       },
       fontFamily: {
-        ui: ["Inter", "sans-serif"],
-        heading: ["Nunito", "sans-serif"],
+        ui: ["'Plus Jakarta Sans'", "sans-serif"],
+        heading: ["'Outfit'", "sans-serif"],
       },
       animation: {
         'spin-slow': 'spin 12s linear infinite',
