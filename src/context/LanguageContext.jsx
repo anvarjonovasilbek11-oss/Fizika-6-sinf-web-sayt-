@@ -17,6 +17,7 @@ export const TRANSLATIONS = {
     nav_tests: "Testlar (AI)",
     nav_settings: "Sozlamalar",
     nav_logout: "Chiqish",
+    nav_constants: "O'zgarmaslar",
     nav_back: "Orqaga",
     nav_back_long: "Bo'limga qaytish",
 
@@ -145,6 +146,18 @@ export const TRANSLATIONS = {
     not_found_desc: "Siz qidirayotgan sahifa manzili xato yoki o'chirilgan.",
     not_found_back: "Asosiy sahifaga qaytish",
     materials_upload_error: "Fayl saqlashda xotira xatosi yuz berdi.",
+    
+    // Constants
+    constants_title: "Fizik Kattaliklar va O'zgarmaslar",
+    constants_search: "Kattalikni qidirish...",
+    constants_add: "Yangi qo'shish",
+    constants_edit: "Tahrirlash",
+    constants_name: "Nomi",
+    constants_symbol: "Belgisi",
+    constants_value: "Qiymati",
+    constants_unit: "O'lchov birligi",
+    constants_save: "Saqlash",
+    constants_cancel: "Bekor qilish",
 
     // Language names
     lang_uz: "O'zbekcha",
@@ -200,6 +213,7 @@ export const TRANSLATIONS = {
     nav_tests: "Тесты (ИИ)",
     nav_settings: "Настройки",
     nav_logout: "Выйти",
+    nav_constants: "Константы",
     nav_back: "Назад",
     nav_back_long: "Назад к разделу",
 
@@ -328,6 +342,18 @@ export const TRANSLATIONS = {
     not_found_desc: "Страница, которую вы ищете, не существует или была удалена.",
     not_found_back: "Вернуться на главную",
     materials_upload_error: "Ошибка памяти при сохранении файла.",
+    
+    // Constants
+    constants_title: "Физ. Величины и Константы",
+    constants_search: "Поиск величины...",
+    constants_add: "Добавить новую",
+    constants_edit: "Редактировать",
+    constants_name: "Название",
+    constants_symbol: "Символ",
+    constants_value: "Значение",
+    constants_unit: "Единица измерения",
+    constants_save: "Сохранить",
+    constants_cancel: "Отмена",
 
     // Language names
     lang_uz: "O'zbekcha",
@@ -383,6 +409,7 @@ export const TRANSLATIONS = {
     nav_tests: "Tests (AI)",
     nav_settings: "Settings",
     nav_logout: "Logout",
+    nav_constants: "Constants",
     nav_back: "Back",
     nav_back_long: "Back to section",
 
@@ -511,6 +538,18 @@ export const TRANSLATIONS = {
     not_found_desc: "The page you are looking for does not exist or has been removed.",
     not_found_back: "Back to Home",
     materials_upload_error: "Memory error occurred while saving the file.",
+    
+    // Constants
+    constants_title: "Physical Quantities and Constants",
+    constants_search: "Search quantity...",
+    constants_add: "Add New",
+    constants_edit: "Edit",
+    constants_name: "Name",
+    constants_symbol: "Symbol",
+    constants_value: "Value",
+    constants_unit: "Unit",
+    constants_save: "Save",
+    constants_cancel: "Cancel",
 
     // Language names
     lang_uz: "O'zbekcha",

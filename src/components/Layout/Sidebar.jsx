@@ -15,7 +15,8 @@ import {
   RiCloseLine, 
   RiArrowLeftSLine, 
   RiSave3Line, 
-  RiAddLine
+  RiAddLine,
+  RiBarChart2Line
 } from 'react-icons/ri';
 import { getCombinedTextbooks } from '../../services/textbookService';
 import toast from 'react-hot-toast';
@@ -85,6 +86,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     { name: t('nav_textbook'),  icon: <RiBook3Line size={24} />,     path: "/darslik" },
     { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos" },
     { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials" },
+    { name: t('nav_constants'), icon: <RiBarChart2Line size={24} />, path: "/constants" },
     { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: "/tests" },
     { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings" },
   ];

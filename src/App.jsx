@@ -19,6 +19,7 @@ import StudentQuiz from './pages/StudentQuiz';
 import Settings from './pages/Settings';
 import TextbookPage from './pages/TextbookPage';
 import TextbookSelection from './pages/TextbookSelection';
+import ConstantsPage from './pages/ConstantsPage';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
                 <Route path="/materials" element={<ProtectedRoute><MainLayout><Materials /></MainLayout></ProtectedRoute>} />
                 {/* Tests: Take or manage tests */}
                 <Route path="/tests" element={<ProtectedRoute><MainLayout><StudentQuiz /></MainLayout></ProtectedRoute>} />
+                <Route path="/constants" element={<ProtectedRoute><MainLayout><ConstantsPage /></MainLayout></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
                 <Route path="/darslik" element={<ProtectedRoute><MainLayout><TextbookSelection /></MainLayout></ProtectedRoute>} />
                 <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
