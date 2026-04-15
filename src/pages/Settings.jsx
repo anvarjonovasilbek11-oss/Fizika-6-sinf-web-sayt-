@@ -23,7 +23,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-12 pb-20 transition-colors uppercase">
+    <div className="max-w-5xl mx-auto space-y-12 pb-20 transition-colors">
       <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tighter transition-colors">Sozlamalar</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -129,9 +129,7 @@ const Settings = () => {
               <div className="pt-8 border-t border-slate-200 dark:border-white/10">
                 <p className="text-xs font-black text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-widest">LOYIHA TILI</p>
                 <select className="w-full p-4 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-white/10 rounded-2xl outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary dark:text-white font-bold transition-all shadow-sm">
-                  <option>Uzbek (Lotin)</option>
-                  <option disabled>Uzbek (Kirill) - Tez kunda</option>
-                  <option disabled>English - Tez kunda</option>
+                  <option>O'zbekcha</option>
                 </select>
               </div>
             </div>
@@ -146,7 +144,6 @@ const Settings = () => {
             </h3>
             <div className="space-y-3 text-xs text-slate-600 dark:text-slate-400 font-black uppercase tracking-[0.2em] relative z-10">
               <p>Talqin: <span className="text-primary">1.0.0</span></p>
-              <p>Dasturchi: <span className="text-primary">Antigravity AI</span></p>
               <p>© 2026 FizikaWorld Team</p>
             </div>
           </div>
