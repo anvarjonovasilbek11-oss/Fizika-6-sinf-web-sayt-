@@ -64,18 +64,45 @@ const Home = () => {
 
   useEffect(() => {
     const fetchCounts = async () => {
+      // 1. Darslar soni (Statik malumot)
       const textbooks = getCombinedTextbooks(true);
       const lessonsCount = textbooks.reduce((acc, curr) => acc + curr.lessons.length, 0);
       
-      const customVideos = JSON.parse(localStorage.getItem('customVideos') || '[]');
-      const finalVideos = VIDEOS.length + customVideos.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
+      // 2. Videolar sonini Firebase dan olish
+      let finalVideos = VIDEOS.length;
+      try {
+        if (import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_API_KEY !== 'your_api_key') {
+          const { getDocs, collection } = await import('firebase/firestore');
+          const { db } = await import('../services/firebase');
+          const snapshot = await getDocs(collection(db, 'videos'));
+          const customVideosList = snapshot.docs.map(doc => doc.data());
+          // Bazadagi videolar va statik videolar birgalikda sanaladi
+          finalVideos = VIDEOS.length + customVideosList.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
+        } else {
+          const customVideos = JSON.parse(localStorage.getItem('customVideos') || '[]');
+          finalVideos = VIDEOS.length + customVideos.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
+        }
+      } catch (err) {
+        console.error('Home: videolar sonini olishda xato:', err);
+      }
 
-      // Qo'llanmalar sonini LocalForage (IndexedDB) dan o'qish
+      // 3. Foydalanuvchilar soni (AuthContext dan olingan - Firebase bilan sinxron)
+      const usersCount = allUsers.length;
+
+      // 4. Qo'llanmalar sonini Firebase dan olish
       let materialsCount = 0;
       try {
-        const storedFiles = await localforage.getItem('physics_files');
-        if (storedFiles && Array.isArray(storedFiles)) {
-          materialsCount = storedFiles.length;
+        if (import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_API_KEY !== 'your_api_key') {
+          const { getDocs, collection } = await import('firebase/firestore');
+          const { db } = await import('../services/firebase');
+          const snapshot = await getDocs(collection(db, 'materials'));
+          materialsCount = snapshot.size;
+        } else {
+          // Fallback: Agar Firebase bo'lmasa localforage dan olish
+          const storedFiles = await localforage.getItem('physics_files');
+          if (storedFiles && Array.isArray(storedFiles)) {
+            materialsCount = storedFiles.length;
+          }
         }
       } catch (err) {
         console.error('Home: materiallar sonini olishda xato:', err);
@@ -85,9 +112,10 @@ const Home = () => {
         videos: finalVideos,
         lessons: lessonsCount,
         materials: materialsCount, 
-        users: allUsers.length
+        users: usersCount
       });
     };
+    
     fetchCounts();
   }, [allUsers]);
 

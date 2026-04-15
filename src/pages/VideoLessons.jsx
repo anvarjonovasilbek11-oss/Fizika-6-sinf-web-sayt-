@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiSearchLine, 
@@ -14,6 +14,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { VIDEOS } from '../data/videoData';
 import toast from 'react-hot-toast';
+import { db } from '../services/firebase';
+import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 const CATEGORY_KEY_MAP = {
   'Kirish': 'cat_intro',
@@ -33,7 +35,7 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete, onEdit }
     {isAdmin && (
       <div className="absolute top-2 left-2 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
         <button
-          onClick={(e) => { e.stopPropagation(); onEdit(video); }}
+          onClick={(e) => { e.stopPropagation(); onEdit ? onEdit(video) : null; }}
           className="w-8 h-8 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center justify-center shadow-lg"
           title="Taxrirlash"
         >
@@ -48,7 +50,6 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete, onEdit }
         </button>
       </div>
     )}
-    {/* ... (rest of VideoCard) */}
     <div className="relative aspect-video">
       <img 
         src={`https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg`} 
@@ -82,7 +83,6 @@ const VideoLessons = () => {
   const [showAdminForm, setShowAdminForm] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
   
-  // CMS State
   const [cmsTitle, setCmsTitle] = useState('');
   const [cmsCategory, setCmsCategory] = useState('Kirish');
   const [cmsVideoId, setCmsVideoId] = useState('');
@@ -91,15 +91,22 @@ const VideoLessons = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  React.useEffect(() => {
-    const saved = localStorage.getItem('customVideos');
-    if (saved) {
-      setCustomVideos(JSON.parse(saved));
+  useEffect(() => {
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
+      const saved = localStorage.getItem('customVideos');
+      if (saved) setCustomVideos(JSON.parse(saved));
+      return;
     }
+
+    const unsub = onSnapshot(collection(db, 'videos'), (snapshot) => {
+      const videoList = snapshot.docs.map(doc => doc.data());
+      setCustomVideos(videoList);
+    });
+
+    return () => unsub();
   }, []);
 
-  // Use effects or triggers to populate form when editing
-  React.useEffect(() => {
+  useEffect(() => {
     if (editingVideo) {
       setCmsTitle(editingVideo.title);
       setCmsCategory(editingVideo.category || 'Kirish');
@@ -108,7 +115,6 @@ const VideoLessons = () => {
     }
   }, [editingVideo]);
 
-  // Categories same... (skipped for brevity)
   const categories = [
     { key: '__all__',       label: t('cat_all') },
     { key: 'Kirish',        label: t('cat_intro') },
@@ -116,15 +122,21 @@ const VideoLessons = () => {
     { key: 'Termodynamika', label: t('cat_thermo') },
   ];
 
-  const handleDeleteVideo = (id) => {
+  const handleDeleteVideo = async (id) => {
     if (!window.confirm("Rostdan ham ushbu videoni o'chirib tashlamoqchimisiz?")) return;
-    const remainingCustom = customVideos.filter(v => v.id !== id);
-    setCustomVideos(remainingCustom);
-    localStorage.setItem('customVideos', JSON.stringify(remainingCustom));
-    toast.success("Muvaffaqiyatli o'chirildi!");
+    
+    try {
+      await deleteDoc(doc(db, 'videos', id));
+      toast.success("Muvaffaqiyatli o'chirildi!");
+    } catch (err) {
+      console.error("Video o'chirishda xato:", err);
+      const remainingCustom = customVideos.filter(v => v.id !== id);
+      setCustomVideos(remainingCustom);
+      localStorage.setItem('customVideos', JSON.stringify(remainingCustom));
+    }
   };
 
-  const handleSaveVideo = (e) => {
+  const handleSaveVideo = async (e) => {
     e.preventDefault();
     if (!cmsTitle || !cmsVideoId) {
       toast.error("Iltimos, video nomi va linkni kiriting.");
@@ -140,37 +152,34 @@ const VideoLessons = () => {
         finalId = cmsVideoId.split('embed/')[1].split('?')[0];
     }
 
+    const videoId = editingVideo ? editingVideo.id : Date.now().toString();
     const videoData = {
-      id: editingVideo ? editingVideo.id : Date.now().toString(),
+      id: videoId,
       videoId: finalId,
       title: cmsTitle,
       topic: cmsTitle,
       category: cmsCategory,
-      isCustom: true
+      isCustom: true,
+      updatedAt: new Date().toISOString()
     };
 
-    let updatedVideos;
-    if (editingVideo) {
-      updatedVideos = customVideos.map(v => v.id === editingVideo.id ? videoData : v);
-      // Case where we are editing a STATIC video for the first time
-      if (!customVideos.some(v => v.id === editingVideo.id)) {
-        updatedVideos.push(videoData);
-      }
-    } else {
-      updatedVideos = [...customVideos, videoData];
+    try {
+      await setDoc(doc(db, 'videos', videoId), videoData);
+      toast.success("Muvaffaqiyatli saqlandi!");
+    } catch (err) {
+      console.error("Video saqlashda xato:", err);
+      toast.error("Cloud-ga saqlab bo'lmadi, localda saqlandi.");
+      const updated = [...customVideos.filter(v => v.id !== videoId), videoData];
+      setCustomVideos(updated);
+      localStorage.setItem('customVideos', JSON.stringify(updated));
     }
-
-    setCustomVideos(updatedVideos);
-    localStorage.setItem('customVideos', JSON.stringify(updatedVideos));
     
     setCmsTitle('');
     setCmsVideoId('');
     setShowAdminForm(false);
     setEditingVideo(null);
-    toast.success("Muvaffaqiyatli saqlandi!");
   };
 
-  // Merge static default videos with custom overrides
   const finalVideosData = VIDEOS.map(v => {
     const custom = customVideos.find(cv => cv.id === v.id);
     return custom ? custom : v;
