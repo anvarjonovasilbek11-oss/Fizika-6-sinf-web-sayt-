@@ -20,6 +20,8 @@ import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
+import { db } from '../services/firebase';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 
 const StudentQuiz = () => {
   const navigate = useNavigate();
@@ -44,40 +46,34 @@ const StudentQuiz = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
+  // Firebase Firestore dan testlarni real-vaqtda olish
   useEffect(() => {
-    const savedApproved = localStorage.getItem('approvedQuizzes');
-    const savedPending = localStorage.getItem('pendingQuizzes');
-
-    // Robust Initialization: Always ensure we have content
-    let finalApproved = [];
-    if (savedApproved) {
-      finalApproved = JSON.parse(savedApproved);
-    }
-    
-    // If empty or first load, inject defaults
-    if (finalApproved.length === 0) {
-      finalApproved = [...DEFAULT_AI_QUIZZES];
-      localStorage.setItem('approvedQuizzes', JSON.stringify(finalApproved));
-    }
-    setApprovedQuizzes(finalApproved);
-
-    if (savedPending) {
+    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
+      // Fallback: LocalStorage
+      const savedApproved = localStorage.getItem('approvedQuizzes') || JSON.stringify(DEFAULT_AI_QUIZZES);
+      const savedPending = localStorage.getItem('pendingQuizzes') || '[]';
+      setApprovedQuizzes(JSON.parse(savedApproved));
       setPendingQuizzes(JSON.parse(savedPending));
-    } else {
-      setPendingQuizzes(DEFAULT_AI_QUIZZES); // Keep defaults in pending too for admin to see
-      localStorage.setItem('pendingQuizzes', JSON.stringify(DEFAULT_AI_QUIZZES));
+      return;
     }
+
+    const unsub = onSnapshot(collection(db, 'quizzes'), (snapshot) => {
+      const allQuizzes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      const approved = allQuizzes.filter(q => q.isApproved);
+      const pending = allQuizzes.filter(q => !q.isApproved);
+      
+      // Agar bazada hech narsa bo'lmasa, defaultlarni ko'rsatish
+      if (approved.length === 0) {
+        setApprovedQuizzes(DEFAULT_AI_QUIZZES);
+      } else {
+        setApprovedQuizzes(approved);
+      }
+      setPendingQuizzes(pending);
+    });
+
+    return () => unsub();
   }, []);
-
-  const saveApproved = (updated) => {
-    setApprovedQuizzes(updated);
-    localStorage.setItem('approvedQuizzes', JSON.stringify(updated));
-  };
-
-  const savePending = (updated) => {
-    setPendingQuizzes(updated);
-    localStorage.setItem('pendingQuizzes', JSON.stringify(updated));
-  };
 
   const generateQuiz = async (e) => {
     e.preventDefault();
@@ -87,7 +83,7 @@ const StudentQuiz = () => {
     try {
       const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       if (!apiKey) {
-        toast.error("API kaliti topilmadi!");
+        toast.error("AI kaliti topilmadi! .env faylni tekshiring.");
         setLoading(false);
         return;
       }
@@ -113,44 +109,51 @@ const StudentQuiz = () => {
       if (!jsonMatch) throw new Error("AI formatda xatolik");
       const parsed = JSON.parse(jsonMatch[0]);
       
-      const newQuiz = { ...parsed, id: Date.now(), isApproved: false };
-      const updatedPending = [...pendingQuizzes, newQuiz];
-      savePending(updatedPending);
+      const quizId = Date.now().toString();
+      const newQuiz = { 
+        ...parsed, 
+        id: quizId, 
+        isApproved: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Firebase-ga saqlash
+      await setDoc(doc(db, 'quizzes', quizId), newQuiz);
       
       toast.success("AI testni tayyorladi! 'Tasdiqlanishi kutilayotgan testlar' bo'limidan ko'rib tasdiqlang.");
       setTopic('');
       setShowGenerator(false);
     } catch (err) {
+      console.error("Test yaratishda xato:", err);
       toast.error("Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
     } finally {
       setLoading(false);
     }
   };
 
-  const approveQuiz = (quiz) => {
-    const updatedApproved = [...approvedQuizzes, { ...quiz, isApproved: true }];
-    const updatedPending = pendingQuizzes.filter(q => q.id !== quiz.id);
-    saveApproved(updatedApproved);
-    savePending(updatedPending);
-    toast.success("Test tasdiqlandi va barchaga e'lon qilindi!");
+  const approveQuiz = async (quiz) => {
+    try {
+      await setDoc(doc(db, 'quizzes', quiz.id), { ...quiz, isApproved: true });
+      toast.success("Test tasdiqlandi va barchaga e'lon qilindi!");
+    } catch (err) {
+      console.error("Tasdiqlashda xato:", err);
+      toast.error("Tasdiqlashda xatolik yuz berdi.");
+    }
   };
 
-  const deleteQuiz = (id, isFromPending = false) => {
+  const deleteQuiz = async (id, isFromPending = false) => {
     if (isFromPending) {
       if (!window.confirm("Ushbu testni butunlay o'chirasizmi?")) return;
-      const updated = pendingQuizzes.filter(q => q.id !== id);
-      savePending(updated);
-      toast.success("Test o'chirildi");
     } else {
-      if (!window.confirm("Ushbu testni tasdiqlanmaganlar qatoriga qaytarasizmi?")) return;
-      const quizToRevert = approvedQuizzes.find(q => q.id === id);
-      if (quizToRevert) {
-        const updatedApproved = approvedQuizzes.filter(q => q.id !== id);
-        const updatedPending = [...pendingQuizzes, { ...quizToRevert, isApproved: false }];
-        saveApproved(updatedApproved);
-        savePending(updatedPending);
-        toast.success("Test tasdiqlanmaganlar qatoriga qaytarildi");
-      }
+      if (!window.confirm("Ushbu testni o'chirasizmi?")) return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'quizzes', id));
+      toast.success("Test o'chirildi");
+    } catch (err) {
+      console.error("O'chirishda xato:", err);
+      toast.error("Testni o'chirib bo'lmadi.");
     }
   };
 

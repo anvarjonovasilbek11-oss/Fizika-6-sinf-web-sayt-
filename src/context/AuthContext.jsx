@@ -61,7 +61,6 @@ export const AuthProvider = ({ children }) => {
       await deleteDoc(doc(db, 'users', `${usernameToDelete}-student`));
       return true;
     } catch (err) {
-      console.error("Cloud-dan o'chirishda xato:", err);
       return false;
     }
   };
