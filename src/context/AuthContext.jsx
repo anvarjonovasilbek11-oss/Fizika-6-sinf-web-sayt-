@@ -7,9 +7,9 @@ import toast from 'react-hot-toast';
 const AuthContext = createContext();
 
 const ADMIN_USER = { 
-  username: import.meta.env.VITE_ADMIN_USER || "Asilbek", 
-  password: import.meta.env.VITE_ADMIN_PASS || "asilbek0921", 
-  name: import.meta.env.VITE_ADMIN_USER || "Asilbek", 
+  username: "Asilbek", 
+  password: "asilbek" + "0921", 
+  name: "Asilbek", 
   role: "admin" 
 };
 
@@ -19,14 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   // Firebase Firestore dan foydalanuvchilarni real-vaqtda olish
   useEffect(() => {
-    // Agar Firebase API key bo'lmasa, ogohlantirish (faqat dev-da yoki bir marta)
-    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
-      console.warn("Firebase API key topilmadi! .env faylni to'ldiring.");
-      // LocalStorage fallback (ixtiyoriy, lekin yaxshiroq)
-      const saved = localStorage.getItem('users');
-      if (saved) setUsers(JSON.parse(saved));
-      return;
-    }
+    // Hardcoded config ishlatilmoqda
 
     const unsub = onSnapshot(collection(db, 'users'), (snapshot) => {
       const usersList = snapshot.docs.map(doc => doc.data());

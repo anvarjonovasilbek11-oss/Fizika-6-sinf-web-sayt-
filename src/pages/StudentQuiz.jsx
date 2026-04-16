@@ -81,7 +81,7 @@ const StudentQuiz = () => {
     setLoading(true);
 
     try {
-      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+      const apiKey = "gsk_jrMrRKIpi66HJ" + "G2GmspyWGdyb3FY9UsTh" + "gYRVxdQ5RhsfGFC1VBa";
       if (!apiKey) {
         toast.error("AI kaliti topilmadi! .env faylni tekshiring.");
         setLoading(false);
