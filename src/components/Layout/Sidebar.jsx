@@ -82,13 +82,13 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   };
 
   const menuItems = [
-    { name: t('nav_home'),      icon: <RiDashboardLine size={24} />, path: "/home" },
-    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} />,     path: "/darslik" },
-    { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos" },
-    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials" },
-    { name: t('nav_constants'), icon: <RiBarChart2Line size={24} />, path: "/constants" },
-    { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: "/tests" },
-    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings" },
+    { name: t('nav_home'),      icon: <RiDashboardLine size={24} />, path: "/home", label: "Bosh sahifa bo'limi" },
+    { name: t('nav_textbook'),  icon: <RiBook3Line size={24} />,     path: "/darslik", label: "Darslik darslar bo'limi" },
+    { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos", label: "Video darslar bo'limi" },
+    { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials", label: "O'quv qo'llanmalar bo'limi" },
+    { name: t('nav_constants'), icon: <RiBarChart2Line size={24} />, path: "/constants", label: "O'zgarmaslar va birliklar bo'limi" },
+    { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: "/tests", label: "Testlar laboratoriyasi bo'limi" },
+    { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings", label: "Sozlamalar bo'limi" },
   ];
 
   const handleLogout = () => {
@@ -131,6 +131,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
               <NavLink
                 to={item.path}
                 onClick={() => handleMainItemClick(item.path)}
+                aria-label={item.label}
                 className={({ isActive }) => `
                   flex items-center gap-4 p-4 rounded-2xl group transition-all duration-300
                   ${isActive 

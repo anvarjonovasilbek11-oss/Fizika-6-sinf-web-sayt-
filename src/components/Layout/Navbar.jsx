@@ -55,7 +55,10 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
         >
           {mobileOpen ? <RiCloseLine size={24} /> : (collapsed ? <RiMenuUnfoldLine size={24} /> : <RiMenuFoldLine size={24} />)}
         </button>
-        <h2 className="text-xl font-heading font-extrabold text-slate-900 dark:text-white hidden md:block tracking-tight">
+        <h2 
+          className="text-xl font-heading font-extrabold text-slate-900 dark:text-white hidden md:block tracking-tight"
+          aria-label={`Salom, ${user?.name}. Fizika Olamiga Xush kelibsiz!`}
+        >
           {t('greeting')}, <span className="text-primary italic">{user?.name}</span>
         </h2>
       </div>
@@ -93,6 +96,7 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
         {/* Theme Toggle */}
         <button 
           onClick={toggleTheme}
+          aria-label={theme === 'light' ? "Tungi rejimga o'tish" : "Kunduzgi rejimga o'tish"}
           className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg transition-colors text-slate-600 dark:text-slate-300"
         >
           {theme === 'light' ? <RiMoonLine size={22} /> : <RiSunLine size={22} />}
@@ -102,6 +106,7 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
         <div className="relative">
           <button
             onClick={() => setLangOpen(!langOpen)}
+            aria-label="Tilni o'zgartirish"
             className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-slate-700 dark:text-slate-200 font-bold text-sm"
           >
             <span className="text-lg">{FLAG[lang]}</span>
@@ -119,6 +124,7 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
                 <button
                   key={l.code}
                   onClick={() => { changeLang(l.code); setLangOpen(false); }}
+                  aria-label={`${l.label} tiliga o'tish`}
                   className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all hover:bg-primary/10 hover:text-primary
                     ${lang === l.code ? 'bg-primary/10 text-primary' : 'text-slate-700 dark:text-slate-200'}`}
                 >
@@ -132,7 +138,10 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
         </div>
 
         {/* User Avatar */}
-        <div className="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-white/10">
+        <div 
+          className="flex items-center gap-3 pl-3 border-l border-slate-200 dark:border-white/10"
+          aria-label={`Foydalanuvchi profili: ${user?.name}`}
+        >
           <div className="text-right hidden sm:block">
             <p className="text-sm font-semibold text-slate-800 dark:text-white leading-tight">{user?.name}</p>
             <p className="text-xs text-slate-500 dark:text-slate-300">

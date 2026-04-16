@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { RiRobotLine, RiSendPlane2Line, RiCloseLine, RiMessage3Line } from 'react-icons/ri';
-import { useAuth } from '../../context/AuthContext';
+import { useAccessibility } from '../../context/AccessibilityContext';
 
 const AIChatBot = () => {
   const { user } = useAuth();
+  const { ttsEnabled } = useAccessibility();
   const [isOpen, setIsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(1);
   const [messages, setMessages] = useState([
     { role: 'assistant', content: `Salom ${user?.name || 'foydalanuvchi'}! Men Fizika Olam yordamchisiman. Sizga qanday yordam bera olaman?` }
   ]);
@@ -164,16 +163,26 @@ const AIChatBot = () => {
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setUnreadCount(0);
+        }}
+        onMouseEnter={() => {
+          if (ttsEnabled && unreadCount > 0) {
+            // TTS o'qib bo'lguncha kutish (taxminiy 2 soniya)
+            setTimeout(() => setUnreadCount(0), 2000);
+          }
+        }}
+        aria-label={unreadCount > 0 ? `${unreadCount} ta yangi xabar bor` : 'Chat yordamchisi'}
         className={`
-          w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-colors
+          w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-colors relative
           ${isOpen ? 'bg-secondary text-white' : 'bg-primary text-white'}
         `}
       >
         {isOpen ? <RiCloseLine size={32} /> : <RiMessage3Line size={32} />}
-        {!isOpen && (
+        {!isOpen && unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 w-5 h-5 bg-secondary text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white dark:border-dark-bg ring-2 ring-primary/20">
-            1
+            {unreadCount}
           </span>
         )}
       </motion.button>
