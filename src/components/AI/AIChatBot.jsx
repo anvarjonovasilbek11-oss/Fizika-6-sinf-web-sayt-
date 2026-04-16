@@ -1,3 +1,7 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { RiRobotLine, RiSendPlane2Line, RiCloseLine, RiMessage3Line } from 'react-icons/ri';
+import { useAuth } from '../../context/AuthContext';
 import { useAccessibility } from '../../context/AccessibilityContext';
 
 const AIChatBot = () => {
