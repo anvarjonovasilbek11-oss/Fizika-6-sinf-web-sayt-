@@ -39,10 +39,7 @@ const Materials = () => {
   }, []);
 
   const onDrop = useCallback(async (acceptedFiles) => {
-    if (!import.meta.env.VITE_FIREBASE_API_KEY) {
-      toast.error("Firebase sozlanmagan! Loyiha sozlamalarida API kalitlari mavjud emas.");
-      return;
-    }
+    // Hardcoded config ishlatilmoqda, env check shart emas
 
     setUploading(true);
     
