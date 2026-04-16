@@ -2,7 +2,18 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { RiSunLine, RiMoonLine, RiMenuFoldLine, RiMenuUnfoldLine, RiArrowDownSLine, RiCloseLine, RiMenuLine } from 'react-icons/ri';
+import { useAccessibility } from '../../context/AccessibilityContext';
+import { 
+  RiSunLine, 
+  RiMoonLine, 
+  RiMenuFoldLine, 
+  RiMenuUnfoldLine, 
+  RiArrowDownSLine, 
+  RiCloseLine, 
+  RiMenuLine,
+  RiVolumeUpFill,
+  RiVolumeMuteFill
+} from 'react-icons/ri';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const FLAG = { uz: '🇺🇿', ru: '🇷🇺', en: '🇬🇧' };
@@ -11,7 +22,9 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { lang, changeLang, t } = useLanguage();
+  const { ttsEnabled, toggleTts } = useAccessibility();
   const [langOpen, setLangOpen] = useState(false);
+  const [showTtsTooltip, setShowTtsTooltip] = useState(false);
 
   const langs = [
     { code: 'uz', label: "O'zbekcha", flag: '🇺🇿' },
@@ -48,6 +61,35 @@ const Navbar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
       </div>
 
       <div className="flex items-center gap-3">
+        {/* TTS Toggle */}
+        <div className="relative group/tts">
+          <button 
+            onClick={toggleTts}
+            onMouseEnter={() => setShowTtsTooltip(true)}
+            onMouseLeave={() => setShowTtsTooltip(false)}
+            className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center
+              ${ttsEnabled 
+                ? 'bg-primary/20 text-primary shadow-lg shadow-primary/10' 
+                : 'hover:bg-slate-100 dark:hover:bg-white/5 text-slate-500 dark:text-slate-400'}`}
+            aria-label="Ovozli boshqaruv"
+          >
+            {ttsEnabled ? <RiVolumeUpFill size={22} /> : <RiVolumeMuteFill size={22} />}
+          </button>
+          
+          <AnimatePresence>
+            {showTtsTooltip && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute top-full mt-2 right-0 px-3 py-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-lg whitespace-nowrap shadow-xl z-50"
+              >
+                Ovozli qabul
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Theme Toggle */}
         <button 
           onClick={toggleTheme}

@@ -7,6 +7,7 @@ import ProtectedRoute from './components/Layout/ProtectedRoute';
 import AdminRoute from './components/Layout/AdminRoute';
 import MainLayout from './components/Layout/MainLayout';
 import { LanguageProvider } from './context/LanguageContext';
+import { AccessibilityProvider } from './context/AccessibilityContext';
 import ErrorBoundary from './components/Common/ErrorBoundary';
 import LoadingSpinner from './components/Common/LoadingSpinner';
 
@@ -28,6 +29,7 @@ const App = () => {
       <AuthProvider>
         <LanguageProvider>
         <ThemeProvider>
+          <AccessibilityProvider>
             <ErrorBoundary>
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
@@ -44,7 +46,8 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </ErrorBoundary>
-          <Toaster position="top-right" />
+            <Toaster position="top-right" />
+          </AccessibilityProvider>
         </ThemeProvider>
         </LanguageProvider>
       </AuthProvider>
