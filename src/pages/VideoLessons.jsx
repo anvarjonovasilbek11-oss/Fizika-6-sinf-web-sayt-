@@ -92,12 +92,7 @@ const VideoLessons = () => {
   const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
-    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
-      const saved = localStorage.getItem('customVideos');
-      if (saved) setCustomVideos(JSON.parse(saved));
-      return;
-    }
-
+    // Hardcoded config ishlatilmoqda
     const unsub = onSnapshot(collection(db, 'videos'), (snapshot) => {
       const videoList = snapshot.docs.map(doc => doc.data());
       setCustomVideos(videoList);

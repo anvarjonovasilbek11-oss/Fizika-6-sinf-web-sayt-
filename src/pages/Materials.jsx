@@ -25,9 +25,7 @@ const Materials = () => {
 
   // Firebase Firestore dan fayl ma'lumotlarini real-vaqtda olish
   useEffect(() => {
-    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
-      return; 
-    }
+    // Hardcoded config ishlatilmoqda
 
     const q = query(collection(db, 'materials'), orderBy('createdAt', 'desc'));
     const unsub = onSnapshot(q, (snapshot) => {
