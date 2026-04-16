@@ -142,18 +142,30 @@ const StudentQuiz = () => {
   };
 
   const deleteQuiz = async (id, isFromPending = false) => {
-    if (isFromPending) {
-      if (!window.confirm("Ushbu testni butunlay o'chirasizmi?")) return;
-    } else {
-      if (!window.confirm("Ushbu testni o'chirasizmi?")) return;
-    }
+    const message = isFromPending 
+      ? "Ushbu testni butunlay o'chirasizmi?" 
+      : "Ushbu testni butunlay o'chirib tashlamoqchimisiz? (Bu amalni ortga qaytarib bo'lmaydi)";
+
+    if (!window.confirm(message)) return;
 
     try {
       await deleteDoc(doc(db, 'quizzes', id));
-      toast.success("Test o'chirildi");
+      toast.success("Test butunlay o'chirildi");
     } catch (err) {
       console.error("O'chirishda xato:", err);
       toast.error("Testni o'chirib bo'lmadi.");
+    }
+  };
+
+  const moveToPending = async (quiz) => {
+    if (!window.confirm("Ushbu testni tasdiqlanmaganlar qatoriga qaytarmoqchimisiz?")) return;
+
+    try {
+      await setDoc(doc(db, 'quizzes', quiz.id), { ...quiz, isApproved: false });
+      toast.success("Test tasdiqlanmaganlar qatoriga o'tkazildi");
+    } catch (err) {
+      console.error("O'tkazishda xato:", err);
+      toast.error("Xatolik yuz berdi.");
     }
   };
 
@@ -385,7 +397,22 @@ const StudentQuiz = () => {
                        TESTNI BOSHLASH
                     </button>
                     {isAdmin && (
-                      <button onClick={() => deleteQuiz(q.id)} className="w-full py-2 text-red-500 font-black text-xs uppercase tracking-widest hover:underline opacity-80 hover:opacity-100 transition-opacity">O'chirish</button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => moveToPending(q)} 
+                          className="flex-1 py-3 bg-amber-500/10 text-amber-600 dark:text-amber-500 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center gap-1"
+                          title="Tasdiqlanmagan qatorga o'tkazish"
+                        >
+                          <RiRestartLine size={14} /> Qaytarish
+                        </button>
+                        <button 
+                          onClick={() => deleteQuiz(q.id)} 
+                          className="px-4 py-3 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-1 font-black text-[10px] uppercase tracking-widest"
+                          title="Butunlay o'chirish"
+                        >
+                          <RiDeleteBin6Line size={14} /> O'chirish
+                        </button>
+                      </div>
                     )}
                   </div>
                 </motion.div>

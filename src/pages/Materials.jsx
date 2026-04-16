@@ -106,15 +106,20 @@ const Materials = () => {
   };
 
   const downloadFile = (file) => {
+    if (!file.url) {
+      toast.error("Fayl manzili topilmadi.");
+      return;
+    }
+
     try {
-      // Mobil qurilmalarda eng xavfsiz yo'l - PDF bo'lsa yangi oynada ochish, bo'lmasa to'g'ridan-to'g'ri linkka yo'naltirish
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.target = "_blank";
-      link.download = file.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Eng ishonchli usul - yangi oynada ochish. 
+      // Brauzer fayl turiga qarab uni yuklab oladi yoki ko'rsatadi.
+      const win = window.open(file.url, '_blank');
+      if (!win) {
+        // Agar popup blocker to'ssa, to'g'ridan-to'g'ri link orqali urinib ko'ramiz
+        window.location.href = file.url;
+      }
+      toast.success("Yuklab olish boshlandi...");
     } catch (err) {
       console.error('Yuklab olishda xatolik:', err);
       toast.error('Faylni yuklab bo\'lmadi.');
