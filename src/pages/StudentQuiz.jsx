@@ -13,7 +13,9 @@ import {
   RiCloseLine, 
   RiHome4Line,
   RiArrowLeftSLine,
-  RiArrowRightSLine
+  RiArrowRightSLine,
+  RiCheckboxCircleLine,
+  RiCloseCircleLine
 } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
@@ -21,7 +23,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
 import { db } from '../services/firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy, addDoc } from 'firebase/firestore';
 
 const StudentQuiz = () => {
   const navigate = useNavigate();
@@ -46,6 +48,7 @@ const StudentQuiz = () => {
   const [activeQuiz, setActiveQuiz] = useState(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [score, setScore] = useState(0);
+  const [userAnswers, setUserAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   
@@ -208,6 +211,7 @@ const StudentQuiz = () => {
     setActiveQuiz(quiz);
     setCurrentIdx(0);
     setScore(0);
+    setUserAnswers({});
     setShowResults(false);
     setSelectedAnswer(null);
   };
@@ -215,6 +219,9 @@ const StudentQuiz = () => {
   const handleAnswer = (option) => {
     if (selectedAnswer) return;
     setSelectedAnswer(option);
+    
+    // Javobni saqlash
+    setUserAnswers(prev => ({ ...prev, [currentIdx]: option }));
     
     if (option === activeQuiz.questions[currentIdx].correct) {
       setScore(prev => prev + 1);
@@ -233,6 +240,30 @@ const StudentQuiz = () => {
       }
     }, 2000);
   };
+
+  // Natijani bazaga saqlash
+  useEffect(() => {
+    const saveResult = async () => {
+      if (showResults && activeQuiz && user) {
+        try {
+          await addDoc(collection(db, 'results'), {
+            userId: user.username,
+            username: user.name || user.username,
+            quizId: activeQuiz.id,
+            topic: activeQuiz.topic,
+            score: score,
+            total: activeQuiz.questions.length,
+            correctCount: score,
+            wrongCount: activeQuiz.questions.length - score,
+            timestamp: new Date().toISOString()
+          });
+        } catch (err) {
+          console.error("Result saqlashda xato:", err);
+        }
+      }
+    };
+    saveResult();
+  }, [showResults]);
 
   if (activeQuiz && !showResults) {
     const q = activeQuiz.questions[currentIdx];
@@ -289,25 +320,89 @@ const StudentQuiz = () => {
 
   if (showResults) {
     const pct = Math.round((score / activeQuiz.questions.length) * 100);
+    const wrongCount = activeQuiz.questions.length - score;
+
     return (
-      <div className="max-w-xl mx-auto glass-card p-12 text-center mt-10 shadow-2xl bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 transition-colors">
-        <RiTrophyLine size={120} className="mx-auto text-primary mb-6 drop-shadow-[0_0_20px_rgba(108,99,255,0.4)]" />
-        <h2 className="text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">Natijangiz</h2>
-        <div className="text-9xl font-black mb-2 text-primary drop-shadow-xl">{score}/{activeQuiz.questions.length}</div>
-        <p className="text-2xl font-black text-slate-700 dark:text-slate-300 mb-10 uppercase tracking-widest">{pct}% Muvaffaqiyat</p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button 
-            onClick={() => startQuiz(activeQuiz)} 
-            className="px-8 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <RiRestartLine size={24} /> Qayta boshlash
-          </button>
-          <button 
-            onClick={() => navigate('/home')} 
-            className="px-8 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
-          >
-            <RiHome4Line size={24} /> Bosh menyu
-          </button>
+      <div className="max-w-4xl mx-auto space-y-8 pb-20 px-4 mt-8 transition-colors">
+        <div className="glass-card p-12 text-center shadow-2xl bg-white dark:bg-white/5 border-slate-200 dark:border-white/10">
+          <RiTrophyLine size={100} className="mx-auto text-primary mb-6 drop-shadow-[0_0_20px_rgba(108,99,255,0.4)]" />
+          <h2 className="text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-4">Natijangiz</h2>
+          <div className="flex justify-center items-end gap-2 mb-2">
+            <span className="text-8xl font-black text-primary drop-shadow-xl">{score}</span>
+            <span className="text-3xl font-black text-slate-400 mb-4">/ {activeQuiz.questions.length}</span>
+          </div>
+          <p className="text-xl font-black text-slate-700 dark:text-slate-300 mb-10 uppercase tracking-widest">{pct}% Muvaffaqiyat</p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button 
+              onClick={() => startQuiz(activeQuiz)} 
+              className="px-8 py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <RiRestartLine size={24} /> Qayta boshlash
+            </button>
+            <button 
+              onClick={() => navigate('/home')} 
+              className="px-8 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <RiHome4Line size={24} /> Bosh menyu
+            </button>
+          </div>
+        </div>
+
+        {/* Detailed Analysis Section */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 px-2">
+            <div className="p-3 bg-primary/10 text-primary rounded-xl">
+              <RiHistoryLine size={24} />
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Savollar tahlili</h3>
+          </div>
+
+          <div className="space-y-4">
+            {activeQuiz.questions.map((q, idx) => {
+              const userAns = userAnswers[idx];
+              const isCorrect = userAns === q.correct;
+              
+              return (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  key={idx} 
+                  className={`glass-card p-6 border-2 transition-all ${isCorrect ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}`}
+                >
+                  <div className="flex gap-4">
+                    <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center font-black ${isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                      {idx + 1}
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <p className="text-lg font-black text-slate-900 dark:text-white leading-tight">{q.question}</p>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className={`p-4 rounded-2xl flex items-center gap-3 ${isCorrect ? 'bg-green-500/10 text-green-700 dark:text-green-400' : 'bg-red-500/10 text-red-700 dark:text-red-400'}`}>
+                          {isCorrect ? <RiCheckboxCircleLine size={20} /> : <RiCloseCircleLine size={20} />}
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-black uppercase opacity-60">Sizning javobingiz</p>
+                            <p className="font-bold truncate">{q.options[userAns] || 'Javob berilmagan'}</p>
+                          </div>
+                        </div>
+
+                        {!isCorrect && (
+                          <div className="p-4 rounded-2xl bg-green-500/10 text-green-700 dark:text-green-400 flex items-center gap-3">
+                            <RiCheckboxCircleLine size={20} />
+                            <div className="min-w-0">
+                              <p className="text-[10px] font-black uppercase opacity-60">To'g'ri javob</p>
+                              <p className="font-bold truncate">{q.options[q.correct]}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );

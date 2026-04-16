@@ -16,7 +16,8 @@ import {
   RiArrowLeftSLine, 
   RiSave3Line, 
   RiAddLine,
-  RiBarChart2Line
+  RiBarChart2Line,
+  RiFunctionLine
 } from 'react-icons/ri';
 import { getCombinedTextbooks } from '../../services/textbookService';
 import toast from 'react-hot-toast';
@@ -87,6 +88,7 @@ const Sidebar = ({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) => {
     { name: t('nav_videos'),    icon: <RiVideoLine size={24} />,     path: "/videos", label: "Video darslar bo'limi" },
     { name: t('nav_materials'), icon: <RiBookOpenLine size={24} />,  path: "/materials", label: "O'quv qo'llanmalar bo'limi" },
     { name: t('nav_constants'), icon: <RiBarChart2Line size={24} />, path: "/constants", label: "O'zgarmaslar va birliklar bo'limi" },
+    { name: "Masalalar yechimi", icon: <RiFunctionLine size={24} />, path: "/solver", label: "Masalalar va misollar yechimi bo'limi" },
     { name: t('nav_tests'),     icon: <RiRobotLine size={24} />,     path: "/tests", label: "Testlar laboratoriyasi bo'limi" },
     { name: t('nav_settings'),  icon: <RiSettings4Line size={24} />, path: "/settings", label: "Sozlamalar bo'limi" },
   ];

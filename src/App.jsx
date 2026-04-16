@@ -21,6 +21,7 @@ import Settings from './pages/Settings';
 import TextbookPage from './pages/TextbookPage';
 import TextbookSelection from './pages/TextbookSelection';
 import ConstantsPage from './pages/ConstantsPage';
+import ProblemSolver from './pages/ProblemSolver';
 import NotFound from './pages/NotFound';
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
                 <Route path="/settings" element={<ProtectedRoute><MainLayout><Settings /></MainLayout></ProtectedRoute>} />
                 <Route path="/darslik" element={<ProtectedRoute><MainLayout><TextbookSelection /></MainLayout></ProtectedRoute>} />
                 <Route path="/textbook/:chapterId/:lessonId" element={<ProtectedRoute><MainLayout><TextbookPage /></MainLayout></ProtectedRoute>} />
+                <Route path="/solver" element={<ProtectedRoute><MainLayout><ProblemSolver /></MainLayout></ProtectedRoute>} />
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

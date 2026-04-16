@@ -16,7 +16,9 @@ import {
   RiEyeLine,
   RiEyeOffLine,
   RiKey2Line,
-  RiInformationLine
+  RiInformationLine,
+  RiBarChart2Line,
+  RiQuestionLine
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -36,6 +38,9 @@ const Home = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [visiblePasswords, setVisiblePasswords] = useState({});
+  const [allResults, setAllResults] = useState([]);
+  const [selectedUserResults, setSelectedUserResults] = useState(null);
+  const [showStatsModal, setShowStatsModal] = useState(false);
 
   // Statik darslar sonini hisoblash (bu o'zgarmaydi)
   const textbooks = getCombinedTextbooks(true);
@@ -116,6 +121,23 @@ const Home = () => {
     }, 10000);
     return () => clearInterval(timer);
   }, []);
+
+  // Firebase Firestore dan barcha natijalarni real-vaqtda olish
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'results'), (snapshot) => {
+      const resultsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setAllResults(resultsList);
+    });
+    return () => unsub();
+  }, []);
+
+  const viewUserStats = (username) => {
+    const userTests = allResults
+      .filter(r => r.userId === username)
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    setSelectedUserResults({ username, tests: userTests });
+    setShowStatsModal(true);
+  };
 
   return (
     <div className="space-y-12 pb-20 relative transition-colors">
@@ -222,6 +244,7 @@ const Home = () => {
                       <th className="pb-4 pl-4 text-left">Foydalanuvchi</th>
                       <th className="pb-4">Status</th>
                       <th className="pb-4">Bio / Ma'lumot</th>
+                      <th className="pb-4">Natijalar</th>
                       <th className="pb-4">Parol</th>
                       <th className="pb-4">Sana</th>
                       <th className="pb-4">Amal</th>
@@ -256,6 +279,15 @@ const Home = () => {
                               <span className="text-[10px] text-slate-400 italic font-bold">Mavjud emas</span>
                             )}
                           </div>
+                        </td>
+                        <td className="py-4 text-center">
+                          <button 
+                            onClick={() => viewUserStats(u.username)}
+                            className="inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white transition-all whitespace-nowrap"
+                          >
+                            <RiBarChart2Line size={14} /> 
+                            {allResults.filter(r => r.userId === u.username).length} ta
+                          </button>
                         </td>
                         <td className="py-4 text-center">
                           <div className="flex items-center justify-center gap-2">
@@ -299,6 +331,67 @@ const Home = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* User Stats/History Modal */}
+      <AnimatePresence>
+        {showStatsModal && selectedUserResults && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-2xl bg-white dark:bg-[#0d1526] rounded-[2.5rem] overflow-hidden shadow-2xl relative border border-white/10"
+            >
+              <div className="p-8 border-b border-slate-100 dark:border-white/5 flex justify-between items-center bg-primary/5">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center font-black">
+                    {selectedUserResults.username.substring(0, 1).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">@{selectedUserResults.username} xronologiyasi</h2>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Jami topshirilgan testlar: {selectedUserResults.tests.length} ta</p>
+                  </div>
+                </div>
+                <button onClick={() => setShowStatsModal(false)} className="p-3 bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-red-500 rounded-full transition-all">
+                  <RiCloseLine size={24} />
+                </button>
+              </div>
+
+              <div className="p-8 max-h-[60vh] overflow-y-auto no-scrollbar">
+                {selectedUserResults.tests.length > 0 ? (
+                  <div className="space-y-4">
+                    {selectedUserResults.tests.map((test, idx) => (
+                      <div key={idx} className="p-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 flex items-center justify-between group hover:border-primary/30 transition-all">
+                        <div className="flex items-center gap-4">
+                           <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-white">
+                             <RiQuestionLine size={18} />
+                           </div>
+                           <div>
+                             <p className="font-black text-slate-800 dark:text-white text-sm line-clamp-1">{test.topic}</p>
+                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{new Date(test.timestamp).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</p>
+                           </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-black text-primary">{test.score} / {test.total}</p>
+                          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                            {Math.round((test.score / test.total) * 100)}% NATIJA
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 space-y-4">
+                    <RiBarChart2Line size={64} className="mx-auto text-slate-200 dark:text-white/10" />
+                    <p className="text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest text-xs">Ushbu foydalanuvchi hali test topshirmagan</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
