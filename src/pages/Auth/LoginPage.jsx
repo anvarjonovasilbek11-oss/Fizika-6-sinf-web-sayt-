@@ -141,15 +141,14 @@ const LoginPage = () => {
               )}
             </AnimatePresence>
 
-            <motion.button 
-              whileTap={{ scale: 0.98 }}
+            <button 
               type="submit"
-              className="w-full py-5 rounded-2xl flex items-center justify-center gap-4 mt-6 bg-primary text-white shadow-xl shadow-primary/30 font-bold uppercase tracking-widest text-sm hover:translate-y-[-2px] transition-all"
+              className="w-full py-5 rounded-2xl flex items-center justify-center gap-4 mt-6 bg-primary text-white shadow-xl shadow-primary/30 font-bold uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer relative z-20"
             >
-              <span>
+              <span className="pointer-events-none">
                 {isRegister ? t('login_btn_register') : t('login_btn')}
               </span>
-            </motion.button>
+            </button>
           </form>
 
           <div className="mt-8 text-center shrink-0">

@@ -22,7 +22,10 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { VIDEOS } from '../data/videoData';
 import { getCombinedTextbooks } from '../services/textbookService';
-import localforage from 'localforage';
+import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
+import { db } from '../services/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import toast from 'react-hot-toast';
 
 const Home = () => {
   const { user, users: allUsers, deleteUser } = useAuth();
@@ -33,6 +36,13 @@ const Home = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [visiblePasswords, setVisiblePasswords] = useState({});
+  const [counts, setCounts] = useState({ 
+    videos: VIDEOS.length, 
+    lessons: 0, 
+    materials: 0, 
+    users: allUsers?.length || 0, 
+    quizzes: DEFAULT_AI_QUIZZES.length 
+  });
 
   const togglePasswordVisibility = (username) => {
     setVisiblePasswords(prev => ({
@@ -60,56 +70,60 @@ const Home = () => {
 
   const getDailyFact = () => dailyFacts[new Date().getDay() % dailyFacts.length];
 
-  const [counts, setCounts] = useState({ videos: 0, lessons: 0, materials: 0, users: 0, quizzes: 0 });
-
   useEffect(() => {
+    // Statik darslar sonini hisoblash
+    const textbooks = getCombinedTextbooks(true);
+    const staticLessons = textbooks.reduce((acc, curr) => acc + curr.lessons.length, 0);
+
     const fetchCounts = async () => {
-      // 1. Darslar soni (Statik malumot)
-      const textbooks = getCombinedTextbooks(true);
-      const lessonsCount = textbooks.reduce((acc, curr) => acc + curr.lessons.length, 0);
-      
-      // 2. Videolar sonini Firebase dan olish
-      let finalVideos = VIDEOS.length;
       try {
-        const { getDocs, collection } = await import('firebase/firestore');
-        const { db } = await import('../services/firebase');
-        const snapshot = await getDocs(collection(db, 'videos'));
-        const customVideosList = snapshot.docs.map(doc => doc.data());
-        finalVideos = VIDEOS.length + customVideosList.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
-      } catch (err) {}
+        // 1. Videolar (Statik + Firebase)
+        let finalVideos = VIDEOS.length;
+        try {
+          const vSnap = await getDocs(collection(db, 'videos'));
+          const customVideosList = vSnap.docs.map(doc => doc.data());
+          const uniqueCustomCount = customVideosList.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
+          finalVideos += uniqueCustomCount;
+        } catch (e) {
+          console.warn("Videos fetch error:", e);
+        }
 
-      // 3. Foydalanuvchilar soni
-      const usersCount = allUsers.length;
+        // 2. Qo'llanmalar
+        let materialsCount = 0;
+        try {
+          const mSnap = await getDocs(collection(db, 'materials'));
+          materialsCount = mSnap.size;
+        } catch (e) {
+          console.warn("Materials fetch error:", e);
+        }
 
-      // 4. Qo'llanmalar soni
-      let materialsCount = 0;
-      try {
-        const { getDocs, collection } = await import('firebase/firestore');
-        const { db } = await import('../services/firebase');
-        const snapshot = await getDocs(collection(db, 'materials'));
-        materialsCount = snapshot.size;
-      } catch (err) {}
+        // 3. Testlar
+        let quizzesCount = DEFAULT_AI_QUIZZES.length;
+        try {
+          const qSnap = await getDocs(collection(db, 'quizzes'));
+          const dbQuizzes = qSnap.docs.map(doc => doc.data());
+          // Bazadagi tasdiqlangan, lekin default bo'lmagan testlar
+          const uniqueDbQuizzes = dbQuizzes.filter(q => 
+            q.isApproved && !DEFAULT_AI_QUIZZES.some(dq => dq.id === q.id)
+          ).length;
+          quizzesCount += uniqueDbQuizzes;
+        } catch (e) {
+          console.warn("Quizzes fetch error:", e);
+        }
 
-      // 5. Testlar sonini Firebase dan olish
-      let quizzesCount = 0;
-      try {
-        const { getDocs, collection, query, where } = await import('firebase/firestore');
-        const { db } = await import('../services/firebase');
-        // Faqat tasdiqlangan testlar sanaladi
-        const q = query(collection(db, 'quizzes'), where('isApproved', '==', true));
-        const snapshot = await getDocs(q);
-        quizzesCount = snapshot.size;
-      } catch (err) {}
-
-      setCounts({
-        videos: finalVideos,
-        lessons: lessonsCount,
-        materials: materialsCount, 
-        users: usersCount,
-        quizzes: quizzesCount
-      });
+        setCounts({
+          videos: finalVideos,
+          lessons: staticLessons,
+          materials: materialsCount, 
+          users: allUsers?.length || 0,
+          quizzes: quizzesCount
+        });
+      } catch (err) {
+        console.error("Critical Home Stats Error:", err);
+        setCounts(prev => ({ ...prev, lessons: staticLessons, users: allUsers?.length || 0 }));
+      }
     };
-    
+
     fetchCounts();
   }, [allUsers]);
 
@@ -201,7 +215,6 @@ const Home = () => {
                 </button>
               </div>
 
-              {/* Search Bar */}
               <div className="px-8 py-4 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-black/20">
                 <div className="relative group">
                   <RiSearchLine className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
@@ -335,7 +348,7 @@ const ActionCard = ({ icon, count, label, description, accentColor, glowColor, o
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     onClick={onClick}
-    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 hover:border-primary/20 ${glowColor} shadow-xl hover:shadow-2xl`}
+    className={`glass-card p-8 flex flex-col items-center text-center group transition-all duration-500 hover:border-primary/20 ${glowColor} shadow-xl hover:shadow-2xl relative overflow-hidden`}
   >
     <div className={`w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 ${accentColor}`}>
       {React.cloneElement(icon, { size: 36 })}
@@ -344,7 +357,7 @@ const ActionCard = ({ icon, count, label, description, accentColor, glowColor, o
     <div className="text-sm font-bold text-slate-900 dark:text-white/90 mb-2 tracking-tight">{label}</div>
     <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[150px]">{description}</div>
     
-    <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-primary/20`} />
+    <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-primary`} />
   </motion.button>
 );
 

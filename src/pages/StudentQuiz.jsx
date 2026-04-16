@@ -51,18 +51,22 @@ const StudentQuiz = () => {
     // Hardcoded config ishlatilmoqda, env check shart emas
 
     const unsub = onSnapshot(collection(db, 'quizzes'), (snapshot) => {
-      const allQuizzes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const dbQuizzes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
-      const approved = allQuizzes.filter(q => q.isApproved);
-      const pending = allQuizzes.filter(q => !q.isApproved);
+      // Default testlarni bazadagi bilan solishtirib chiqamiz
+      // Agar bazada xuddi shu ID dagi test bo'lsa, uni bazadan olamiz (isApproved statusi uchun)
+      const mergedDefaults = DEFAULT_AI_QUIZZES.map(dq => {
+        const dbVersion = dbQuizzes.find(q => q.id === dq.id);
+        return dbVersion || dq;
+      });
+
+      // Boshqa barcha (AIdan yaratilgan) testlar
+      const customQuizzes = dbQuizzes.filter(q => !DEFAULT_AI_QUIZZES.some(dq => dq.id === q.id));
+
+      const allCombined = [...mergedDefaults, ...customQuizzes];
       
-      // Agar bazada hech narsa bo'lmasa, defaultlarni ko'rsatish
-      if (approved.length === 0) {
-        setApprovedQuizzes(DEFAULT_AI_QUIZZES);
-      } else {
-        setApprovedQuizzes(approved);
-      }
-      setPendingQuizzes(pending);
+      setApprovedQuizzes(allCombined.filter(q => q.isApproved));
+      setPendingQuizzes(allCombined.filter(q => !q.isApproved));
     });
 
     return () => unsub();

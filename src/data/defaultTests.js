@@ -2,7 +2,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_1',
     topic: "1-BОB. Fizika nimani o'rgatadi? (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Aristotel 'Fizika' atamasini fanga qachon kiritgan?", options: { A: "Miloddan avvalgi IV asr", B: "Milodiy X asr", C: "XVIII asr", D: "XIX asr" }, correct: "A" },
       { id: 2, question: "Tabiatda yuz beradigan har qanday o'zgarish nima deyiladi?", options: { A: "Fizik hodisa", B: "Tabiat hodisasi", C: "Kimyoviy reaksiya", D: "Biologik jarayon" }, correct: "B" },
@@ -19,7 +19,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_2',
     topic: "2-BОB. Modda tuzilishi (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Modda tuzilishi haqida birinchi bo'lib kimlar fikr yuritgan?", options: { A: "Demokrit va Ar-Roziy", B: "Nyuton va Eynshteyn", C: "Aristotel va Galiley", D: "Paskal va Arximed" }, correct: "A" },
       { id: 2, question: "Moddaning eng kichik, barcha xossalarini o'zida saqlaydigan zarrachasi nima?", options: { A: "Atom", B: "Molekula", C: "Elektron", D: "Neytron" }, correct: "B" },
@@ -36,7 +36,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_3',
     topic: "3-BОB. Fizik kattaliklar va ularni o'lchash (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Xalqaro birliklar sistemasi (SI) qachon qabul qilingan?", options: { A: "1960-yil", B: "1900-yil", C: "1991-yil", D: "1945-yil" }, correct: "A" },
       { id: 2, question: "Uzunlikning SI sistemasidagi asosiy birligi qaysi?", options: { A: "Santimetr", B: "Millimetr", C: "Metr", D: "Kilometr" }, correct: "C" },
@@ -53,7 +53,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_4',
     topic: "4-BОB. Mexanik hodisalar (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Harakat yo'nalishini ko'rsatuvchi chiziq nima deyiladi?", options: { A: "Yo'l", B: "Traektoriya", C: "Ko'chish", D: "Vektor" }, correct: "B" },
       { id: 2, question: "Tezlik qaysi formula orqali topiladi?", options: { A: "v = s / t", B: "v = m / V", C: "v = s * t", D: "v = F / s" }, correct: "A" },
@@ -70,7 +70,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_5',
     topic: "5-BОB. Energiya va Ish (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Mexanik ish qaysi harf bilan belgilanadi?", options: { A: "A", B: "P", C: "E", D: "W" }, correct: "A" },
       { id: 2, question: "Ishning birligi nima?", options: { A: "Nyuton", B: "Joul", C: "Vatt", D: "Paskal" }, correct: "B" },
@@ -87,7 +87,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_6',
     topic: "6-BОB. Issiqlik hodisalari (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Temperaturani o'lchash asbobi?", options: { A: "Dinamometr", B: "Termometr", C: "Barometr", D: "Gigrometr" }, correct: "B" },
       { id: 2, question: "Suv necha gradusda qaynaydi?", options: { A: "50°C", B: "80°C", C: "100°C", D: "120°C" }, correct: "C" },
@@ -104,7 +104,7 @@ export const DEFAULT_AI_QUIZZES = [
   {
     id: 'bob_7',
     topic: "7-BОB. Magnit va elektr hodisalar (Mustahkamlash)",
-    isApproved: false,
+    isApproved: true,
     questions: [
       { id: 1, question: "Magnitning nechta qutbi bor?", options: { A: "1 ta", B: "2 ta (Shimol va Janub)", C: "3 ta", D: "4 ta" }, correct: "B" },
       { id: 2, question: "Elektr zaryadi birligi nima?", options: { A: "Kulon", B: "Amper", C: "Volt", D: "Om" }, correct: "A" },
