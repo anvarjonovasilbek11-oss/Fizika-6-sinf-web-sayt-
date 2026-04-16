@@ -39,8 +39,8 @@ const Materials = () => {
   }, []);
 
   const onDrop = useCallback(async (acceptedFiles) => {
-    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
-      toast.error("Firebase sozlanmagan! Birinchi .env faylni to'ldiring.");
+    if (!import.meta.env.VITE_FIREBASE_API_KEY) {
+      toast.error("Firebase sozlanmagan! Loyiha sozlamalarida API kalitlari mavjud emas.");
       return;
     }
 

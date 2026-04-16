@@ -48,8 +48,8 @@ const StudentQuiz = () => {
 
   // Firebase Firestore dan testlarni real-vaqtda olish
   useEffect(() => {
-    if (!import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'your_api_key') {
-      // Fallback: LocalStorage
+    if (!import.meta.env.VITE_FIREBASE_API_KEY) {
+      // Fallback: LocalStorage agar kalitlar bo'lmasa
       const savedApproved = localStorage.getItem('approvedQuizzes') || JSON.stringify(DEFAULT_AI_QUIZZES);
       const savedPending = localStorage.getItem('pendingQuizzes') || '[]';
       setApprovedQuizzes(JSON.parse(savedApproved));
