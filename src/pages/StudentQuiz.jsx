@@ -25,48 +25,53 @@ import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from '
 
 const StudentQuiz = () => {
   const navigate = useNavigate();
-  const [approvedQuizzes, setApprovedQuizzes] = useState([]);
-  const [pendingQuizzes, setPendingQuizzes] = useState([]);
-  const [activeQuiz, setActiveQuiz] = useState(null);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [score, setScore] = useState(0);
-  const [showResults, setShowResults] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  
-  // AI Generation State
-  const [topic, setTopic] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showGenerator, setShowGenerator] = useState(false);
-  
-  // Preview State
-  const [previewQuiz, setPreviewQuiz] = useState(null);
-  const [previewIdx, setPreviewIdx] = useState(0);
+  // LocalStorage-dan keshni olish
+  const getCachedQuizzes = (type) => {
+    try {
+      const cached = localStorage.getItem('cached_quizzes');
+      if (cached) {
+        const allQuizzes = JSON.parse(cached);
+        return allQuizzes.filter(q => type === 'approved' ? q.isApproved : !q.isApproved);
+      }
+    } catch (e) {
+      console.error("Keshni yuklashda xato:", e);
+    }
+    // Dastlabki holatda faqat tasdiqlangan default testlarni qaytaramiz
+    if (type === 'approved') return DEFAULT_AI_QUIZZES.filter(q => q.isApproved);
+    return [];
+  };
 
+  const [approvedQuizzes, setApprovedQuizzes] = useState(() => getCachedQuizzes('approved'));
+  const [pendingQuizzes, setPendingQuizzes] = useState(() => getCachedQuizzes('pending'));
+  const [activeQuiz, setActiveQuiz] = useState(null);
+...
   const { t } = useLanguage();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
   // Firebase Firestore dan testlarni real-vaqtda olish
   useEffect(() => {
-    // Hardcoded config ishlatilmoqda, env check shart emas
-
     const unsub = onSnapshot(collection(db, 'quizzes'), (snapshot) => {
       const dbQuizzes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       
       // Default testlarni bazadagi bilan solishtirib chiqamiz
-      // Agar bazada xuddi shu ID dagi test bo'lsa, uni bazadan olamiz (isApproved statusi uchun)
       const mergedDefaults = DEFAULT_AI_QUIZZES.map(dq => {
         const dbVersion = dbQuizzes.find(q => q.id === dq.id);
-        return dbVersion || dq;
+        return dbVersion ? { ...dq, ...dbVersion } : dq;
       });
 
-      // Boshqa barcha (AIdan yaratilgan) testlar
+      // AI orqali yaratilgan yangi testlar
       const customQuizzes = dbQuizzes.filter(q => !DEFAULT_AI_QUIZZES.some(dq => dq.id === q.id));
 
       const allCombined = [...mergedDefaults, ...customQuizzes];
       
       setApprovedQuizzes(allCombined.filter(q => q.isApproved));
       setPendingQuizzes(allCombined.filter(q => !q.isApproved));
+      
+      // Keshga saqlash
+      localStorage.setItem('cached_quizzes', JSON.stringify(allCombined));
+    }, (error) => {
+      console.error("Firestore onSnapshot error:", error);
     });
 
     return () => unsub();

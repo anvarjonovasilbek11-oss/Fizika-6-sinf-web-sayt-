@@ -15,33 +15,54 @@ const ADMIN_USER = {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useSessionStorage('currentUser', null);
-  const [users, setUsers] = useState([ADMIN_USER]);
+  
+  // LocalStorage-dan dastlabki foydalanuvchilarni olish
+  const getInitialUsers = () => {
+    try {
+      const backup = localStorage.getItem('backup_users');
+      if (backup) {
+        const parsed = JSON.parse(backup);
+        // Admin yo'q bo'lsa qo'shish
+        if (!parsed.some(u => u.username === ADMIN_USER.username)) {
+          return [ADMIN_USER, ...parsed];
+        }
+        return parsed;
+      }
+    } catch (e) {
+      console.error("Backup yuklashda xato:", e);
+    }
+    return [ADMIN_USER];
+  };
+
+  const [users, setUsers] = useState(getInitialUsers);
 
   // Firebase Firestore dan foydalanuvchilarni real-vaqtda olish
   useEffect(() => {
-    // Hardcoded config ishlatilmoqda
-
     const unsub = onSnapshot(collection(db, 'users'), (snapshot) => {
       const usersList = snapshot.docs.map(doc => doc.data());
-      // Admin har doim ro'yxatda bo'lsin (agar Cloud-da bo'lmasa)
+      
+      // Admin har doim ro'yxatda bo'lsin
       const hasAdmin = usersList.some(u => u.username === ADMIN_USER.username && u.role === 'admin');
-      if (!hasAdmin) {
-        setUsers([ADMIN_USER, ...usersList]);
-      } else {
-        setUsers(usersList);
-      }
+      const finalUsers = !hasAdmin ? [ADMIN_USER, ...usersList] : usersList;
+      
+      setUsers(finalUsers);
+      // LocalStorage-ga zaxira saqlash (persistency uchun)
+      localStorage.setItem('backup_users', JSON.stringify(finalUsers));
     });
 
     return () => unsub();
   }, []);
 
   const saveToCloud = async (userData) => {
+    // Avval mahalliy holatni yangilaymiz (UX uchun)
+    const updatedUsers = [...users.filter(u => u.username !== userData.username), userData];
+    setUsers(updatedUsers);
+    localStorage.setItem('backup_users', JSON.stringify(updatedUsers));
+
     try {
       await setDoc(doc(db, 'users', `${userData.username}-${userData.role}`), userData);
     } catch (err) {
       console.error("Cloud-ga saqlashda xato:", err);
-      // Agar kishi oflayn bo'lsa yoki Firebase sozlanmagan bo'lsa
-      localStorage.setItem('users', JSON.stringify([...users, userData]));
     }
   };
 
