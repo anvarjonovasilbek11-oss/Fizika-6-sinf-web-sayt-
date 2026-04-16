@@ -6,13 +6,43 @@ import {
   RiSendPlane2Line, 
   RiDeleteBinLine, 
   RiLightbulbLine,
-  RiFunctionLine
+  RiFunctionLine,
+  RiVolumeUpLine,
+  RiFileCopyLine,
+  RiCheckLine
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
+import { useAccessibility } from '../context/AccessibilityContext';
 import toast from 'react-hot-toast';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
+
+// Math Rendering Utility
+const MathRenderer = ({ content }) => {
+  if (!content) return null;
+
+  // Split content by $$...$$ (block) and $...$ (inline)
+  const parts = content.split(/(\$\$.*?\$\$|\$.*?\$)/gs);
+
+  return (
+    <div className="math-rendered-content leading-relaxed">
+      {parts.map((part, index) => {
+        if (part.startsWith('$$') && part.endsWith('$$')) {
+          const math = part.slice(2, -2);
+          return <BlockMath key={index} math={math} />;
+        } else if (part.startsWith('$') && part.endsWith('$')) {
+          const math = part.slice(1, -1);
+          return <InlineMath key={index} math={math} />;
+        }
+        return <span key={index} className="whitespace-pre-wrap">{part}</span>;
+      })}
+    </div>
+  );
+};
 
 const ProblemSolver = () => {
   const { user } = useAuth();
+  const { speak } = useAccessibility();
   
   // Calculator State
   const [calcDisplay, setCalcDisplay] = useState('0');
@@ -31,6 +61,26 @@ const ProblemSolver = () => {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Text cleaning for speech
+  const cleanTextForSpeech = (text) => {
+    return text
+      .replace(/\$\$(.*?)\$\$/gs, '$1') // Remove block delimiters
+      .replace(/\$(.*?)\$/g, '$1') // Remove inline delimiters
+      .replace(/\\frac\{(.*?)\}\{(.*?)\}/g, "$1 bo'lingan $2") // Fractions
+      .replace(/\\cdot/g, " ko'paytirilgan ")
+      .replace(/\\times/g, " ko'paytirilgan ")
+      .replace(/\^2/g, " kvadrati")
+      .replace(/\^3/g, " kubi")
+      .replace(/\\text\{(.*?)\}/g, "$1") // Text commands
+      .replace(/\\Delta/g, "delta")
+      .replace(/[\\{}]/g, ""); // Remove remaining slashes and braces
+  };
+
+  const handleCopy = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Nusxa olindi");
+  };
 
   // Calculator Logic
   const handleCalcClick = (val) => {
@@ -87,7 +137,23 @@ const ProblemSolver = () => {
           messages: [
             { 
               role: 'system', 
-              content: "Siz fizika masalalarini qadamma-qadam yechish bo'yicha mutaxassis AI assistantsiz. O'quvchilarga masalani 'Berilgan', 'Topish kerak', 'Formulasi' va 'Yechilishi' tartibida tushuntiring. LaTeX formulalardan foydalaning. O'zbek tilida javob bering." 
+              content: `Siz fizika masalalarini qadamma-qadam yechish bo'yicha professional mutaxassis AI assistantsiz. 
+              
+              MULOQOT QOIDALARI:
+              1. Masalani yechishda albatta quyidagi tartibga amal qiling:
+                 - **Berilgan**: (O'zgaruvchilar va qiymatlar)
+                 - **Topish kerak**: (Noma'lum o'zgaruvchi)
+                 - **Formulasi**: (Asosiy va yordamchi formulalar)
+                 - **Yechilishi**: (Bosqichma-bosqich hisoblashlar va tushuntirishlar)
+                 - **Javob**: (Yakuniy natija birligi bilan)
+              
+              2. FORMULALARKING YOZILISHI:
+                 - Barcha matematik ifodalarni LaTeX formatida yozing.
+                 - Albatta inline matematikaga $...$ ishlating.
+                 - Muhim formulalar va alohida qatordagi natijalar uchun $$...$$ (bloking) ishlating.
+                 - Teztli matnlarni \text{} ichiga oling, masalan: \text{km/soat}.
+
+              3. Til: Faqat O'zbek tilida javob bering.` 
             },
             ...messages.map(m => ({ role: m.role, content: m.content })),
             userMsg
@@ -179,22 +245,42 @@ const ProblemSolver = () => {
            <div className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar bg-slate-50/30 dark:bg-transparent" ref={scrollRef}>
               {messages.map((msg, idx) => (
                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[90%] p-5 rounded-[1.5rem] font-medium text-sm leading-relaxed shadow-sm ${
+                    <div className={`max-w-[90%] p-5 rounded-[1.5rem] font-medium text-sm leading-relaxed shadow-sm relative group ${
                        msg.role === 'user' 
                           ? 'bg-primary text-white rounded-tr-none' 
                           : 'bg-white dark:bg-[#1a2333] text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-200 dark:border-white/10'
                     }`}>
-                       <p className="whitespace-pre-wrap">{msg.content}</p>
+                       <MathRenderer content={msg.content} />
+                       
+                       {msg.role === 'assistant' && idx !== 0 && (
+                         <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                           <button 
+                             onClick={() => speak(cleanTextForSpeech(msg.content))}
+                             className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors"
+                             title="Ovozli o'qish"
+                           >
+                             <RiVolumeUpLine size={16} /> Oqish
+                           </button>
+                           <button 
+                             onClick={() => handleCopy(msg.content)}
+                             className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-primary transition-colors"
+                             title="Nusxa ko'chirish"
+                           >
+                             <RiFileCopyLine size={16} /> Nusxa
+                           </button>
+                         </div>
+                       )}
                     </div>
                  </motion.div>
               ))}
               {loading && (
-                 <div className="flex justify-start">
+                 <div className="flex flex-col items-start gap-2">
                     <div className="bg-white dark:bg-[#1a2333] p-4 rounded-2xl rounded-tl-none flex gap-2 border border-slate-200 dark:border-white/10">
                        <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" />
                        <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce delay-150" />
                        <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce delay-300" />
                     </div>
+                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] animate-pulse pl-2">AI Masalani yechmoqda...</p>
                  </div>
               )}
            </div>
