@@ -24,10 +24,10 @@ const LoginPage = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add logic for bio if register if needed in AuthContext
-    const result = login(username, password, isAdmin ? 'admin' : 'student', bio);
+    const result = await login(username, password, isAdmin ? 'admin' : 'student', bio);
     if (result.success) {
       if (result.isNew) {
         toast.success(`${t('login_welcome')}, ${username}! ${t('login_welcome_new')}`);
