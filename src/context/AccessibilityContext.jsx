@@ -16,11 +16,17 @@ export const AccessibilityProvider = ({ children }) => {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'uz-UZ';
+    utterance.rate = 0.9; // Biroz sekinroq va aniqroq o'qish uchun
+    utterance.pitch = 1;
     
-    // O'zbek tili uchun ovozni qidirish
+    // Ovozni tanlash
     const voices = window.speechSynthesis.getVoices();
-    const uzVoice = voices.find(v => v.lang.includes('uz')) || voices.find(v => v.lang.includes('ru')); // Fallback to Russian if no Uzbek
-    if (uzVoice) utterance.voice = uzVoice;
+    // O'zbek tili uchun ovozni qidirish
+    let selectedVoice = voices.find(v => v.lang.includes('uz')) || 
+                        voices.find(v => v.lang.includes('tr')) || // Turkcha fonetik yaqin bo'lgani uchun
+                        voices.find(v => v.lang.includes('ru'));
+    
+    if (selectedVoice) utterance.voice = selectedVoice;
 
     window.speechSynthesis.speak(utterance);
   }, [ttsEnabled]);
@@ -28,11 +34,13 @@ export const AccessibilityProvider = ({ children }) => {
   const handleInteraction = useCallback((e) => {
     if (!ttsEnabled) return;
 
-    // Elementdan matnni olish (aria-label, title yoki innerText)
-    const target = e.target;
+    // Elementdan matnni olish (aria-label PRIORITETLI)
+    const target = e.target.closest('[aria-label], button, a, h1, h2, h3, p');
+    if (!target) return;
+
     const text = target.getAttribute('aria-label') || target.title || target.innerText || target.placeholder;
 
-    if (text && text.length < 200) { // Juda uzun matnlarni o'qimaslik uchun
+    if (text && text.length < 250) { 
       speak(text);
     }
   }, [ttsEnabled, speak]);

@@ -143,6 +143,7 @@ const Home = () => {
            accentColor="text-red-500"
            glowColor="group-hover:shadow-red-500/10"
            onClick={() => navigate('/videos')}
+           ariaLabel={`${counts.videos} ta video darslar bor`}
          />
          <ActionCard 
            icon={<RiBookReadLine />} 
@@ -152,6 +153,7 @@ const Home = () => {
            accentColor="text-electric-blue"
            glowColor="group-hover:shadow-electric-blue/10"
            onClick={() => navigate('/textbook/bob-1/1')}
+           ariaLabel={`${counts.lessons} ta nazariy darslar bor`}
          />
          <ActionCard 
            icon={<RiFileTextLine />} 
@@ -161,6 +163,7 @@ const Home = () => {
            accentColor="text-amber-500"
            glowColor="group-hover:shadow-amber-500/10"
            onClick={() => navigate('/materials')}
+           ariaLabel={`${counts.materials} ta o'quv qo'llanmalar mavjud`}
          />
          <ActionCard 
            icon={<RiUser3Line />} 
@@ -170,6 +173,7 @@ const Home = () => {
            accentColor="text-neon-purple"
            glowColor="group-hover:shadow-neon-purple/10"
            onClick={() => isAdmin && setShowUserModal(true)}
+           ariaLabel={`${counts.users} ta obunachi ro'yxatdan o'tgan`}
          />
       </div>
 
