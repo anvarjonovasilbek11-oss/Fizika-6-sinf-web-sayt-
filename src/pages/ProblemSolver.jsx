@@ -125,7 +125,7 @@ const ProblemSolver = () => {
     setLoading(true);
 
     try {
-      const apiKey = "gsk_jrMrRKIpi66HJ" + "G2GmspyWGdyb3FY9UsTh" + "gYRVxdQ5RhsfGFC1VBa";
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: {

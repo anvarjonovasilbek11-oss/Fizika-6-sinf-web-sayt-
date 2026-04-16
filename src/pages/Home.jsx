@@ -152,7 +152,7 @@ const Home = () => {
           animate={{ y: 0, opacity: 1 }}
           className="text-6xl md:text-8xl font-black text-slate-900 dark:text-white leading-[0.9] tracking-tighter"
         >
-          FIZIKA <span className="text-primary italic">DUNYOSI</span>
+          Fizika <span className="text-primary italic">dunyosi</span>
         </motion.h1>
       </header>
 

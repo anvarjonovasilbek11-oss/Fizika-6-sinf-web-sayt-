@@ -414,8 +414,8 @@ const StudentQuiz = () => {
         <div className="inline-flex items-center gap-3 px-8 py-3 bg-primary/10 text-primary rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-inner">
            <RiShieldCheckLine size={18} /> 6-Sinf Fizika Testlari
         </div>
-        <h1 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white leading-tight tracking-tighter uppercase">
-          O'z Bilimingizni <br/> <span className="text-primary italic underline underline-offset-[12px] decoration-primary/30">Sinab Ko'ring!</span>
+        <h1 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white leading-tight tracking-tighter">
+          O'z bilimingizni <br/> <span className="text-primary italic underline underline-offset-[12px] decoration-primary/30">sinab ko'ring!</span>
         </h1>
         <p className="text-xl md:text-2xl text-slate-700 dark:text-slate-300 font-black max-w-2xl mx-auto leading-relaxed">
            Har bir bobni mustahkamlash uchun maxsus tuzilgan 10 talik testlar jamlanmasi.

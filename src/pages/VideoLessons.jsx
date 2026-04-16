@@ -75,11 +75,22 @@ const VideoCard = ({ video, onSelect, categoryLabel, isAdmin, onDelete, onEdit }
   </motion.div>
 );
 
+const VideoSkeleton = () => (
+  <div className="glass-card overflow-hidden rounded-[2rem] border-white/5 animate-pulse">
+    <div className="aspect-video bg-slate-200 dark:bg-white/5" />
+    <div className="p-5 space-y-3">
+      <div className="h-6 bg-slate-200 dark:bg-white/5 rounded-lg w-3/4" />
+      <div className="h-4 bg-slate-200 dark:bg-white/5 rounded-lg w-1/2" />
+    </div>
+  </div>
+);
+
 const VideoLessons = () => {
   const [search, setSearch] = useState('');
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [activeCategory, setActiveCategory] = useState('__all__');
   const [customVideos, setCustomVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showAdminForm, setShowAdminForm] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
   
@@ -92,10 +103,12 @@ const VideoLessons = () => {
   const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
-    // Hardcoded config ishlatilmoqda
     const unsub = onSnapshot(collection(db, 'videos'), (snapshot) => {
       const videoList = snapshot.docs.map(doc => doc.data());
       setCustomVideos(videoList);
+      setLoading(false);
+    }, (err) => {
+      setLoading(false);
     });
 
     return () => unsub();
@@ -188,7 +201,9 @@ const VideoLessons = () => {
   return (
     <div className="space-y-12 transition-colors">
       <div className="flex flex-col md:flex-row gap-10 items-center justify-between mt-8">
-        <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">{t('videos_title')}</h1>
+        <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">
+          Video <span className="text-primary italic">darslar</span>
+        </h1>
         <div className="relative w-full md:w-96 group">
           <RiSearchLine className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
           <input 
@@ -300,8 +315,10 @@ const VideoLessons = () => {
         layout
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10"
       >
-        <AnimatePresence>
-          {filteredVideos.length > 0 ? (
+        <AnimatePresence mode="popLayout">
+          {loading ? (
+            [...Array(8)].map((_, i) => <VideoSkeleton key={i} />)
+          ) : filteredVideos.length > 0 ? (
             filteredVideos.map(video => (
               <VideoCard 
                 key={video.id} 

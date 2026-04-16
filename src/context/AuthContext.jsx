@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
         setUser(existingUser);
         return { success: true };
       } else {
-        return { success: false, message: "Parol noto'g'ri! Iltimos, o'z parolingizni kiriting." };
+        return { success: false, message: "Ism yoki parol xato" };
       }
     } else {
       // Yangi foydalanuvchi (Student)

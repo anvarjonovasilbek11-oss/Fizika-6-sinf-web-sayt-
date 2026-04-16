@@ -14,6 +14,8 @@ const LoginPage = () => {
   const [bio, setBio] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockUntil, setLockUntil] = useState(null);
   const { user, login } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -26,9 +28,25 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Check for Lockout
+    if (lockUntil && Date.now() < lockUntil) {
+      const remainingSeconds = Math.ceil((lockUntil - Date.now()) / 1000);
+      toast.error(`Ko'p marta xato urunish! Iltimos, ${remainingSeconds} soniyadan keyin qayta urinib ko'ring.`);
+      return;
+    }
+
+    // Validation
+    if (username.length < 3) {
+      toast.error("Ism kamida 3 ta belgidan iborat bo'lishi kerak");
+      return;
+    }
+
     try {
       const result = await login(username, password, isAdmin ? 'admin' : 'student', bio);
       if (result.success) {
+        setFailedAttempts(0);
+        setLockUntil(null);
         if (result.isNew) {
           toast.success(`${t('login_welcome')}, ${username}! ${t('login_welcome_new')}`);
         } else {
@@ -36,7 +54,16 @@ const LoginPage = () => {
         }
         navigate('/home');
       } else {
-        toast.error(result.message);
+        const newAttempts = failedAttempts + 1;
+        setFailedAttempts(newAttempts);
+        
+        if (newAttempts >= 5) {
+          const lockTime = Date.now() + 30000; // 30 second lock
+          setLockUntil(lockTime);
+          toast.error("Ko'p marta xato urunish! Tizim 30 soniyaga bloklandi.");
+        } else {
+          toast.error(result.message);
+        }
       }
     } catch (err) {
       toast.error("Xatolik yuz berdi. Iltimos qaytadan urinib ko'ring.");
