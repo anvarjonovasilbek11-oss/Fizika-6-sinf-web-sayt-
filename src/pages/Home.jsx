@@ -24,7 +24,7 @@ import { VIDEOS } from '../data/videoData';
 import { getCombinedTextbooks } from '../services/textbookService';
 import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
 import { db } from '../services/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
 const Home = () => {
@@ -36,9 +36,14 @@ const Home = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [visiblePasswords, setVisiblePasswords] = useState({});
+
+  // Statik darslar sonini hisoblash (bu o'zgarmaydi)
+  const textbooks = getCombinedTextbooks(true);
+  const staticLessons = textbooks.reduce((acc, curr) => acc + curr.lessons.length, 0);
+
   const [counts, setCounts] = useState({ 
     videos: VIDEOS.length, 
-    lessons: 0, 
+    lessons: staticLessons, 
     materials: 0, 
     users: allUsers?.length || 0, 
     quizzes: DEFAULT_AI_QUIZZES.length 
@@ -70,61 +75,39 @@ const Home = () => {
 
   const getDailyFact = () => dailyFacts[new Date().getDay() % dailyFacts.length];
 
+  // Real-time statistics listeners
   useEffect(() => {
-    // Statik darslar sonini hisoblash
-    const textbooks = getCombinedTextbooks(true);
-    const staticLessons = textbooks.reduce((acc, curr) => acc + curr.lessons.length, 0);
+    // 1. Videolar
+    const unsubVideos = onSnapshot(collection(db, 'videos'), (snapshot) => {
+      const customVideosList = snapshot.docs.map(doc => doc.data());
+      const uniqueCustomCount = customVideosList.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
+      setCounts(prev => ({ ...prev, videos: VIDEOS.length + uniqueCustomCount }));
+    });
 
-    const fetchCounts = async () => {
-      try {
-        // 1. Videolar (Statik + Firebase)
-        let finalVideos = VIDEOS.length;
-        try {
-          const vSnap = await getDocs(collection(db, 'videos'));
-          const customVideosList = vSnap.docs.map(doc => doc.data());
-          const uniqueCustomCount = customVideosList.filter(cv => !VIDEOS.some(v => v.id === cv.id)).length;
-          finalVideos += uniqueCustomCount;
-        } catch (e) {
-          console.warn("Videos fetch error:", e);
-        }
+    // 2. Qo'llanmalar
+    const unsubMaterials = onSnapshot(collection(db, 'materials'), (snapshot) => {
+      setCounts(prev => ({ ...prev, materials: snapshot.size }));
+    });
 
-        // 2. Qo'llanmalar
-        let materialsCount = 0;
-        try {
-          const mSnap = await getDocs(collection(db, 'materials'));
-          materialsCount = mSnap.size;
-        } catch (e) {
-          console.warn("Materials fetch error:", e);
-        }
+    // 3. Testlar
+    const unsubQuizzes = onSnapshot(collection(db, 'quizzes'), (snapshot) => {
+      const dbQuizzes = snapshot.docs.map(doc => doc.data());
+      const uniqueDbQuizzes = dbQuizzes.filter(q => 
+        q.isApproved && !DEFAULT_AI_QUIZZES.some(dq => dq.id === q.id)
+      ).length;
+      setCounts(prev => ({ ...prev, quizzes: DEFAULT_AI_QUIZZES.length + uniqueDbQuizzes }));
+    });
 
-        // 3. Testlar
-        let quizzesCount = DEFAULT_AI_QUIZZES.length;
-        try {
-          const qSnap = await getDocs(collection(db, 'quizzes'));
-          const dbQuizzes = qSnap.docs.map(doc => doc.data());
-          // Bazadagi tasdiqlangan, lekin default bo'lmagan testlar
-          const uniqueDbQuizzes = dbQuizzes.filter(q => 
-            q.isApproved && !DEFAULT_AI_QUIZZES.some(dq => dq.id === q.id)
-          ).length;
-          quizzesCount += uniqueDbQuizzes;
-        } catch (e) {
-          console.warn("Quizzes fetch error:", e);
-        }
-
-        setCounts({
-          videos: finalVideos,
-          lessons: staticLessons,
-          materials: materialsCount, 
-          users: allUsers?.length || 0,
-          quizzes: quizzesCount
-        });
-      } catch (err) {
-        console.error("Critical Home Stats Error:", err);
-        setCounts(prev => ({ ...prev, lessons: staticLessons, users: allUsers?.length || 0 }));
-      }
+    return () => {
+      unsubVideos();
+      unsubMaterials();
+      unsubQuizzes();
     };
+  }, []);
 
-    fetchCounts();
+  // Foydalanuvchilar sonini AuthContext dan olingan allUsers o'zgarganda yangilash
+  useEffect(() => {
+    setCounts(prev => ({ ...prev, users: allUsers.length }));
   }, [allUsers]);
 
   useEffect(() => {
