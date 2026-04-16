@@ -255,7 +255,7 @@ const ProblemSolver = () => {
                        {msg.role === 'assistant' && idx !== 0 && (
                          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
                            <button 
-                             onClick={() => speak(cleanTextForSpeech(msg.content))}
+                             onClick={() => speak(cleanTextForSpeech(msg.content), true)}
                              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors"
                              title="Ovozli o'qish"
                            >

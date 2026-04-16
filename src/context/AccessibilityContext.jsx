@@ -8,25 +8,34 @@ export const AccessibilityProvider = ({ children }) => {
     return saved === 'true';
   });
 
-  const speak = useCallback((text) => {
-    if (!ttsEnabled || !text) return;
+  const speak = useCallback((text, force = false) => {
+    if ((!ttsEnabled && !force) || !text) return;
 
     // To'xtatib turish va kutishni oldini olish
     window.speechSynthesis.cancel();
 
+    // Browser ovozlar yuklanishini kutish (ayrim hollarda kerak)
+    if (window.speechSynthesis.getVoices().length === 0) {
+      window.speechSynthesis.onvoiceschanged = () => speak(text, force);
+      return;
+    }
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'uz-UZ';
-    utterance.rate = 0.9; // Biroz sekinroq va aniqroq o'qish uchun
+    utterance.rate = 0.9;
     utterance.pitch = 1;
     
-    // Ovozni tanlash
     const voices = window.speechSynthesis.getVoices();
-    // O'zbek tili uchun ovozni qidirish
-    let selectedVoice = voices.find(v => v.lang.includes('uz')) || 
-                        voices.find(v => v.lang.includes('tr')) || // Turkcha fonetik yaqin bo'lgani uchun
-                        voices.find(v => v.lang.includes('ru'));
+    // O'zbek tili yo'q bo'lsa, fonetik yaqin tillar yoki tizim ovozini tanlaymiz
+    let selectedVoice = voices.find(v => v.lang.toLowerCase().includes('uz')) || 
+                        voices.find(v => v.lang.toLowerCase().includes('tr')) || 
+                        voices.find(v => v.lang.toLowerCase().includes('ru')) ||
+                        voices[0];
     
-    if (selectedVoice) utterance.voice = selectedVoice;
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
+    }
 
     window.speechSynthesis.speak(utterance);
   }, [ttsEnabled]);
