@@ -44,7 +44,19 @@ const StudentQuiz = () => {
   const [approvedQuizzes, setApprovedQuizzes] = useState(() => getCachedQuizzes('approved'));
   const [pendingQuizzes, setPendingQuizzes] = useState(() => getCachedQuizzes('pending'));
   const [activeQuiz, setActiveQuiz] = useState(null);
-...
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [score, setScore] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  
+  // AI Generation State
+  const [topic, setTopic] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showGenerator, setShowGenerator] = useState(false);
+  
+  // Preview State
+  const [previewQuiz, setPreviewQuiz] = useState(null);
+  const [previewIdx, setPreviewIdx] = useState(0);
   const { t } = useLanguage();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
