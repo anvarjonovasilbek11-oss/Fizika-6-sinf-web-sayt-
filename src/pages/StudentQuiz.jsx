@@ -94,16 +94,37 @@ const StudentQuiz = () => {
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages: [
-            { role: 'system', content: `Sen 6-sinf fizika fani bo'yicha O'zbek tilida professional test tuzuvchi AI assistantsan. QAT'IY RAVISHDA 10 ta test savoli tuz. Format: {"topic": "string", "questions": [{"id": 1, "question": "string", "options": {"A": "string", "B": "string", "C": "string", "D": "string"}, "correct": "A"}]}` },
+            { 
+              role: 'system', 
+              content: `Sen 6-sinf fizika fani bo'yicha professional test tuzuvchi AI assistantsan. 
+              FAQAT va FAQAT JSON formatida javob ber. Hech qanday qo'shimcha matn yoki tushuntirish yozma.
+              QAT'IY RAVISHDA 10 ta test savoli tuz. 
+              Format: {"topic": "string", "questions": [{"id": 1, "question": "string", "options": {"A": "string", "B": "string", "C": "string", "D": "string"}, "correct": "A"}]}` 
+            },
             { role: 'user', content: `Mavzu: ${topic} bo'yicha 10 ta test savoli tuz.` }
-          ]
+          ],
+          temperature: 0.7
         })
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`API Error: ${errorData.error?.message || response.statusText}`);
+      }
+
       const data = await response.json();
       const raw = data.choices[0].message.content;
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("AI formatda xatolik");
+      console.log("AI Raw Response:", raw);
+
+      // Markdown bloklarini tozalash
+      const cleanJson = raw.replace(/```json|```/g, '').trim();
+      const jsonMatch = cleanJson.match(/\{[\s\S]*\}/);
+      
+      if (!jsonMatch) {
+        console.error("No JSON found in response:", raw);
+        throw new Error("AI formatda xatolik");
+      }
+
       const parsed = JSON.parse(jsonMatch[0]);
       
       const quizId = Date.now().toString();
