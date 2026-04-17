@@ -29,6 +29,9 @@ import { db } from '../services/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 
+// Qo'llanmalar sahifasidagi hardcoded (pinned) fayllar soni
+const PINNED_FILES_COUNT = 1;
+
 const Home = () => {
   const { user, users: allUsers, deleteUser } = useAuth();
   const { t } = useLanguage();
@@ -49,7 +52,7 @@ const Home = () => {
   const [counts, setCounts] = useState({ 
     videos: VIDEOS.length, 
     lessons: staticLessons, 
-    materials: 0, 
+    materials: PINNED_FILES_COUNT, 
     users: allUsers?.length || 0, 
     quizzes: DEFAULT_AI_QUIZZES.length 
   });
@@ -89,9 +92,9 @@ const Home = () => {
       setCounts(prev => ({ ...prev, videos: VIDEOS.length + uniqueCustomCount }));
     });
 
-    // 2. Qo'llanmalar
+    // 2. Qo'llanmalar (Firebase + hardcoded pinned fayllar)
     const unsubMaterials = onSnapshot(collection(db, 'materials'), (snapshot) => {
-      setCounts(prev => ({ ...prev, materials: snapshot.size }));
+      setCounts(prev => ({ ...prev, materials: snapshot.size + PINNED_FILES_COUNT }));
     });
 
     // 3. Testlar

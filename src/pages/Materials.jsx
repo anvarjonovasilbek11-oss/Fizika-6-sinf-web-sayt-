@@ -264,7 +264,7 @@ const Materials = () => {
         </AnimatePresence>
       </div>
 
-      {files.length === 0 && !uploading && (
+      {files.length === 0 && !uploading && PINNED_FILES.length === 0 && (
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
