@@ -57,6 +57,16 @@ const Home = () => {
     quizzes: DEFAULT_AI_QUIZZES.length 
   });
 
+  // ─── Obunachilar soni: Firebase + localStorage backup ────────────────────
+  // Bu auth holatidan MUSTAQIL ishlaydi — login/logout ta'sir qilmaydi
+  const getInitialUserCount = () => {
+    try {
+      const cached = localStorage.getItem('cached_user_count');
+      return cached ? parseInt(cached, 10) : (allUsers?.length || 1);
+    } catch { return 1; }
+  };
+  const [usersCount, setUsersCount] = useState(getInitialUserCount);
+
   const togglePasswordVisibility = (username) => {
     setVisiblePasswords(prev => ({
       ...prev,
@@ -113,10 +123,20 @@ const Home = () => {
     };
   }, []);
 
-  // Foydalanuvchilar sonini AuthContext dan olingan allUsers o'zgarganda yangilash
+  // Foydalanuvchilar sonini Firebase-dan to'g'ridan-to'g'ri o'qish
+  // (AuthContext-dan emas — login/logout ta'sir qilmaydi)
   useEffect(() => {
-    setCounts(prev => ({ ...prev, users: allUsers.length }));
-  }, [allUsers]);
+    const unsubUsers = onSnapshot(collection(db, 'users'), (snapshot) => {
+      // Admin har doim hisobga olinadi (+1 agar Firebase-da yo'q bo'lsa)
+      const firebaseUsers = snapshot.docs.map(d => d.data());
+      const hasAdmin = firebaseUsers.some(u => u.role === 'admin');
+      const total = hasAdmin ? firebaseUsers.length : firebaseUsers.length + 1;
+      setUsersCount(total);
+      // localStorage backup — offline/uzilish holatida ham saqlanib qolsin
+      try { localStorage.setItem('cached_user_count', String(total)); } catch {}
+    });
+    return () => unsubUsers();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -190,15 +210,10 @@ const Home = () => {
            onClick={() => navigate('/materials')}
            ariaLabel={`${counts.materials} ta o'quv qo'llanmalar mavjud`}
          />
-         <ActionCard 
-           icon={<RiUser3Line />} 
-           count={counts.users} 
-           label="Obunachilar" 
-           description="Ro'yxatdan o'tganlar"
-           accentColor="text-neon-purple"
-           glowColor="group-hover:shadow-neon-purple/10"
+         <UsersCard
+           count={usersCount}
            onClick={() => isAdmin && setShowUserModal(true)}
-           ariaLabel={`${counts.users} ta obunachi ro'yxatdan o'tgan`}
+           isAdmin={isAdmin}
          />
       </div>
 
@@ -441,6 +456,82 @@ const ActionCard = ({ icon, count, label, description, accentColor, glowColor, o
     <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 leading-relaxed max-w-[150px]">{description}</div>
     
     <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-primary`} />
+  </motion.button>
+);
+
+// ─── Premium Obunachilar Kartochkasi ─────────────────────────────────────────
+const UsersCard = ({ count, onClick, isAdmin }) => (
+  <motion.button
+    whileHover={{ y: -10, scale: 1.01 }}
+    whileTap={{ scale: 0.98 }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    onClick={onClick}
+    aria-label={`${count} ta obunachi ro'yxatdan o'tgan`}
+    className="relative overflow-hidden rounded-3xl p-8 flex flex-col items-center text-center group transition-all duration-500 shadow-xl hover:shadow-2xl hover:shadow-neon-purple/20 border border-neon-purple/20 hover:border-neon-purple/50"
+    style={{
+      background: 'linear-gradient(135deg, #0f0720 0%, #1a0d35 50%, #120820 100%)'
+    }}
+  >
+    {/* Animated background glow */}
+    <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-neon-purple/20 blur-[60px] group-hover:bg-neon-purple/30 transition-all duration-700" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-violet-600/10 blur-[50px] group-hover:bg-violet-600/20 transition-all duration-700" />
+      {/* Dot grid */}
+      <div
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #a855f7 1px, transparent 1px)',
+          backgroundSize: '20px 20px'
+        }}
+      />
+    </div>
+
+    {/* Icon */}
+    <div className="relative z-10 w-20 h-20 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg shadow-neon-purple/30"
+      style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)' }}
+    >
+      <RiUser3Line size={36} className="text-white drop-shadow-lg" />
+    </div>
+
+    {/* Counter */}
+    <motion.div
+      key={count}
+      initial={{ scale: 0.5, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      className="relative z-10 text-5xl font-black tracking-tighter mb-1"
+      style={{
+        background: 'linear-gradient(135deg, #c084fc, #e879f9, #a855f7)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent'
+      }}
+    >
+      {count}
+    </motion.div>
+
+    {/* Labels */}
+    <div className="relative z-10 space-y-0.5">
+      <div className="text-sm font-black text-white tracking-tight">Obunachilar</div>
+      <div className="text-xs font-semibold tracking-widest uppercase" style={{ color: '#a78bfa' }}>
+        Ro'yxatdan o'tganlar
+      </div>
+    </div>
+
+    {/* Bottom accent line */}
+    <div
+      className="absolute bottom-0 left-0 right-0 h-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      style={{ background: 'linear-gradient(90deg, transparent, #a855f7, transparent)' }}
+    />
+
+    {/* Admin badge */}
+    {isAdmin && (
+      <div className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest"
+        style={{ background: 'rgba(168,85,247,0.2)', color: '#c084fc', border: '1px solid rgba(168,85,247,0.3)' }}
+      >
+        Boshqarish
+      </div>
+    )}
   </motion.button>
 );
 
