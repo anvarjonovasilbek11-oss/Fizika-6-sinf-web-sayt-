@@ -14,7 +14,11 @@ import {
   RiEditLine,
   RiEyeOffLine,
   RiSave3Line,
-  RiCloseLine
+  RiCloseLine,
+  RiVolumeUpLine,
+  RiVolumeMuteLine,
+  RiStopCircleLine,
+  RiLoader4Line
 } from 'react-icons/ri';
 import { getCombinedTextbooks, getVideoForLesson, saveCustomLesson, hideLesson } from '../services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
@@ -22,6 +26,214 @@ import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/Common/LoadingSpinner';
 import toast from 'react-hot-toast';
 
+// ─── TTS Hook ───────────────────────────────────────────────────────────────
+// Voices oldindan yuklash (Chrome-da kechikishni oldini olish)
+let _cachedVoices = [];
+const _loadVoices = () => {
+  const v = window.speechSynthesis.getVoices();
+  if (v.length) _cachedVoices = v;
+};
+_loadVoices();
+if (typeof window !== 'undefined' && window.speechSynthesis) {
+  window.speechSynthesis.onvoiceschanged = _loadVoices;
+}
+
+const useTTS = () => {
+  const [isSpeaking, setIsSpeaking] = React.useState(false);
+  const [isPaused, setIsPaused]     = React.useState(false);
+  const utteranceRef = React.useRef(null);
+  const keepAliveRef = React.useRef(null);
+
+  // Nutqni to'xtatish
+  const stopSpeech = React.useCallback(() => {
+    clearInterval(keepAliveRef.current);
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+    setIsPaused(false);
+    utteranceRef.current = null;
+  }, []);
+
+  // Matnni o'qib berish — darhol, kechikishsiz
+  const speak = React.useCallback((text) => {
+    if (!text || !text.trim()) return;
+
+    clearInterval(keepAliveRef.current);
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text.trim());
+
+    // Voices ro'yxatidan ovoz tanlash
+    const voices = _cachedVoices.length
+      ? _cachedVoices
+      : window.speechSynthesis.getVoices();
+
+    const uzVoice  = voices.find(v => v.lang.startsWith('uz'));
+    const ruVoice  = voices.find(v => v.lang.startsWith('ru'));
+    const enVoice  = voices.find(v => v.lang.startsWith('en'));
+    utterance.voice = uzVoice || ruVoice || enVoice || voices[0] || null;
+    utterance.lang  = uzVoice ? 'uz-UZ' : ruVoice ? 'ru-RU' : 'en-US';
+    utterance.rate   = 0.88;
+    utterance.pitch  = 1;
+    utterance.volume = 1;
+
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setIsPaused(false);
+    };
+    utterance.onend = () => {
+      clearInterval(keepAliveRef.current);
+      setIsSpeaking(false);
+      setIsPaused(false);
+      utteranceRef.current = null;
+    };
+    utterance.onerror = (e) => {
+      if (e.error !== 'interrupted' && e.error !== 'canceled') {
+        console.warn('TTS xato:', e.error);
+      }
+      clearInterval(keepAliveRef.current);
+      setIsSpeaking(false);
+      setIsPaused(false);
+      utteranceRef.current = null;
+    };
+
+    utteranceRef.current = utterance;
+    setIsSpeaking(true); // UI ni darhol yangilash
+
+    // Chrome 14+ bug: uzun matnlarda speechSynthesis o'z-o'zidan to'xtab qoladi.
+    // Har 10 sekundda resume() chaqirib turamiz.
+    keepAliveRef.current = setInterval(() => {
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    }, 10000);
+
+    window.speechSynthesis.speak(utterance);
+  }, []);
+
+  // Pause / Resume
+  const togglePause = React.useCallback(() => {
+    if (isPaused) {
+      window.speechSynthesis.resume();
+      setIsPaused(false);
+    } else {
+      window.speechSynthesis.pause();
+      setIsPaused(true);
+    }
+  }, [isPaused]);
+
+  // Komponent unmount bo'lganda tozalash
+  React.useEffect(() => {
+    return () => {
+      clearInterval(keepAliveRef.current);
+      window.speechSynthesis.cancel();
+    };
+  }, []);
+
+  return { isSpeaking, isPaused, speak, stopSpeech, togglePause };
+};
+
+
+// ─── Hover-to-Read Paragraph ────────────────────────────────────────────────
+const HoverReadParagraph = ({ text, onHoverRead, className = '' }) => {
+  const hoverTimerRef = React.useRef(null);
+
+  const handleMouseEnter = () => {
+    // 600ms hover pauzadan keyin o'qib berish
+    hoverTimerRef.current = setTimeout(() => {
+      if (text && text.trim()) {
+        onHoverRead(text);
+      }
+    }, 600);
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(hoverTimerRef.current);
+  };
+
+  return (
+    <span
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`cursor-context-menu hover:bg-primary/10 hover:text-primary rounded transition-all duration-200 px-0.5 ${className}`}
+      title="Ovoz bilan o'qish uchun ustiga turing"
+    >
+      {text}
+    </span>
+  );
+};
+
+// ─── TTS Control Panel ──────────────────────────────────────────────────────
+const TTSPanel = ({ text, isSpeaking, isPaused, onPlay, onStop, onTogglePause }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-3 p-3 glass-card bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl shadow-lg"
+    >
+      {/* Nutq holati */}
+      <div className="flex items-center gap-2 flex-1 min-w-0">
+        {isSpeaking ? (
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ repeat: Infinity, duration: 0.8 }}
+          >
+            <RiVolumeUpLine className="text-primary flex-shrink-0" size={20} />
+          </motion.div>
+        ) : (
+          <RiVolumeMuteLine className="text-slate-400 flex-shrink-0" size={20} />
+        )}
+        <span className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 truncate">
+          {isSpeaking
+            ? isPaused
+              ? 'To\'xtatildi...'
+              : 'O\'qilmoqda...'
+            : 'Ovozli o\'qish'}
+        </span>
+      </div>
+
+      {/* Tugmalar */}
+      <div className="flex items-center gap-2">
+        {/* Play tugmasi */}
+        {!isSpeaking ? (
+          <button
+            onClick={() => onPlay(text)}
+            title="O'qishni boshlash"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:scale-105 active:scale-95"
+          >
+            <RiVolumeUpLine size={16} />
+            O'qib ber
+          </button>
+        ) : (
+          <>
+            {/* Pause/Resume */}
+            <button
+              onClick={onTogglePause}
+              title={isPaused ? 'Davom ettirish' : 'To\'xtatib turish'}
+              className="p-2 bg-amber-500/20 text-amber-500 rounded-xl hover:bg-amber-500/30 transition-all"
+            >
+              {isPaused ? (
+                <RiVolumeUpLine size={18} />
+              ) : (
+                <RiLoader4Line size={18} className="animate-spin" />
+              )}
+            </button>
+            {/* Stop */}
+            <button
+              onClick={onStop}
+              title="To'xtatish"
+              className="p-2 bg-red-500/20 text-red-500 rounded-xl hover:bg-red-500/30 transition-all"
+            >
+              <RiStopCircleLine size={18} />
+            </button>
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+// ─── Main Component ──────────────────────────────────────────────────────────
 const TextbookPage = () => {
   const { chapterId, lessonId } = useParams();
   const navigate = useNavigate();
@@ -33,6 +245,9 @@ const TextbookPage = () => {
   const [textbooks, setTextbooks] = React.useState([]);
   const [lessonVideo, setLessonVideo] = React.useState(null);
   const [isEditing, setIsEditing] = React.useState(false);
+
+  // TTS
+  const { isSpeaking, isPaused, speak, stopSpeech, togglePause } = useTTS();
 
   // Edit State
   const [editTheory, setEditTheory] = React.useState('');
@@ -54,6 +269,11 @@ const TextbookPage = () => {
       setEditFormula(lesson.content?.formulas || '');
     }
   }, [lesson]);
+
+  // Sahifadan chiqqanda nutqni to'xtatish
+  React.useEffect(() => {
+    return () => stopSpeech();
+  }, [lessonId, stopSpeech]);
 
   // Handle Save
   const handleSave = () => {
@@ -80,6 +300,15 @@ const TextbookPage = () => {
     navigate(-1);
   };
 
+  // Butun matn uchun TTS teksti
+  const fullText = React.useMemo(() => {
+    const parts = [];
+    if (lesson?.title) parts.push(t(lesson.title));
+    if (editTheory || lesson?.content?.theory) parts.push(editTheory || lesson.content.theory);
+    if (editFormula || lesson?.content?.formulas) parts.push(`Formula: ${editFormula || lesson.content.formulas}`);
+    return parts.join('. ');
+  }, [lesson, editTheory, editFormula, t]);
+
   if (loading) return <LoadingSpinner />;
   if (!chapter || !lesson) return null;
 
@@ -89,9 +318,14 @@ const TextbookPage = () => {
   const prevLesson = allLessons[currentIndex - 1];
   const nextLesson = allLessons[currentIndex + 1];
 
+  // Matnni paragrafga bo'lib, har biri hover-read qilish uchun
+  const theoryText = editTheory || lesson.content?.theory || '';
+  const theorySegments = theoryText
+    ? theoryText.split(/(?<=[.!?])\s+/).filter(s => s.trim().length > 0)
+    : [];
+
   return (
     <div className="relative min-h-screen bg-light-bg dark:bg-space-dark transition-colors duration-500">
-      {/* ... (Background Floating Elements) */}
 
       <motion.div 
         initial={{ opacity: 0 }}
@@ -144,27 +378,63 @@ const TextbookPage = () => {
               <span className="text-glow-blue dark:text-glow-blue transition-all">{t(lesson.title)}</span>
             </h1>
           </div>
+
+          {/* ── TTS Panel ── */}
+          <TTSPanel
+            text={fullText}
+            isSpeaking={isSpeaking}
+            isPaused={isPaused}
+            onPlay={speak}
+            onStop={stopSpeech}
+            onTogglePause={togglePause}
+          />
         </header>
 
         {/* Content Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Central Theory Board */}
           <div className="lg:col-span-2 space-y-8">
-              <div className="glass-card p-8 md:p-12 space-y-8 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden group min-h-[400px] flex items-center justify-center transition-colors">
+              <div className="glass-card p-8 md:p-12 space-y-8 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-2xl relative overflow-hidden group min-h-[400px] flex flex-col transition-colors">
                 <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-neon-purple/5 blur-[100px] pointer-events-none group-hover:bg-neon-purple/10 transition-colors" />
                 
-                <div className="relative prose dark:prose-invert prose-slate max-w-none w-full">
-                  {!lesson.content?.theory && !editTheory ? (
+                <div className="relative prose dark:prose-invert prose-slate max-w-none w-full flex-1 flex flex-col justify-center">
+                  {!theoryText ? (
                     <div className="text-center space-y-4 py-20">
                       <RiPulseLine className="mx-auto text-slate-300 dark:text-white/20 animate-pulse" size={64} />
                       <p className="text-slate-400 dark:text-slate-500 font-black uppercase tracking-[0.3em] text-sm italic">Nazariya tasdiqlanish jarayonida...</p>
                     </div>
                   ) : (
-                    <p className="leading-[1.8] text-slate-800 dark:text-slate-100 font-bold whitespace-pre-wrap tracking-wide text-lg md:text-xl text-justify transition-colors">
-                      {editTheory || lesson.content?.theory}
-                    </p>
+                    <div className="leading-[1.8] text-slate-800 dark:text-slate-100 font-bold tracking-wide text-lg md:text-xl text-justify transition-colors space-y-1">
+                      {/* Har bir gap/jumla alohida hover-read segment */}
+                      {theorySegments.length > 1 ? (
+                        theorySegments.map((segment, idx) => (
+                          <React.Fragment key={idx}>
+                            <HoverReadParagraph
+                              text={segment}
+                              onHoverRead={speak}
+                            />
+                            {idx < theorySegments.length - 1 ? ' ' : ''}
+                          </React.Fragment>
+                        ))
+                      ) : (
+                        <HoverReadParagraph
+                          text={theoryText}
+                          onHoverRead={speak}
+                        />
+                      )}
+                    </div>
                   )}
                 </div>
+
+                {/* Hover hint */}
+                {theoryText && (
+                  <div className="flex items-center gap-2 pt-4 border-t border-slate-100 dark:border-white/5">
+                    <RiVolumeUpLine className="text-slate-300 dark:text-white/20" size={16} />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600">
+                      Matn ustiga sichqonchani olib boring — o'qib beradi
+                    </p>
+                  </div>
+                )}
               </div>
           </div>
 
@@ -182,7 +452,14 @@ const TextbookPage = () => {
               
               <div className="space-y-6 relative z-10">
                 {(editFormula || (lesson.content?.formulas)) ? (
-                  <div className="p-6 rounded-3xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/5 hover:border-neon-purple/30 transition-all group/formula shadow-inner text-center">
+                  <div
+                    className="p-6 rounded-3xl bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/5 hover:border-neon-purple/30 transition-all group/formula shadow-inner text-center cursor-context-menu"
+                    onMouseEnter={() => {
+                      const f = editFormula || lesson.content?.formulas;
+                      if (f) setTimeout(() => speak(`Formula: ${f}`), 600);
+                    }}
+                    title="Ovoz bilan o'qish uchun ustiga turing"
+                  >
                     <p className="text-2xl font-black text-neon-purple italic drop-shadow-[0_0_8px_rgba(188,19,254,0.3)]">
                       {editFormula || lesson.content?.formulas}
                     </p>
@@ -284,7 +561,7 @@ const TextbookPage = () => {
           )}
         </AnimatePresence>
 
-        {/* Footer Navigation Same... (as before) */}
+        {/* Footer Navigation */}
         <footer className="flex flex-col sm:flex-row justify-between items-center gap-8 border-t border-slate-200 dark:border-white/5 pt-12">
            <button 
              disabled={!prevLesson}

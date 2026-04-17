@@ -14,30 +14,41 @@ export const AccessibilityProvider = ({ children }) => {
     // To'xtatib turish va kutishni oldini olish
     window.speechSynthesis.cancel();
 
-    // Browser ovozlar yuklanishini kutish (ayrim hollarda kerak)
+    const startSpeaking = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'uz-UZ';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      
+      const voices = window.speechSynthesis.getVoices();
+      // O'zbek tili uchun ovozni qidirish
+      let selectedVoice = voices.find(v => v.lang.toLowerCase().includes('uz')) || 
+                          voices.find(v => v.lang.toLowerCase().includes('tr')) || 
+                          voices.find(v => v.lang.toLowerCase().includes('ru')) ||
+                          voices.find(v => v.lang.toLowerCase().includes('en')) ||
+                          voices[0];
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    // Browser ovozlar yuklanishini kutish
     if (window.speechSynthesis.getVoices().length === 0) {
-      window.speechSynthesis.onvoiceschanged = () => speak(text, force);
-      return;
+      const timer = setInterval(() => {
+        if (window.speechSynthesis.getVoices().length > 0) {
+          clearInterval(timer);
+          startSpeaking();
+        }
+      }, 100);
+      // Max 2 sekund kutish
+      setTimeout(() => clearInterval(timer), 2000);
+    } else {
+      startSpeaking();
     }
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'uz-UZ';
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    
-    const voices = window.speechSynthesis.getVoices();
-    // O'zbek tili yo'q bo'lsa, fonetik yaqin tillar yoki tizim ovozini tanlaymiz
-    let selectedVoice = voices.find(v => v.lang.toLowerCase().includes('uz')) || 
-                        voices.find(v => v.lang.toLowerCase().includes('tr')) || 
-                        voices.find(v => v.lang.toLowerCase().includes('ru')) ||
-                        voices[0];
-    
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-      utterance.lang = selectedVoice.lang;
-    }
-
-    window.speechSynthesis.speak(utterance);
   }, [ttsEnabled]);
 
   const handleInteraction = useCallback((e) => {

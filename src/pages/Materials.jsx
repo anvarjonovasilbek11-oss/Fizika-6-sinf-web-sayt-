@@ -1,13 +1,28 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RiUploadCloud2Line, RiFilePdfLine, RiFileWordLine, RiFileZipLine, RiDeleteBin7Line, RiDownload2Line, RiFileTextLine } from 'react-icons/ri';
+import { RiUploadCloud2Line, RiFilePdfLine, RiFileWordLine, RiFileZipLine, RiDeleteBin7Line, RiDownload2Line, RiFileTextLine, RiStarFill } from 'react-icons/ri';
 import toast from 'react-hot-toast';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { db, storage } from '../services/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+
+// ─── Doimiy (hardcoded) ko'rinadigan qo'llanmalar ───────────────────────────
+// Bu yerga qo'shilgan fayllar HAR DOIM ko'rinib turadi (login + logout ham)
+const PINNED_FILES = [
+  {
+    id: 'pinned-fizika-darslik-2017',
+    name: "Fizika 6-sinf o'quv darsligi (N.Turdiyev, 2017)",
+    size: '1.8 MB',
+    type: 'application/pdf',
+    date: '2017',
+    url: '/fizika-6-sinf-darslik.pdf',
+    pinned: true
+  }
+];
+// ────────────────────────────────────────────────────────────────────────────
 
 const FileIcon = ({ type }) => {
   if (type.includes('pdf')) return <RiFilePdfLine className="text-red-500" />;
@@ -126,6 +141,53 @@ const Materials = () => {
       <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter transition-colors">
         O'quv <span className="text-primary italic">qo'llanmalar</span>
       </h1>
+
+      {/* ── Doim ko'rinadigan (Pinned) qo'llanmalar ── */}
+      {PINNED_FILES.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <RiStarFill className="text-amber-400" size={18} />
+            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-amber-500">Tavsiya etilgan qo'llanmalar</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {PINNED_FILES.map((file) => (
+              <motion.div
+                key={file.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="glass-card p-6 group bg-amber-50 dark:bg-amber-500/5 border-2 border-amber-300 dark:border-amber-500/30 shadow-lg hover:shadow-2xl transition-all relative"
+              >
+                {/* Pinned badge */}
+                <div className="absolute -top-2 -right-2 px-2 py-1 bg-amber-400 text-white text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg flex items-center gap-1">
+                  <RiStarFill size={10} /> Tavsiya
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="text-5xl drop-shadow-lg">
+                    <FileIcon type={file.type} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-black text-slate-900 dark:text-white truncate text-lg" title={file.name}>
+                      {file.name}
+                    </h4>
+                    <p className="text-xs font-black text-slate-600 dark:text-slate-500 mt-1 uppercase tracking-widest">{file.size} • {file.date}</p>
+                  </div>
+                </div>
+                <div className="mt-8">
+                  <a
+                    href={file.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    className="flex-1 w-full px-6 py-3 bg-amber-500 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg hover:bg-amber-400 transition-all flex items-center justify-center gap-2"
+                  >
+                    <RiDownload2Line size={18} /> Yuklab olish
+                  </a>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Upload Zone */}
       {isAdmin && (
