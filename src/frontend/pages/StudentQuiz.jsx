@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -21,8 +21,8 @@ import toast from 'react-hot-toast';
 import confetti from 'canvas-confetti';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
-import { db } from '../services/firebase';
+import { DEFAULT_AI_QUIZZES } from '../../backend/data/defaultTests';
+import { db } from '../../backend/services/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy, addDoc } from 'firebase/firestore';
 
 const StudentQuiz = () => {

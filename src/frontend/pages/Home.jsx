@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -22,10 +22,10 @@ import {
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { VIDEOS } from '../data/videoData';
-import { getCombinedTextbooks } from '../services/textbookService';
-import { DEFAULT_AI_QUIZZES } from '../data/defaultTests';
-import { db } from '../services/firebase';
+import { VIDEOS } from '../../backend/data/videoData';
+import { getCombinedTextbooks } from '../../backend/services/textbookService';
+import { DEFAULT_AI_QUIZZES } from '../../backend/data/defaultTests';
+import { db } from '../../backend/services/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 

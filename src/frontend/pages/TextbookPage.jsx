@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -20,7 +20,7 @@ import {
   RiStopCircleLine,
   RiLoader4Line
 } from 'react-icons/ri';
-import { getCombinedTextbooks, getVideoForLesson, saveCustomLesson, hideLesson } from '../services/textbookService';
+import { getCombinedTextbooks, getVideoForLesson, saveCustomLesson, hideLesson } from '../../backend/services/textbookService';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/Common/LoadingSpinner';

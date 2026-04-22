@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiSearchLine, 
@@ -10,7 +10,7 @@ import {
 } from 'react-icons/ri';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { getConstants, saveConstant, deleteConstant } from '../services/constantService';
+import { getConstants, saveConstant, deleteConstant } from '../../backend/services/constantService';
 import toast from 'react-hot-toast';
 
 const ConstantsPage = () => {

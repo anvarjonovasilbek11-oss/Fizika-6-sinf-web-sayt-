@@ -19,7 +19,7 @@ import {
   RiBarChart2Line,
   RiFunctionLine
 } from 'react-icons/ri';
-import { getCombinedTextbooks } from '../../services/textbookService';
+import { getCombinedTextbooks } from '../../../backend/services/textbookService';
 import toast from 'react-hot-toast';
 const Logo = ({ collapsed }) => (
   <div className="flex items-center gap-4 group">

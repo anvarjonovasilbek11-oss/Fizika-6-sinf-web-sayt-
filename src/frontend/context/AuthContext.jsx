@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useSessionStorage } from '../hooks/useSessionStorage';
-import { db } from '../services/firebase';
+import { db } from '../../backend/services/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, getDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   RiSearchLine, 
@@ -12,9 +12,9 @@ import {
 } from 'react-icons/ri';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
-import { VIDEOS } from '../data/videoData';
+import { VIDEOS } from '../../backend/data/videoData';
 import toast from 'react-hot-toast';
-import { db } from '../services/firebase';
+import { db } from '../../backend/services/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 const CATEGORY_KEY_MAP = {

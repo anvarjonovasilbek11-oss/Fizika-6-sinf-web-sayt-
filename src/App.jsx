@@ -1,28 +1,28 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
-import { ThemeProvider } from './context/ThemeContext';
-import ProtectedRoute from './components/Layout/ProtectedRoute';
-import AdminRoute from './components/Layout/AdminRoute';
-import MainLayout from './components/Layout/MainLayout';
-import { LanguageProvider } from './context/LanguageContext';
-import { AccessibilityProvider } from './context/AccessibilityContext';
-import ErrorBoundary from './components/Common/ErrorBoundary';
-import LoadingSpinner from './components/Common/LoadingSpinner';
+import { AuthProvider } from './frontend/context/AuthContext';
+import { ThemeProvider } from './frontend/context/ThemeContext';
+import ProtectedRoute from './frontend/components/Layout/ProtectedRoute';
+import AdminRoute from './frontend/components/Layout/AdminRoute';
+import MainLayout from './frontend/components/Layout/MainLayout';
+import { LanguageProvider } from './frontend/context/LanguageContext';
+import { AccessibilityProvider } from './frontend/context/AccessibilityContext';
+import ErrorBoundary from './frontend/components/Common/ErrorBoundary';
+import LoadingSpinner from './frontend/components/Common/LoadingSpinner';
 
 // Revert to static imports to simplify bundle graph and fix build crash
-import LoginPage from './pages/Auth/LoginPage';
-import Home from './pages/Home';
-import VideoLessons from './pages/VideoLessons';
-import Materials from './pages/Materials';
-import StudentQuiz from './pages/StudentQuiz';
-import Settings from './pages/Settings';
-import TextbookPage from './pages/TextbookPage';
-import TextbookSelection from './pages/TextbookSelection';
-import ConstantsPage from './pages/ConstantsPage';
-import ProblemSolver from './pages/ProblemSolver';
-import NotFound from './pages/NotFound';
+import LoginPage from './frontend/pages/Auth/LoginPage';
+import Home from './frontend/pages/Home';
+import VideoLessons from './frontend/pages/VideoLessons';
+import Materials from './frontend/pages/Materials';
+import StudentQuiz from './frontend/pages/StudentQuiz';
+import Settings from './frontend/pages/Settings';
+import TextbookPage from './frontend/pages/TextbookPage';
+import TextbookSelection from './frontend/pages/TextbookSelection';
+import ConstantsPage from './frontend/pages/ConstantsPage';
+import ProblemSolver from './frontend/pages/ProblemSolver';
+import NotFound from './frontend/pages/NotFound';
 
 const App = () => {
   return (
